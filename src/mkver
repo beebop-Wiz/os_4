@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+
+open VERSION, ">$ARGV[0]";
+open VTXT, "version.txt";
+
+$gitver = `git rev-parse --short HEAD`;
+$semver = <VTXT>;
+chomp $gitver;
+chomp $semver;
+
+$vstr = "v$semver (git-$gitver)";
+
+print VERSION "#ifndef VERSION\n";
+print VERSION "#define VERSION \"$vstr\"\n";
+print VERSION "#endif\n";
