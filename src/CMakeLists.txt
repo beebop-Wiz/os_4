@@ -21,14 +21,14 @@ add_custom_command(
   )
 add_custom_target(version DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/version.h)
 
-add_executable(os_4.bin)
+add_executable(os_4.bin boot.s)
 add_dependencies(os_4.bin version)
 
 target_link_libraries(os_4.bin "-T linker.ld" -ffreestanding -nostdlib -O2 gcc)
 
 # Build the C library (libc.a)
 
-add_library(c STATIC)
+add_library(c STATIC ../libc/src/crt0.s)
 
 include_directories(libc/include)
 
@@ -36,7 +36,7 @@ include_directories(libc/include)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/fs_mount)
 
-add_executable(init.exe)
+add_executable(init.exe init/init.c)
 add_dependencies(init.exe c)
 add_custom_command(
   TARGET init.exe
