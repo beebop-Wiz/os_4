@@ -1,3 +1,9 @@
 # Disk file
 fs_mount/
 disk.img
+
+# gcc-cross
+gcc-cross/
+
+# object files
+*.o
