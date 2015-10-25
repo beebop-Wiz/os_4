@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 2.6)
+project(FireOS)
+add_subdirectory(src)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+add_executable(run_test tests/run_test.c)
+add_subdirectory(tests)
+enable_testing()
+include(tests/cmake_add_test.txt)
