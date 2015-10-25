@@ -12,7 +12,7 @@ enable_language(ASM_NASM)
 
 include_directories(../src/libc/include ../src)
 
-set(KERNEL_SRCS)
+set(KERNEL_SRCS boot.nasm kernel.c)
 
 add_custom_target(regen_tests ALL perl regen_tests.pl
   SOURCES regen_tests.pl

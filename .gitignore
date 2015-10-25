@@ -12,3 +12,6 @@ gcc-cross/
 # CMake nonsense
 CMakeFiles/
 CMakeCache.txt
+
+# QEMU nonsense
+trace-*
