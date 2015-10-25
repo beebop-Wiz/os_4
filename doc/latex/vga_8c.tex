@@ -1,0 +1,46 @@
+\hypertarget{vga_8c}{}\section{/home/beebop/src/os\+\_\+4/src/vga.c File Reference}
+\label{vga_8c}\index{/home/beebop/src/os\+\_\+4/src/vga.\+c@{/home/beebop/src/os\+\_\+4/src/vga.\+c}}
+{\ttfamily \#include \char`\"{}vga.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}port.\+h\char`\"{}}\\*
+Include dependency graph for vga.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=188pt]{vga_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{vga_8c_adef84c325b6265f4d05f439987eab121}{init\+\_\+vga} (void)
+\item 
+void \hyperlink{vga_8c_a42459dac9039d9b2c44b2c535969eeb0}{vga\+\_\+write\+\_\+reg} (unsigned short port, unsigned char idx, unsigned char dat)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{vga_8c_adef84c325b6265f4d05f439987eab121}{}\index{vga.\+c@{vga.\+c}!init\+\_\+vga@{init\+\_\+vga}}
+\index{init\+\_\+vga@{init\+\_\+vga}!vga.\+c@{vga.\+c}}
+\subsubsection[{init\+\_\+vga}]{\setlength{\rightskip}{0pt plus 5cm}void init\+\_\+vga (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)}\label{vga_8c_adef84c325b6265f4d05f439987eab121}
+Initialize the V\+G\+A subsystem and clear the screen. Currently initializes it in graphics mode. \hypertarget{vga_8c_a42459dac9039d9b2c44b2c535969eeb0}{}\index{vga.\+c@{vga.\+c}!vga\+\_\+write\+\_\+reg@{vga\+\_\+write\+\_\+reg}}
+\index{vga\+\_\+write\+\_\+reg@{vga\+\_\+write\+\_\+reg}!vga.\+c@{vga.\+c}}
+\subsubsection[{vga\+\_\+write\+\_\+reg}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+write\+\_\+reg (
+\begin{DoxyParamCaption}
+\item[{unsigned short}]{port, }
+\item[{unsigned char}]{idx, }
+\item[{unsigned char}]{dat}
+\end{DoxyParamCaption}
+)}\label{vga_8c_a42459dac9039d9b2c44b2c535969eeb0}
+Writes one byte to an indexed V\+G\+A register. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em port} & The base port of the register. \\
+\hline
+\mbox{\tt in}  & {\em idx} & The index of the V\+G\+A register. \\
+\hline
+\mbox{\tt in}  & {\em dat} & The data to write. \\
+\hline
+\end{DoxyParams}

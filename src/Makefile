@@ -172,6 +172,54 @@ kernel.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/kernel.c.s
 .PHONY : kernel.c.s
 
+port.o: port.c.o
+.PHONY : port.o
+
+# target to build an object file
+port.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/port.c.o
+.PHONY : port.c.o
+
+port.i: port.c.i
+.PHONY : port.i
+
+# target to preprocess a source file
+port.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/port.c.i
+.PHONY : port.c.i
+
+port.s: port.c.s
+.PHONY : port.s
+
+# target to generate assembly for a file
+port.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/port.c.s
+.PHONY : port.c.s
+
+vga.o: vga.c.o
+.PHONY : vga.o
+
+# target to build an object file
+vga.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vga.c.o
+.PHONY : vga.c.o
+
+vga.i: vga.c.i
+.PHONY : vga.i
+
+# target to preprocess a source file
+vga.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vga.c.i
+.PHONY : vga.c.i
+
+vga.s: vga.c.s
+.PHONY : vga.s
+
+# target to generate assembly for a file
+vga.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vga.c.s
+.PHONY : vga.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -187,6 +235,12 @@ help:
 	@echo "... kernel.o"
 	@echo "... kernel.i"
 	@echo "... kernel.s"
+	@echo "... port.o"
+	@echo "... port.i"
+	@echo "... port.s"
+	@echo "... vga.o"
+	@echo "... vga.i"
+	@echo "... vga.s"
 .PHONY : help
 
 
