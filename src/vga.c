@@ -4,7 +4,7 @@
 unsigned char *vga = (unsigned char *) 0xA0000;
 
 unsigned char palette[256][3] = {
-  {0, 7, 0},
+  {0, 32, 0},
   {32, 0, 0},
   {0, 32, 0},
   {32, 32, 0},
@@ -36,11 +36,17 @@ void init_vga(void) {
   write_attr(ATTR_CSEL, 0);
   outb(VGA_MOR,
        MOR_HSYNCP | MOR_OEPAGE | MOR_CLOCK(0) | MOR_RAMEN | MOR_IOAS);
+  vga_write_reg(VGA_SEQ, SEQ_RST, RST_ASYNC | RST_SYNC);
   vga_write_reg(VGA_SEQ, SEQ_CMODE, CMODE_98DM);
+  vga_write_reg(VGA_SEQ, SEQ_MMASK, 0xf);
   vga_write_reg(VGA_SEQ, SEQ_CSEL, CSEL_A(0) | CSEL_B(0));
   vga_write_reg(VGA_SEQ, SEQ_MMODE, MMODE_EXTM | MMODE_OE | MMODE_CH4);
+  vga_write_reg(VGA_GC, GC_SET_RST, 0);
+  vga_write_reg(VGA_GC, GC_EN_ST_RT, 0);
+  vga_write_reg(VGA_GC, GC_ROTATE, ROTATE_COUNT(0) | ROTATE_IDENT);
   vga_write_reg(VGA_GC, GC_MODE, MODE_SH256);
   vga_write_reg(VGA_GC, GC_MISC, MISC_MMAP(1) | MISC_ADIS);
+  vga_write_reg(VGA_GC, GC_BITMASK, 0xff);
   vga_write_reg(VGA_CRTC, CRTC_HTOTAL, 0x5f);
   vga_write_reg(VGA_CRTC, CRTC_HDEE, 0x4f);
   vga_write_reg(VGA_CRTC, CRTC_HBLS, 0x50);
@@ -70,8 +76,8 @@ void init_vga(void) {
   }
   outb(VGA_ATTR, 0x20);
   int x, y;
-  for(x = 0; x < 320; x++) {
-    for(y = 0; y < 200; y++) {
+  for(y = 0; y < 200; y++) {
+    for(x = 0; x < 320; x++) {
       vga[320 * y + x] = 1;
     }
   }

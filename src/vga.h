@@ -24,12 +24,19 @@
 #define ATTR_HPAN   0x13
 #define ATTR_CSEL   0x14
 
+#define SEQ_RST     0x00
 #define SEQ_CMODE   0x01
+#define SEQ_MMASK   0x02
 #define SEQ_CSEL    0x03
 #define SEQ_MMODE   0x04
 
+#define GC_SET_RST  0x00
+#define GC_EN_ST_RT 0x01
+#define GC_COMPARE  0x02
+#define GC_ROTATE   0x03
 #define GC_MODE     0x05
 #define GC_MISC     0x06
+#define GC_BITMASK  0x08
 
 #define CRTC_HTOTAL 0x00
 #define CRTC_HDEE   0x01
@@ -66,6 +73,9 @@
 #define MCTL_8BIT   0x40
 #define MCTL_P54S   0x80
 
+#define RST_ASYNC   0x01
+#define RST_SYNC    0x02
+
 #define CMODE_98DM  0x01
 #define CMODE_SLR   0x04
 #define CMODE_DCR   0x08
@@ -88,6 +98,12 @@
 #define MISC_ADIS  0x01
 #define MISC_CHOE  0x02
 #define MISC_MMAP(i) (((i) & 0x03) << 2)
+
+#define ROTATE_COUNT(i) ((i) & 0x03)
+#define ROTATE_IDENT 0x00
+#define ROTATE_AND   0x08
+#define ROTATE_OR    0x10
+#define ROTATE_XOR   0x18
 
 /**
  * Initialize the VGA subsystem and clear the screen. Currently
