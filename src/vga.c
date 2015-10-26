@@ -22,6 +22,18 @@ unsigned char palette[256][3] = {
   {63, 63, 63}
 };
 
+unsigned short mode13h[] = {
+  0x63, 0x00, 0x70, 0x04, // General
+  0x03, 0x01, 0x0f, 0x00, 0x0e, // Sequence
+  0x5f, 0x4f, 0x50, 0x82, 0x24, 0x80, 0xbf, 0x1f, 0x00, 0x41,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x31, 0x9c, 0x8e, 0x8f, 0x28,
+  0x40, 0x96, 0x89, 0xa3, 0xff, // CRTC
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x05, 0x0f, 0xff, // GC
+  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
+  0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x41, 0x00, 0x0f, 0x00,
+  0x00 // Attribute
+};
+
 void write_attr(unsigned char idx, unsigned char val) {
   inb(VGA_IDX_RST);
   outb(VGA_ATTR, idx);
@@ -29,43 +41,18 @@ void write_attr(unsigned char idx, unsigned char val) {
 }
 
 void init_vga(void) {
-  write_attr(ATTR_MCTL, MCTL_8BIT | MCTL_ATGE);
-  write_attr(ATTR_OSCN, 4);
-  write_attr(ATTR_CPE, 0xf);
-  write_attr(ATTR_HPAN, 0);
-  write_attr(ATTR_CSEL, 0);
-  outb(VGA_MOR,
-       MOR_HSYNCP | MOR_OEPAGE | MOR_CLOCK(0) | MOR_RAMEN | MOR_IOAS);
-  vga_write_reg(VGA_SEQ, SEQ_RST, RST_ASYNC | RST_SYNC);
-  vga_write_reg(VGA_SEQ, SEQ_CMODE, CMODE_98DM);
-  vga_write_reg(VGA_SEQ, SEQ_MMASK, 0xf);
-  vga_write_reg(VGA_SEQ, SEQ_CSEL, CSEL_A(0) | CSEL_B(0));
-  vga_write_reg(VGA_SEQ, SEQ_MMODE, MMODE_EXTM | MMODE_OE | MMODE_CH4);
-  vga_write_reg(VGA_GC, GC_SET_RST, 0);
-  vga_write_reg(VGA_GC, GC_EN_ST_RT, 0);
-  vga_write_reg(VGA_GC, GC_ROTATE, ROTATE_COUNT(0) | ROTATE_IDENT);
-  vga_write_reg(VGA_GC, GC_MODE, MODE_SH256);
-  vga_write_reg(VGA_GC, GC_MISC, MISC_MMAP(1) | MISC_ADIS);
-  vga_write_reg(VGA_GC, GC_BITMASK, 0xff);
-  vga_write_reg(VGA_CRTC, CRTC_HTOTAL, 0x5f);
-  vga_write_reg(VGA_CRTC, CRTC_HDEE, 0x4f);
-  vga_write_reg(VGA_CRTC, CRTC_HBLS, 0x50);
-  vga_write_reg(VGA_CRTC, CRTC_HBLE, 0x82);
-  vga_write_reg(VGA_CRTC, CRTC_HRTS, 0x54);
-  vga_write_reg(VGA_CRTC, CRTC_HRTE, 0x80);
-  vga_write_reg(VGA_CRTC, CRTC_VTOTAL, 0xbf);
-  vga_write_reg(VGA_CRTC, CRTC_OFREG, 0x1f);
-  vga_write_reg(VGA_CRTC, CRTC_PRSCAN, 0);
-  vga_write_reg(VGA_CRTC, CRTC_MAXSCN, 0x41);
-  vga_write_reg(VGA_CRTC, CRTC_VRTS, 0x9c);
-  vga_write_reg(VGA_CRTC, CRTC_VRTE, 0x8e);
-  vga_write_reg(VGA_CRTC, CRTC_VDEE, 0x8f);
-  vga_write_reg(VGA_CRTC, CRTC_LWIDTH, 0x28);
-  vga_write_reg(VGA_CRTC, CRTC_UNDLOC, 0x40);
-  vga_write_reg(VGA_CRTC, CRTC_VBLS, 0x96);
-  vga_write_reg(VGA_CRTC, CRTC_VBLE, 0xb9);
-  vga_write_reg(VGA_CRTC, CRTC_MCTL, 0xa3);
-
+  /*  outb(VGA_MOR, mode13h[0]);
+  outb(0x03ba, mode13h[1]);
+  int i;
+  for(i = 0; i < N_SEQ_IDX; i++)
+    vga_write_reg(VGA_SEQ, i, mode13h[4 + i]);
+  for(i = 0; i < N_CRTC_IDX; i++)
+    vga_write_reg(VGA_CRTC, i, mode13h[4 + N_SEQ_IDX + i]);
+  for(i = 0; i < N_GC_IDX; i++)
+    vga_write_reg(VGA_GC, i, mode13h[4 + N_SEQ_IDX + N_CRTC_IDX] + i);
+  for(i = 0; i < N_ATTR_IDX; i++)
+    write_attr(i, mode13h[4 + N_SEQ_IDX + N_CRTC_IDX + N_GC_IDX + i]);
+  */
   // Load palette
   int pi;
   for(pi = 0; pi < 256; pi++) {

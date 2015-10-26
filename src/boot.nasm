@@ -4,7 +4,8 @@
 ; Set up our multiboot header
 	MBALIGN  equ 1 << 0
 	MEMINFO  equ 1 << 1
-	FLAGS    equ MBALIGN | MEMINFO
+	GFXINFO  equ 1 << 2
+	FLAGS    equ MBALIGN | MEMINFO | GFXINFO
 	MAGIC    equ 0x1BADB002
 	CHECKSUM equ -(MAGIC + FLAGS)
 
@@ -13,7 +14,16 @@ align 4
 dd MAGIC
 dd FLAGS
 dd CHECKSUM
-
+dd 0
+dd 0
+dd 0
+dd 0
+dd 0
+dd 0
+dd 0
+dd 0
+dd 0
+	
 section .bootstrap_stack, nobits
 align 4
 stack_bottom:

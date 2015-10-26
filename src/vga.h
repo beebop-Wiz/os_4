@@ -1,6 +1,10 @@
 #ifndef VGA_H
 #define VGA_H
 
+#define N_SEQ_IDX 5
+#define N_CRTC_IDX 19
+#define N_GC_IDX 9
+#define N_ATTR_IDX 15
 
 // ports
 #define VGA_ATTR    0x3C0 /**< VGA index/data port. Alternates between
@@ -105,6 +109,7 @@
 #define ROTATE_OR    0x10
 #define ROTATE_XOR   0x18
 
+  
 /**
  * Initialize the VGA subsystem and clear the screen. Currently
  * initializes it in graphics mode.
