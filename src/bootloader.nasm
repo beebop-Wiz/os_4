@@ -48,15 +48,17 @@ load:
 	mov ah,0x0e
 	int 0x10
 	
-	mov dx,0x1000
-	mov es,dx
-	mov bx,0x0000	
 	mov ax,0x0100
 	mov es,ax
 	mov al,[es:0000]
+	
+	mov dx,0x1000
+	mov es,dx
+	mov bx,0x0000	
+
 	mov ah,2
 	mov ch,0
-	mov cl,2
+	mov cl,3
 	mov dh,0
 	mov dl,0x80
 	int 0x13
@@ -108,4 +110,3 @@ ld  db "Loaded OS.",10,13,0
 times 510-($-$$) db 0
 db 0x55
 db 0xAA
-	
