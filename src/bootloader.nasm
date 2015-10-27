@@ -86,8 +86,9 @@ read_chunk:
 	mov fs,ax
 
 	mov cx,[fs:0]
-	mov bx,[fs:2]
-	mov ax,[fs:4]
+	mov ax,[fs:2]
+	mov bx,[fs:4]
+;	jmp halt
 	debugb 'c'
 	debugw cx
 	debugb 'h'
@@ -124,7 +125,6 @@ done:
 	mov al, 'F'
 	int 0x10
 halt:
-	hlt
 	jmp halt
 
 align 4
