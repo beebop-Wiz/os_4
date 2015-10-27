@@ -108,6 +108,8 @@ int main(void) {
     lseek(devfd, 512 - ((ph.p_filesz + sizeof(bh)) % 512), SEEK_CUR);
   }
   bh.nsectors = 0;
+  bh.memaddr_lo = osh.entry & 0xFFFF;
+  bh.memaddr_hi = (osh.entry & 0xF0000) >> 4;
   write(devfd, &bh, sizeof(bh));
   close(loaderfd);
   close(osfd);

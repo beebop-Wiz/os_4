@@ -113,6 +113,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named mkimg
+
+# Build rule for target.
+mkimg: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 mkimg
+.PHONY : mkimg
+
+# fast build rule for target.
+mkimg/fast:
+	$(MAKE) -f CMakeFiles/mkimg.dir/build.make CMakeFiles/mkimg.dir/build
+.PHONY : mkimg/fast
+
+#=============================================================================
 # Target rules for targets named run_test
 
 # Build rule for target.
@@ -164,6 +177,30 @@ regen_tests/fast:
 	$(MAKE) -f tests/CMakeFiles/regen_tests.dir/build.make tests/CMakeFiles/regen_tests.dir/build
 .PHONY : regen_tests/fast
 
+mkimg.o: mkimg.c.o
+.PHONY : mkimg.o
+
+# target to build an object file
+mkimg.c.o:
+	$(MAKE) -f CMakeFiles/mkimg.dir/build.make CMakeFiles/mkimg.dir/mkimg.c.o
+.PHONY : mkimg.c.o
+
+mkimg.i: mkimg.c.i
+.PHONY : mkimg.i
+
+# target to preprocess a source file
+mkimg.c.i:
+	$(MAKE) -f CMakeFiles/mkimg.dir/build.make CMakeFiles/mkimg.dir/mkimg.c.i
+.PHONY : mkimg.c.i
+
+mkimg.s: mkimg.c.s
+.PHONY : mkimg.s
+
+# target to generate assembly for a file
+mkimg.c.s:
+	$(MAKE) -f CMakeFiles/mkimg.dir/build.make CMakeFiles/mkimg.dir/mkimg.c.s
+.PHONY : mkimg.c.s
+
 tests/run_test.o: tests/run_test.c.o
 .PHONY : tests/run_test.o
 
@@ -195,12 +232,16 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... mkimg"
 	@echo "... rebuild_cache"
 	@echo "... run_test"
 	@echo "... test"
 	@echo "... os_4.bin"
 	@echo "... version"
 	@echo "... regen_tests"
+	@echo "... mkimg.o"
+	@echo "... mkimg.i"
+	@echo "... mkimg.s"
 	@echo "... tests/run_test.o"
 	@echo "... tests/run_test.i"
 	@echo "... tests/run_test.s"

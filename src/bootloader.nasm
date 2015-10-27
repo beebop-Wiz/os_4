@@ -88,7 +88,6 @@ read_chunk:
 	mov cx,[fs:0]
 	mov ax,[fs:2]
 	mov bx,[fs:4]
-;	jmp halt
 	debugb 'c'
 	debugw cx
 	debugb 'h'
