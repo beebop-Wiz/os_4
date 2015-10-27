@@ -48,6 +48,7 @@ struct bheader {
   u_int16_t nsectors;
   u_int16_t memaddr_hi;
   u_int16_t memaddr_lo;
+  u_int8_t pad[506];
 } __attribute__ ((packed));
 
 int main(void) {
@@ -80,6 +81,8 @@ int main(void) {
   struct elf_header osh;
   struct pheader ph;
   struct bheader bh;
+  for(i = 0; i < sizeof(bh.pad); i++)
+    bh.pad[i] = 0;
   u_int8_t *buf2;
   read(osfd, &osh, sizeof(osh));
   printf("Read OS header, bit %d, endian %d, PHT pos 0x%x, PT size %dx"
@@ -92,7 +95,7 @@ int main(void) {
     printf("\tProgram header %d: type %d filesz %x (%d sectors) vaddr "
 	   "%x\n", i, ph.type, ph.p_filesz, (int)
 	   ceil((ph.p_filesz + sizeof(bh)) / 512.0), ph.p_vaddr);
-    bh.nsectors = (int) ceil((ph.p_filesz + sizeof(bh)) / 512.0);
+    bh.nsectors = (int) ceil((ph.p_filesz + sizeof(bh)) / 512.0) - 1;
     bh.memaddr_lo = ph.p_vaddr & 0xFFFF;
     bh.memaddr_hi = (ph.p_vaddr & 0xF0000) >> 4;
     printf("\t\tnsectors %x lo %x hi %x\n", bh.nsectors,

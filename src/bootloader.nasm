@@ -51,15 +51,20 @@ start:
 	int 0x10
 	jmp ssm
 err:
-	mov al,77
+	mov al,'E'
 	mov ah,0x0e
 	int 0x10
+	hlt
 	jmp err
 ssm:
 ; read one sector (OS information). first word is # of sectors, second
 ; word is memory address high, third word is memory address low
 	mov di,1
 read_chunk:
+	debugw 'o'
+	debugw di
+	mov ax,cs
+	mov ds,ax
 	mov bx,0x0000
 	mov byte [a_size],16
 	mov byte [a_res],0
@@ -73,47 +78,41 @@ read_chunk:
 	mov word [a_lba_4],0
 	mov si,address
 	mov dl,0x80
-	int 0x42
-	debugw [a_nsect]
-	debugw [a_buf_lo]
-	debugw [a_buf_hi]
-	debugw [a_lba_1]
+	mov ah, 0x42
+	int 0x13
 	jc err
-
-hang:
-	hlt
-	jmp hang
 
 	mov ax,0x0100
 	mov fs,ax
 
 	mov cx,[fs:0]
+	mov bx,[fs:2]
+	mov ax,[fs:4]
+	debugb 'c'
 	debugw cx
-	mov bx,[fs:1]
-	debugw bx
-	mov ax,[fs:2]
-	push dx
-	mov dx,ax
+	debugb 'h'
 	debugw ax
-	pop dx
-	debugw di
-
+	debugb 'l'
+	debugw bx
 	test cx,cx
 	jz done
 
 	mov byte [a_size],16
 	mov byte [a_res],0
 	mov [a_nsect],cx
-	mov [a_buf_lo],ax
-	mov [a_buf_hi],bx
+	mov [a_buf_lo],bx
+	mov [a_buf_hi],ax
 	mov [a_lba_1],di
-	add di,cx
 	mov word [a_lba_2],0
 	mov word [a_lba_3],0
 	mov word [a_lba_4],0
+	add di, cx
 	mov si,address
 	mov dl,0x80
-	int 0x42
+	
+	mov ah, 0x42
+	int 0x13
+
 	jc err
 
 	mov al,'C'
@@ -124,9 +123,11 @@ done:
 	mov ax, 0x0e00
 	mov al, 'F'
 	int 0x10
+halt:
 	hlt
-	jmp done
+	jmp halt
 
+align 4
 address:
 	a_size   db 0
 	a_res    db 0
