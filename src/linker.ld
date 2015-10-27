@@ -7,8 +7,8 @@ ENTRY(_start)
 SECTIONS
 {
 	/* We load at 10K because f*** conventions */
-        . = 0x10000
-
+        . = 0x10000;
+	
 	/* First put the multiboot header, as it is required to be put very early
 	   early in the image or the bootloader won't recognize the file format.
 	   Next we'll put the .text section. */

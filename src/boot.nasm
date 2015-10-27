@@ -10,6 +10,7 @@
 	CHECKSUM equ -(MAGIC + FLAGS)
 
 section .multiboot
+	jmp _start
 align 4
 dd MAGIC
 dd FLAGS
