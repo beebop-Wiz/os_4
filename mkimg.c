@@ -86,8 +86,9 @@ int main(void) {
   u_int8_t *buf2;
   read(osfd, &osh, sizeof(osh));
   printf("Read OS header, bit %d, endian %d, PHT pos 0x%x, PT size %dx"
-	 "%d (%d total)\n", osh.bits, osh.endian, osh.header_pos,
-	 osh.ptsize, osh.ptidx, osh.ptsize * osh.ptidx);
+	 "%d (%d total), entry %x\n", osh.bits, osh.endian,
+	 osh.header_pos, osh.ptsize, osh.ptidx, osh.ptsize * osh.ptidx,
+	 osh.entry);
 
   for(i = 0; i < osh.ptidx; i++) {
     lseek(osfd, osh.header_pos + i * osh.ptsize, SEEK_SET);

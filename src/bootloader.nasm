@@ -61,8 +61,6 @@ ssm:
 ; word is memory address high, third word is memory address low
 	mov di,1
 read_chunk:
-	debugw 'o'
-	debugw di
 	mov ax,cs
 	mov ds,ax
 	mov bx,0x0000
@@ -88,12 +86,6 @@ read_chunk:
 	mov cx,[fs:0]
 	mov ax,[fs:2]
 	mov bx,[fs:4]
-	debugb 'c'
-	debugw cx
-	debugb 'h'
-	debugw ax
-	debugb 'l'
-	debugw bx
 	test cx,cx
 	jz done
 
@@ -120,10 +112,49 @@ read_chunk:
 	int 0x10
 	jmp read_chunk
 done:
+	push ax
+	push bx
 	mov ax, 0x0e00
 	mov al, 'F'
 	int 0x10
+	cli
+	xor eax, eax
+	mov ax, ds
+	shl eax, 4
+	add eax, gdt
+	mov [gdtr + 2], eax
+	mov eax, gdt_end
+	sub eax, gdt
+	mov [gdtr], ax
+	lgdt [gdtr]
+	mov eax, cr0
+	or al, 1
+	mov cr0, eax
+	mov eax, 0x10
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	mov ebx,pmode
+	add ebx,0x7c00
+	push word 0x8
+	push bx
+	retf
+	[bits 32]
+pmode:
+	mov word [0xB8000],'FF'
+	xor ebx, ebx
+	pop bx
+	pop ax
+	shl eax, 4
+	add eax, ebx
+	jmp eax
 halt:
+	sti
+	int 0xf
+	cli
+	hlt
 	jmp halt
 
 align 4
@@ -137,7 +168,36 @@ address:
 	a_lba_2  dw 0
 	a_lba_3  dw 0
 	a_lba_4  dw 0
-	
+
+align 4
+gdtr:
+	lim dw 0
+	base db 0
+
+align 4
+gdt:
+; null descriptor
+dw 0
+dw 0
+db 0
+db 0
+db 0
+db 0
+; 0x08: kcode
+dw 0xffff
+dw 0
+db 0
+db 0x9a
+db 0xcf
+db 0
+; 0x10: kdata
+dw 0xffff
+dw 0
+db 0
+db 0x92
+db 0xcf
+db 0
+gdt_end:
 times 510-($-$$) db 0
 db 0x55
 db 0xAA
