@@ -11,3 +11,7 @@ gcc-cross/
 # CMake nonsense
 CMakeFiles/
 CMakeCache.txt
+
+bin/
+mkimg
+os_4.img
