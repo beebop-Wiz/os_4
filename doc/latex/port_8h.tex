@@ -1,0 +1,83 @@
+\hypertarget{port_8h}{}\section{/home/beebop/src/os\+\_\+4/src/port.h File Reference}
+\label{port_8h}\index{/home/beebop/src/os\+\_\+4/src/port.\+h@{/home/beebop/src/os\+\_\+4/src/port.\+h}}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=314pt]{port_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{port_8h_a758def1b1168d2562f6e5030e343240a}{outb} (unsigned short port, unsigned char val)
+\item 
+void \hyperlink{port_8h_ab33f4442a8212007469ac760323d9d2a}{outw} (unsigned short port, unsigned short val)
+\item 
+unsigned char \hyperlink{port_8h_a8e267bc99eb4e47d1390903b8ea0e522}{inb} (unsigned short port)
+\item 
+unsigned short \hyperlink{port_8h_a6d87b47abf48abc5f8dbc9788b3e26a3}{inw} (unsigned short port)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{port_8h_a8e267bc99eb4e47d1390903b8ea0e522}{}\index{port.\+h@{port.\+h}!inb@{inb}}
+\index{inb@{inb}!port.\+h@{port.\+h}}
+\subsubsection[{inb}]{\setlength{\rightskip}{0pt plus 5cm}unsigned char inb (
+\begin{DoxyParamCaption}
+\item[{unsigned short}]{port}
+\end{DoxyParamCaption}
+)}\label{port_8h_a8e267bc99eb4e47d1390903b8ea0e522}
+Reads one byte from a port. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em port} & The port to read from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The byte read from the port. 
+\end{DoxyReturn}
+\hypertarget{port_8h_a6d87b47abf48abc5f8dbc9788b3e26a3}{}\index{port.\+h@{port.\+h}!inw@{inw}}
+\index{inw@{inw}!port.\+h@{port.\+h}}
+\subsubsection[{inw}]{\setlength{\rightskip}{0pt plus 5cm}unsigned short inw (
+\begin{DoxyParamCaption}
+\item[{unsigned short}]{port}
+\end{DoxyParamCaption}
+)}\label{port_8h_a6d87b47abf48abc5f8dbc9788b3e26a3}
+Reads one word from a port. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em port} & The port to read from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The word read from the port. 
+\end{DoxyReturn}
+\hypertarget{port_8h_a758def1b1168d2562f6e5030e343240a}{}\index{port.\+h@{port.\+h}!outb@{outb}}
+\index{outb@{outb}!port.\+h@{port.\+h}}
+\subsubsection[{outb}]{\setlength{\rightskip}{0pt plus 5cm}void outb (
+\begin{DoxyParamCaption}
+\item[{unsigned short}]{port, }
+\item[{unsigned char}]{val}
+\end{DoxyParamCaption}
+)}\label{port_8h_a758def1b1168d2562f6e5030e343240a}
+Writes one byte to a port. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em port} & The port to write to. \\
+\hline
+\mbox{\tt in}  & {\em val} & The byte to emit. \\
+\hline
+\end{DoxyParams}
+\hypertarget{port_8h_ab33f4442a8212007469ac760323d9d2a}{}\index{port.\+h@{port.\+h}!outw@{outw}}
+\index{outw@{outw}!port.\+h@{port.\+h}}
+\subsubsection[{outw}]{\setlength{\rightskip}{0pt plus 5cm}void outw (
+\begin{DoxyParamCaption}
+\item[{unsigned short}]{port, }
+\item[{unsigned short}]{val}
+\end{DoxyParamCaption}
+)}\label{port_8h_ab33f4442a8212007469ac760323d9d2a}
+Writes one word (2 bytes) to a port. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em port} & The port to write to. \\
+\hline
+\mbox{\tt in}  & {\em val} & The word to emit. \\
+\hline
+\end{DoxyParams}

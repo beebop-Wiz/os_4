@@ -7,11 +7,13 @@ gcc-cross/
 
 # object files
 *.o
+/bin/*
 
 # CMake nonsense
 CMakeFiles/
 CMakeCache.txt
 
-bin/
+# QEMU nonsense
+trace-*
 mkimg
 os_4.img
