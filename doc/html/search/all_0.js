@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['inb',['inb',['../port_8c.html#a8e267bc99eb4e47d1390903b8ea0e522',1,'inb(unsigned short port):&#160;port.c'],['../port_8h.html#a8e267bc99eb4e47d1390903b8ea0e522',1,'inb(unsigned short port):&#160;port.c']]],
-  ['init_2ec',['init.c',['../init_8c.html',1,'']]],
-  ['init_5fvga',['init_vga',['../vga_8c.html#adef84c325b6265f4d05f439987eab121',1,'init_vga(void):&#160;vga.c'],['../vga_8h.html#adef84c325b6265f4d05f439987eab121',1,'init_vga(void):&#160;vga.c']]],
-  ['inw',['inw',['../port_8c.html#a6d87b47abf48abc5f8dbc9788b3e26a3',1,'inw(unsigned short port):&#160;port.c'],['../port_8h.html#a6d87b47abf48abc5f8dbc9788b3e26a3',1,'inw(unsigned short port):&#160;port.c']]]
+  ['attr_5fcpe',['ATTR_CPE',['../vga_8h.html#aadccf1d2a7e39e697ab456570b2b9625',1,'vga.h']]],
+  ['attr_5fcsel',['ATTR_CSEL',['../vga_8h.html#a7529974b9122bd7040515749b00745da',1,'vga.h']]],
+  ['attr_5fhpan',['ATTR_HPAN',['../vga_8h.html#af211be3eeb891d39bdccd3a1d3388c59',1,'vga.h']]],
+  ['attr_5fmctl',['ATTR_MCTL',['../vga_8h.html#af67d72f9e2eda7cecbb3acc5f826aaee',1,'vga.h']]],
+  ['attr_5foscn',['ATTR_OSCN',['../vga_8h.html#adb56366965d8e44da81214dd86c9c3a3',1,'vga.h']]]
 ];

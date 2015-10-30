@@ -90,28 +90,133 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="vga_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef VGA_H</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define VGA_H</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div>
-<div class="line"><a name="l00004"></a><span class="lineno"><a class="line" href="vga_8h.html#a13c24b1ab7fee4a72f92c42dedb1f6f5">    4</a></span>&#160;<span class="preprocessor">#define VGA_IDX_DAT 0x3C0 </span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define VGA_MOR     0x3C2 </span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#define VGA_MIR     0x3CC </span></div>
-<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="vga_8h.html#aaebe724fc2d035e37bef596584215260">    9</a></span>&#160;<span class="preprocessor">#define VGA_R1      0x3C4</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="vga_8h.html#ad4c5bd530a03da9cb5aa105c9ceee573">   10</a></span>&#160;<span class="preprocessor">#define VGA_R2      0x3CE</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="vga_8h.html#acc1e836eff172df31ca8bcf8b7432db8">   11</a></span>&#160;<span class="preprocessor">#define VGA_R3      0x3D4</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="vga_8h.html#a50f857994df9f7a13d25bd9e59291b0c">   12</a></span>&#160;<span class="preprocessor">#define VGA_DACMASK 0x3C6</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="vga_8h.html#a06b547fd2de2a5c5ed223e95844f6d38">   13</a></span>&#160;<span class="preprocessor">#define VGA_DAC1    0x3C8</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="vga_8h.html#a83a1104fbaf8794026d8ef5d84c651ef">   14</a></span>&#160;<span class="preprocessor">#define VGA_DAC2    0x3C9</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="vga_8h.html#ae190246c8300bdebabaf41aa7b98de94">   15</a></span>&#160;<span class="preprocessor">#define VGA_DAC3    0x3C7</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="vga_8h.html#a74ae869daeda5575bd9cd4458e1d6f9c">   16</a></span>&#160;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keywordtype">void</span> <a class="code" href="vga_8h.html#adef84c325b6265f4d05f439987eab121">init_vga</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keywordtype">void</span> <a class="code" href="vga_8h.html#a42459dac9039d9b2c44b2c535969eeb0">vga_write_reg</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> port, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> idx, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> dat);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="vga_8h_html_adef84c325b6265f4d05f439987eab121"><div class="ttname"><a href="vga_8h.html#adef84c325b6265f4d05f439987eab121">init_vga</a></div><div class="ttdeci">void init_vga(void)</div><div class="ttdef"><b>Definition:</b> vga.c:4</div></div>
-<div class="ttc" id="vga_8h_html_a42459dac9039d9b2c44b2c535969eeb0"><div class="ttname"><a href="vga_8h.html#a42459dac9039d9b2c44b2c535969eeb0">vga_write_reg</a></div><div class="ttdeci">void vga_write_reg(unsigned short port, unsigned char idx, unsigned char dat)</div><div class="ttdef"><b>Definition:</b> vga.c:10</div></div>
+<div class="line"><a name="l00004"></a><span class="lineno"><a class="line" href="vga_8h.html#ad61f065a3e0e7a7bd1525df3d15a6953">    4</a></span>&#160;<span class="preprocessor">#define N_SEQ_IDX 5</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno"><a class="line" href="vga_8h.html#a86301978523d49d2e15cd4c2d24f2b0d">    5</a></span>&#160;<span class="preprocessor">#define N_CRTC_IDX 19</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="vga_8h.html#a377dfd92d57a796e5fd855cd1410ce42">    6</a></span>&#160;<span class="preprocessor">#define N_GC_IDX 9</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="vga_8h.html#ae4c0ab86e3f36da5db686badfb28c52c">    7</a></span>&#160;<span class="preprocessor">#define N_ATTR_IDX 15</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// ports</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="vga_8h.html#acb0ac46e8f1bf7e9ce476914db9aa6ea">   10</a></span>&#160;<span class="preprocessor">#define VGA_ATTR    0x3C0 </span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#define VGA_IDX_RST 0x3DA</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define VGA_MOR     0x3C2 </span></div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="vga_8h.html#a634dc02903dec3173cfbfd9a5011f587">   15</a></span>&#160;<span class="preprocessor">#define VGA_MIR     0x3CC </span></div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="vga_8h.html#aaebe724fc2d035e37bef596584215260">   16</a></span>&#160;<span class="preprocessor">#define VGA_SEQ     0x3C4</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="vga_8h.html#ad4c5bd530a03da9cb5aa105c9ceee573">   17</a></span>&#160;<span class="preprocessor">#define VGA_GC      0x3CE</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="vga_8h.html#af7796c3fcfbb7182b15eda3709d7a432">   18</a></span>&#160;<span class="preprocessor">#define VGA_CRTC    0x3D4</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="vga_8h.html#a833ed8801d1eac123134d17dbbc82006">   19</a></span>&#160;<span class="preprocessor">#define VGA_DACMASK 0x3C6</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="vga_8h.html#a70e51dbc2468cebf9b87ce7b2cbae708">   20</a></span>&#160;<span class="preprocessor">#define VGA_DAC1    0x3C8</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="vga_8h.html#a83a1104fbaf8794026d8ef5d84c651ef">   21</a></span>&#160;<span class="preprocessor">#define VGA_DAC2    0x3C9</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="vga_8h.html#ae190246c8300bdebabaf41aa7b98de94">   22</a></span>&#160;<span class="preprocessor">#define VGA_DAC3    0x3C7</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="vga_8h.html#a74ae869daeda5575bd9cd4458e1d6f9c">   23</a></span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="vga_8h.html#a593c4720b0ab1f310cf71dc053885d19">   24</a></span>&#160;<span class="comment">// indices</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#define ATTR_MCTL   0x10</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#define ATTR_OSCN   0x11</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="vga_8h.html#af67d72f9e2eda7cecbb3acc5f826aaee">   27</a></span>&#160;<span class="preprocessor">#define ATTR_CPE    0x12</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="vga_8h.html#adb56366965d8e44da81214dd86c9c3a3">   28</a></span>&#160;<span class="preprocessor">#define ATTR_HPAN   0x13</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="vga_8h.html#aadccf1d2a7e39e697ab456570b2b9625">   29</a></span>&#160;<span class="preprocessor">#define ATTR_CSEL   0x14</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="vga_8h.html#af211be3eeb891d39bdccd3a1d3388c59">   30</a></span>&#160;</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="vga_8h.html#a7529974b9122bd7040515749b00745da">   31</a></span>&#160;<span class="preprocessor">#define SEQ_RST     0x00</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#define SEQ_CMODE   0x01</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="vga_8h.html#a4868042d04ed00f634b1886f3575f9a9">   33</a></span>&#160;<span class="preprocessor">#define SEQ_MMASK   0x02</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="vga_8h.html#a7643c8112da9a6d965732aa4779eb026">   34</a></span>&#160;<span class="preprocessor">#define SEQ_CSEL    0x03</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="vga_8h.html#abf109e2a8642ca8ea6f74d8cccd84898">   35</a></span>&#160;<span class="preprocessor">#define SEQ_MMODE   0x04</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="vga_8h.html#a97a667f2e2866dcce41def4066459253">   36</a></span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="vga_8h.html#a1e3d5d818670c09a987e14595b81d24b">   37</a></span>&#160;<span class="preprocessor">#define GC_SET_RST  0x00</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#define GC_EN_ST_RT 0x01</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="vga_8h.html#ad9ad449f693e229a155e31c2b2e5d29b">   39</a></span>&#160;<span class="preprocessor">#define GC_COMPARE  0x02</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="vga_8h.html#a816e6122661ce73da47b55ae4911a9a7">   40</a></span>&#160;<span class="preprocessor">#define GC_ROTATE   0x03</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="vga_8h.html#a26e4d0698508a954ca30a285427caf86">   41</a></span>&#160;<span class="preprocessor">#define GC_MODE     0x05</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="vga_8h.html#a78b874928f3b2da7d3aba922e0360a37">   42</a></span>&#160;<span class="preprocessor">#define GC_MISC     0x06</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="vga_8h.html#a905ca51e0e01d01c850b6200148f99d8">   43</a></span>&#160;<span class="preprocessor">#define GC_BITMASK  0x08</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="vga_8h.html#ae7bf4ce899bee250a3a0ebe5e06cee19">   44</a></span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="vga_8h.html#aedfe7e3a696381edff689f77ccced9e0">   45</a></span>&#160;<span class="preprocessor">#define CRTC_HTOTAL 0x00</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#define CRTC_HDEE   0x01</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="vga_8h.html#acbd413d7f16fed55ce7b6dca80f8094b">   47</a></span>&#160;<span class="preprocessor">#define CRTC_HBLS   0x02</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="vga_8h.html#a25ae64dd9457afa0314f3dfb9a6434e9">   48</a></span>&#160;<span class="preprocessor">#define CRTC_HBLE   0x03</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="vga_8h.html#af60ad0aa89abafef0b6c5f0d7a8ed5d5">   49</a></span>&#160;<span class="preprocessor">#define CRTC_HRTS   0x04</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="vga_8h.html#abbb33e888ffff1a4d435673e9ac34b7b">   50</a></span>&#160;<span class="preprocessor">#define CRTC_HRTE   0x05</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="vga_8h.html#a0d9cc090105731c77fa41a6c5f8a8f94">   51</a></span>&#160;<span class="preprocessor">#define CRTC_VTOTAL 0x06</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="vga_8h.html#abfe5222c90908c2b031be39434f0f612">   52</a></span>&#160;<span class="preprocessor">#define CRTC_OFREG  0x07</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="vga_8h.html#a096bbb3087184390dc4e46a78e7776d8">   53</a></span>&#160;<span class="preprocessor">#define CRTC_PRSCAN 0x08</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="vga_8h.html#a0ba498fec085fee19e0c99728e47c1f6">   54</a></span>&#160;<span class="preprocessor">#define CRTC_MAXSCN 0x09</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="vga_8h.html#a1baf1b8464a763c694b6595c1b79ca7f">   55</a></span>&#160;<span class="preprocessor">#define CRTC_VRTS   0x10</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="vga_8h.html#a91594ce7c81441ac654bac1e0884e1a6">   56</a></span>&#160;<span class="preprocessor">#define CRTC_VRTE   0x11</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="vga_8h.html#ac3e8ca31f339a9f2b987326340cc721f">   57</a></span>&#160;<span class="preprocessor">#define CRTC_VDEE   0x12</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="vga_8h.html#a4875db97e7aa6895e251b71b0d9aea67">   58</a></span>&#160;<span class="preprocessor">#define CRTC_LWIDTH 0x13</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="vga_8h.html#a21965da476bfc0a677bccf6e50d191e7">   59</a></span>&#160;<span class="preprocessor">#define CRTC_UNDLOC 0x14</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="vga_8h.html#ac5de12adde1e7164bacb893849e83659">   60</a></span>&#160;<span class="preprocessor">#define CRTC_VBLS   0x15</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="vga_8h.html#a01ed24f49e638969b74180e0eb606af1">   61</a></span>&#160;<span class="preprocessor">#define CRTC_VBLE   0x16</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="vga_8h.html#aca57cdc7059066048f1d3a13ae49795d">   62</a></span>&#160;<span class="preprocessor">#define CRTC_MCTL   0x17</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="vga_8h.html#a243258a8e45628ea6f4d50a5522ea43b">   63</a></span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="vga_8h.html#a72a035619a6a3afb9fc24105ab77dfb4">   64</a></span>&#160;<span class="comment">// flags</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor">#define MOR_IOAS    0x01</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#define MOR_RAMEN   0x02</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="vga_8h.html#a43f727238ef41c41ffa4ed00297b71a5">   67</a></span>&#160;<span class="preprocessor">#define MOR_CLOCK(i) (((i) &amp; 0x3) &lt;&lt; 2)</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="vga_8h.html#abbb8c671d93393a3979d892a4bf7869b">   68</a></span>&#160;<span class="preprocessor">#define MOR_OEPAGE  0x20</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="vga_8h.html#a7e6c5567fae2613eb58a563332ccd097">   69</a></span>&#160;<span class="preprocessor">#define MOR_HSYNCP  0x40</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="vga_8h.html#a9dcac7eb26f1090a64af829460a447ba">   70</a></span>&#160;<span class="preprocessor">#define MOR_VSYNCP  0x80</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="vga_8h.html#a5ecb5b3d02c4c935aed76b5c3270b82f">   71</a></span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="vga_8h.html#af226ad03f6e35487c7bc634129477364">   72</a></span>&#160;<span class="preprocessor">#define MCTL_ATGE   0x01</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="preprocessor">#define MCTL_MONO   0x02</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="vga_8h.html#a4c7e63c99b310db6928789009bda3e28">   74</a></span>&#160;<span class="preprocessor">#define MCTL_LGE    0x04</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="vga_8h.html#a9a0f5773ce5bfa92050afade160536fa">   75</a></span>&#160;<span class="preprocessor">#define MCTL_BLINK  0x08</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="vga_8h.html#a25dc415c8e004de709a46c98ae8216ef">   76</a></span>&#160;<span class="preprocessor">#define MCTL_PPM    0x20</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="vga_8h.html#a50ca7305d50314a5cc0f8e166206b922">   77</a></span>&#160;<span class="preprocessor">#define MCTL_8BIT   0x40</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="vga_8h.html#abccfef2e69a62284552a498ec3e552d5">   78</a></span>&#160;<span class="preprocessor">#define MCTL_P54S   0x80</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="vga_8h.html#a590972bbe8a5f4dbfe408d2bb5f053e6">   79</a></span>&#160;</div>
+<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="vga_8h.html#a82b16928b54136bbce6a991872307565">   80</a></span>&#160;<span class="preprocessor">#define RST_ASYNC   0x01</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#define RST_SYNC    0x02</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="vga_8h.html#add6cb20db5c6d930e75ee5e8a92d72f2">   82</a></span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="vga_8h.html#a843d3c1018976459ec6bcf555908da5c">   83</a></span>&#160;<span class="preprocessor">#define CMODE_98DM  0x01</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">#define CMODE_SLR   0x04</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="vga_8h.html#ab7aa98fe6737a410a896eacaca8e2919">   85</a></span>&#160;<span class="preprocessor">#define CMODE_DCR   0x08</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="vga_8h.html#af77e7949af47e71bb4a07c9d1dfc6e5a">   86</a></span>&#160;<span class="preprocessor">#define CMODE_S4    0x10</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="vga_8h.html#ad0d84123842fb0beff42a53db717ff2d">   87</a></span>&#160;<span class="preprocessor">#define CMODE_SD    0x20</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="vga_8h.html#a11cb9bf20c9d6f8abeb7a99c01ff7c66">   88</a></span>&#160;</div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="vga_8h.html#a06e34e9ee4952ef22a93f824d3bafd52">   89</a></span>&#160;<span class="preprocessor">#define CSEL_A(i) ((((i) &amp; 0x03) &lt;&lt; 2) | (((i) &amp; 0x04) &lt;&lt; 3))</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">#define CSEL_B(i) (((i) &amp; 0x03) | (((i) &amp; 0x04) &lt;&lt; 2))</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="vga_8h.html#ad0b2d73aa98c5eb1c73f627e249588b3">   91</a></span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="vga_8h.html#a57101cbcde6a0b308e6f78d451b1d05a">   92</a></span>&#160;<span class="preprocessor">#define MMODE_EXTM 0x02</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="preprocessor">#define MMODE_OE   0x04</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="vga_8h.html#ae524fc74fe3acde1c050bf0e84616626">   94</a></span>&#160;<span class="preprocessor">#define MMODE_CH4  0x08</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="vga_8h.html#a9924603882d01d7aff8895b39fb35979">   95</a></span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="vga_8h.html#a508d5b41af971997ca73156475f1a169">   96</a></span>&#160;<span class="preprocessor">#define MODE_WRITE(i) ((i) &amp; 0x03)</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#define MODE_READ(i) ((i) &lt;&lt; 3)</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="vga_8h.html#a85cda99eab9022e29270a9bf095583bd">   98</a></span>&#160;<span class="preprocessor">#define MODE_HOE   0x10</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="vga_8h.html#a0ac8b5ff52772ec706a05bfffd241ab2">   99</a></span>&#160;<span class="preprocessor">#define MODE_SHR   0x20</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno"><a class="line" href="vga_8h.html#a173ec59cbb4ba878f65ea0ac0999fd3e">  100</a></span>&#160;<span class="preprocessor">#define MODE_SH256 0x40</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="vga_8h.html#a92f0bfcee023e8c8911da39387f8cee6">  101</a></span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="vga_8h.html#ae929377b61a15172a66c9b06844311fb">  102</a></span>&#160;<span class="preprocessor">#define MISC_ADIS  0x01</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#define MISC_CHOE  0x02</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno"><a class="line" href="vga_8h.html#a1215cd18c0694c7ad5636f320fa9376c">  104</a></span>&#160;<span class="preprocessor">#define MISC_MMAP(i) (((i) &amp; 0x03) &lt;&lt; 2)</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="vga_8h.html#a8e45f298c73c336a913dde39a8e27091">  105</a></span>&#160;</div>
+<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="vga_8h.html#a9bcf1113f113b6065bb9dc1d606ab733">  106</a></span>&#160;<span class="preprocessor">#define ROTATE_COUNT(i) ((i) &amp; 0x03)</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="preprocessor">#define ROTATE_IDENT 0x00</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="vga_8h.html#a83eb6ee44e7f506a2089981c91c38887">  108</a></span>&#160;<span class="preprocessor">#define ROTATE_AND   0x08</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="vga_8h.html#a1b755af4fec583854628df318f998c68">  109</a></span>&#160;<span class="preprocessor">#define ROTATE_OR    0x10</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="vga_8h.html#a8aea5cd51c72ebe76e3d20c6af2bfc6c">  110</a></span>&#160;<span class="preprocessor">#define ROTATE_XOR   0x18</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="vga_8h.html#a8c3b53cf477fd7d402c555dfa10edbb5">  111</a></span>&#160;</div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="vga_8h.html#aaa03cdcbcf718d2aa76c4a6a2d9c6d85">  112</a></span>&#160;  </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="keywordtype">void</span> <a class="code" href="vga_8h.html#adef84c325b6265f4d05f439987eab121">init_vga</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="keywordtype">void</span> <a class="code" href="vga_8h.html#a42459dac9039d9b2c44b2c535969eeb0">vga_write_reg</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> port, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> idx, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> dat);</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="keywordtype">void</span> <a class="code" href="vga_8h.html#a8122db7ab751f5409cb3e94b102364b5">vga_write_pix</a>(<span class="keywordtype">int</span> x, <span class="keywordtype">int</span> y, <span class="keywordtype">int</span> color);</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="keywordtype">void</span> <a class="code" href="vga_8h.html#ab88b680bc59f7446af3e5b97961f1c27">vga_set_palette</a>(<span class="keywordtype">int</span> idx, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> r, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> g, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> b);</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="keywordtype">void</span> <a class="code" href="vga_8h.html#a0a09bc3b0111af74c7aa94b6504c3e9b">vga_clear</a>();</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="vga_8h_html_ab88b680bc59f7446af3e5b97961f1c27"><div class="ttname"><a href="vga_8h.html#ab88b680bc59f7446af3e5b97961f1c27">vga_set_palette</a></div><div class="ttdeci">void vga_set_palette(int idx, unsigned char r, unsigned char g, unsigned char b)</div><div class="ttdef"><b>Definition:</b> vga.c:57</div></div>
+<div class="ttc" id="vga_8h_html_adef84c325b6265f4d05f439987eab121"><div class="ttname"><a href="vga_8h.html#adef84c325b6265f4d05f439987eab121">init_vga</a></div><div class="ttdeci">void init_vga(void)</div><div class="ttdef"><b>Definition:</b> vga.c:25</div></div>
+<div class="ttc" id="vga_8h_html_a8122db7ab751f5409cb3e94b102364b5"><div class="ttname"><a href="vga_8h.html#a8122db7ab751f5409cb3e94b102364b5">vga_write_pix</a></div><div class="ttdeci">void vga_write_pix(int x, int y, int color)</div><div class="ttdef"><b>Definition:</b> vga.c:53</div></div>
+<div class="ttc" id="vga_8h_html_a0a09bc3b0111af74c7aa94b6504c3e9b"><div class="ttname"><a href="vga_8h.html#a0a09bc3b0111af74c7aa94b6504c3e9b">vga_clear</a></div><div class="ttdeci">void vga_clear()</div><div class="ttdef"><b>Definition:</b> vga.c:44</div></div>
+<div class="ttc" id="vga_8h_html_a42459dac9039d9b2c44b2c535969eeb0"><div class="ttname"><a href="vga_8h.html#a42459dac9039d9b2c44b2c535969eeb0">vga_write_reg</a></div><div class="ttdeci">void vga_write_reg(unsigned short port, unsigned char idx, unsigned char dat)</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Oct 25 2015 10:53:20 for os_4 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Oct 29 2015 17:45:51 for os_4 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

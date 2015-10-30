@@ -113,6 +113,20 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+src/CMakeFiles/image.dir/rule:
+	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/image.dir/rule
+.PHONY : src/CMakeFiles/image.dir/rule
+
+# Convenience name for target.
+image: src/CMakeFiles/image.dir/rule
+.PHONY : image
+
+# fast build rule for target.
+image/fast:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/image.dir/build.make src/CMakeFiles/image.dir/build
+.PHONY : image/fast
+
+# Convenience name for target.
 src/CMakeFiles/os_4.bin.dir/rule:
 	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/os_4.bin.dir/rule
 .PHONY : src/CMakeFiles/os_4.bin.dir/rule
@@ -220,6 +234,30 @@ vga.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vga.c.s
 .PHONY : vga.c.s
 
+vgatext.o: vgatext.c.o
+.PHONY : vgatext.o
+
+# target to build an object file
+vgatext.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vgatext.c.o
+.PHONY : vgatext.c.o
+
+vgatext.i: vgatext.c.i
+.PHONY : vgatext.i
+
+# target to preprocess a source file
+vgatext.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vgatext.c.i
+.PHONY : vgatext.c.i
+
+vgatext.s: vgatext.c.s
+.PHONY : vgatext.s
+
+# target to generate assembly for a file
+vgatext.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vgatext.c.s
+.PHONY : vgatext.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -227,6 +265,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... image"
 	@echo "... os_4.bin"
 	@echo "... rebuild_cache"
 	@echo "... test"
@@ -241,6 +280,9 @@ help:
 	@echo "... vga.o"
 	@echo "... vga.i"
 	@echo "... vga.s"
+	@echo "... vgatext.o"
+	@echo "... vgatext.i"
+	@echo "... vgatext.s"
 .PHONY : help
 
 

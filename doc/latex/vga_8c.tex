@@ -14,7 +14,18 @@ Include dependency graph for vga.\+c\+:\nopagebreak
 \item 
 void \hyperlink{vga_8c_adef84c325b6265f4d05f439987eab121}{init\+\_\+vga} (void)
 \item 
-void \hyperlink{vga_8c_a42459dac9039d9b2c44b2c535969eeb0}{vga\+\_\+write\+\_\+reg} (unsigned short port, unsigned char idx, unsigned char dat)
+void \hyperlink{vga_8c_a0a09bc3b0111af74c7aa94b6504c3e9b}{vga\+\_\+clear} ()
+\item 
+void \hyperlink{vga_8c_a8122db7ab751f5409cb3e94b102364b5}{vga\+\_\+write\+\_\+pix} (int x, int y, int color)
+\item 
+void \hyperlink{vga_8c_ab88b680bc59f7446af3e5b97961f1c27}{vga\+\_\+set\+\_\+palette} (int idx, unsigned char r, unsigned char g, unsigned char b)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+unsigned char $\ast$ \hyperlink{vga_8c_a13e9a23013ffa1fef2c55e4f349da51c}{vga} = (unsigned char $\ast$) 0x\+A0000
+\item 
+unsigned char \hyperlink{vga_8c_a79d9219be09687f1869b6695ffd71dd1}{palette} \mbox{[}256\mbox{]}\mbox{[}3\mbox{]}
 \end{DoxyCompactItemize}
 
 
@@ -26,21 +37,79 @@ void \hyperlink{vga_8c_a42459dac9039d9b2c44b2c535969eeb0}{vga\+\_\+write\+\_\+re
 \item[{void}]{}
 \end{DoxyParamCaption}
 )}\label{vga_8c_adef84c325b6265f4d05f439987eab121}
-Initialize the V\+G\+A subsystem and clear the screen. Currently initializes it in graphics mode. \hypertarget{vga_8c_a42459dac9039d9b2c44b2c535969eeb0}{}\index{vga.\+c@{vga.\+c}!vga\+\_\+write\+\_\+reg@{vga\+\_\+write\+\_\+reg}}
-\index{vga\+\_\+write\+\_\+reg@{vga\+\_\+write\+\_\+reg}!vga.\+c@{vga.\+c}}
-\subsubsection[{vga\+\_\+write\+\_\+reg}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+write\+\_\+reg (
+Initialize the V\+G\+A subsystem and clear the screen. Currently initializes it in graphics mode. \hypertarget{vga_8c_a0a09bc3b0111af74c7aa94b6504c3e9b}{}\index{vga.\+c@{vga.\+c}!vga\+\_\+clear@{vga\+\_\+clear}}
+\index{vga\+\_\+clear@{vga\+\_\+clear}!vga.\+c@{vga.\+c}}
+\subsubsection[{vga\+\_\+clear}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+clear (
 \begin{DoxyParamCaption}
-\item[{unsigned short}]{port, }
-\item[{unsigned char}]{idx, }
-\item[{unsigned char}]{dat}
+{}
 \end{DoxyParamCaption}
-)}\label{vga_8c_a42459dac9039d9b2c44b2c535969eeb0}
-Writes one byte to an indexed V\+G\+A register. 
+)}\label{vga_8c_a0a09bc3b0111af74c7aa94b6504c3e9b}
+Resets the screen to color 0. \hypertarget{vga_8c_ab88b680bc59f7446af3e5b97961f1c27}{}\index{vga.\+c@{vga.\+c}!vga\+\_\+set\+\_\+palette@{vga\+\_\+set\+\_\+palette}}
+\index{vga\+\_\+set\+\_\+palette@{vga\+\_\+set\+\_\+palette}!vga.\+c@{vga.\+c}}
+\subsubsection[{vga\+\_\+set\+\_\+palette}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+set\+\_\+palette (
+\begin{DoxyParamCaption}
+\item[{int}]{idx, }
+\item[{unsigned char}]{r, }
+\item[{unsigned char}]{g, }
+\item[{unsigned char}]{b}
+\end{DoxyParamCaption}
+)}\label{vga_8c_ab88b680bc59f7446af3e5b97961f1c27}
+Sets one palette entry. 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\tt in}  & {\em port} & The base port of the register. \\
+\mbox{\tt in}  & {\em idx} & Color index (1-\/256) \\
 \hline
-\mbox{\tt in}  & {\em idx} & The index of the V\+G\+A register. \\
+\mbox{\tt in}  & {\em r} & Red component (0-\/63) \\
 \hline
-\mbox{\tt in}  & {\em dat} & The data to write. \\
+\mbox{\tt in}  & {\em g} & Green component (0-\/63) \\
+\hline
+\mbox{\tt in}  & {\em b} & Blue component (0-\/63) \\
 \hline
 \end{DoxyParams}
+\hypertarget{vga_8c_a8122db7ab751f5409cb3e94b102364b5}{}\index{vga.\+c@{vga.\+c}!vga\+\_\+write\+\_\+pix@{vga\+\_\+write\+\_\+pix}}
+\index{vga\+\_\+write\+\_\+pix@{vga\+\_\+write\+\_\+pix}!vga.\+c@{vga.\+c}}
+\subsubsection[{vga\+\_\+write\+\_\+pix}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+write\+\_\+pix (
+\begin{DoxyParamCaption}
+\item[{int}]{x, }
+\item[{int}]{y, }
+\item[{int}]{color}
+\end{DoxyParamCaption}
+)}\label{vga_8c_a8122db7ab751f5409cb3e94b102364b5}
+Draws one pixel. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em x} & X coordinate of the pixel. \\
+\hline
+\mbox{\tt in}  & {\em y} & Y coordinate of the pixel. \\
+\hline
+\mbox{\tt in}  & {\em color} & Color of the pixel. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Variable Documentation}
+\hypertarget{vga_8c_a79d9219be09687f1869b6695ffd71dd1}{}\index{vga.\+c@{vga.\+c}!palette@{palette}}
+\index{palette@{palette}!vga.\+c@{vga.\+c}}
+\subsubsection[{palette}]{\setlength{\rightskip}{0pt plus 5cm}unsigned char palette\mbox{[}256\mbox{]}\mbox{[}3\mbox{]}}\label{vga_8c_a79d9219be09687f1869b6695ffd71dd1}
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= \{
+  \{0, 0, 0\},
+  \{32, 0, 0\},
+  \{0, 32, 0\},
+  \{32, 32, 0\},
+  \{0, 0, 32\},
+  \{32, 0, 32\},
+  \{0, 32, 32\},
+  \{48, 48, 48\},
+  \{32, 32, 32\},
+  \{63, 0, 0\},
+  \{0, 63, 0\},
+  \{63, 63, 0\},
+  \{0, 0, 63\},
+  \{63, 0, 63\},
+  \{0, 63, 63\},
+  \{63, 63, 63\}
+\}
+\end{DoxyCode}
+\hypertarget{vga_8c_a13e9a23013ffa1fef2c55e4f349da51c}{}\index{vga.\+c@{vga.\+c}!vga@{vga}}
+\index{vga@{vga}!vga.\+c@{vga.\+c}}
+\subsubsection[{vga}]{\setlength{\rightskip}{0pt plus 5cm}unsigned char$\ast$ vga = (unsigned char $\ast$) 0x\+A0000}\label{vga_8c_a13e9a23013ffa1fef2c55e4f349da51c}

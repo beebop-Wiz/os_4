@@ -21,17 +21,12 @@ add_custom_command(
   )
 add_custom_target(version DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/version.h)
 
-add_executable(os_4.bin boot.nasm kernel.c vga.c port.c)
+add_executable(os_4.bin boot.nasm kernel.c vga.c port.c vgatext.c)
 add_dependencies(os_4.bin version)
 
 target_link_libraries(os_4.bin "-T linker.ld" -ffreestanding -nostdlib -O2 gcc)
 
-add_custom_command(
-  TARGET os_4.bin
-  POST_BUILD
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../mkimg
-  COMMENT "Generating OS image..."
-  )
+add_custom_target(image ALL ${CMAKE_CURRENT_SOURCE_DIR}/../mkimg DEPENDS os_4.bin)
 
 # Build the C library (libc.a)
 

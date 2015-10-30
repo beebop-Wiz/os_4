@@ -1,15 +1,10 @@
 #include "vga.h"
+#include "vgatext.h"
+#include "version.h"
 
 void kernel_main() {
   init_vga();
-  int t, x, i;
-  while(1) {
-    for(t = 0; t < 128; t++) {
-      for(x = 0; x < 128; x++) {
-	vga_write_pix(x, x^t, 15);
-      }
-      for(i = 0; i < 10000000; i++) ;
-    }
-    vga_clear();
-  }
+  init_vgatext();
+  vga_puts("Hello, World!\n");
+  vga_puts("Booted os_4 " VERSION ".\n");
 }

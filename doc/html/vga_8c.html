@@ -84,7 +84,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">vga.c File Reference</div>  </div>
 </div><!--header-->
@@ -103,8 +104,19 @@ Include dependency graph for vga.c:</div>
 Functions</h2></td></tr>
 <tr class="memitem:adef84c325b6265f4d05f439987eab121"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vga_8c.html#adef84c325b6265f4d05f439987eab121">init_vga</a> (void)</td></tr>
 <tr class="separator:adef84c325b6265f4d05f439987eab121"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42459dac9039d9b2c44b2c535969eeb0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vga_8c.html#a42459dac9039d9b2c44b2c535969eeb0">vga_write_reg</a> (unsigned short port, unsigned char idx, unsigned char dat)</td></tr>
-<tr class="separator:a42459dac9039d9b2c44b2c535969eeb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a09bc3b0111af74c7aa94b6504c3e9b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vga_8c.html#a0a09bc3b0111af74c7aa94b6504c3e9b">vga_clear</a> ()</td></tr>
+<tr class="separator:a0a09bc3b0111af74c7aa94b6504c3e9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8122db7ab751f5409cb3e94b102364b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vga_8c.html#a8122db7ab751f5409cb3e94b102364b5">vga_write_pix</a> (int x, int y, int color)</td></tr>
+<tr class="separator:a8122db7ab751f5409cb3e94b102364b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab88b680bc59f7446af3e5b97961f1c27"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vga_8c.html#ab88b680bc59f7446af3e5b97961f1c27">vga_set_palette</a> (int idx, unsigned char r, unsigned char g, unsigned char b)</td></tr>
+<tr class="separator:ab88b680bc59f7446af3e5b97961f1c27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a13e9a23013ffa1fef2c55e4f349da51c"><td class="memItemLeft" align="right" valign="top">unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vga_8c.html#a13e9a23013ffa1fef2c55e4f349da51c">vga</a> = (unsigned char *) 0xA0000</td></tr>
+<tr class="separator:a13e9a23013ffa1fef2c55e4f349da51c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79d9219be09687f1869b6695ffd71dd1"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vga_8c.html#a79d9219be09687f1869b6695ffd71dd1">palette</a> [256][3]</td></tr>
+<tr class="separator:a79d9219be09687f1869b6695ffd71dd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="adef84c325b6265f4d05f439987eab121"></a>
@@ -124,27 +136,49 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a42459dac9039d9b2c44b2c535969eeb0"></a>
+<a class="anchor" id="a0a09bc3b0111af74c7aa94b6504c3e9b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void vga_write_reg </td>
+          <td class="memname">void vga_clear </td>
           <td>(</td>
-          <td class="paramtype">unsigned short&#160;</td>
-          <td class="paramname"><em>port</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
-          <td class="paramtype">unsigned char&#160;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Resets the screen to color 0. </p>
+
+</div>
+</div>
+<a class="anchor" id="ab88b680bc59f7446af3e5b97961f1c27"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void vga_set_palette </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>idx</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">unsigned char&#160;</td>
-          <td class="paramname"><em>dat</em>&#160;</td>
+          <td class="paramname"><em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned char&#160;</td>
+          <td class="paramname"><em>g</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned char&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -153,21 +187,105 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Writes one byte to an indexed VGA register. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Sets one palette entry. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">port</td><td>The base port of the register. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">idx</td><td>The index of the VGA register. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dat</td><td>The data to write. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">idx</td><td>Color index (1-256) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td>Red component (0-63) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">g</td><td>Green component (0-63) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>Blue component (0-63) </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
+<a class="anchor" id="a8122db7ab751f5409cb3e94b102364b5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void vga_write_pix </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>color</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Draws one pixel. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">x</td><td>X coordinate of the pixel. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">y</td><td>Y coordinate of the pixel. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">color</td><td>Color of the pixel. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a class="anchor" id="a79d9219be09687f1869b6695ffd71dd1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned char palette[256][3]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">  {0, 0, 0},</div>
+<div class="line">  {32, 0, 0},</div>
+<div class="line">  {0, 32, 0},</div>
+<div class="line">  {32, 32, 0},</div>
+<div class="line">  {0, 0, 32},</div>
+<div class="line">  {32, 0, 32},</div>
+<div class="line">  {0, 32, 32},</div>
+<div class="line">  {48, 48, 48},</div>
+<div class="line">  {32, 32, 32},</div>
+<div class="line">  {63, 0, 0},</div>
+<div class="line">  {0, 63, 0},</div>
+<div class="line">  {63, 63, 0},</div>
+<div class="line">  {0, 0, 63},</div>
+<div class="line">  {63, 0, 63},</div>
+<div class="line">  {0, 63, 63},</div>
+<div class="line">  {63, 63, 63}</div>
+<div class="line">}</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="a13e9a23013ffa1fef2c55e4f349da51c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned char* vga = (unsigned char *) 0xA0000</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Oct 25 2015 10:53:20 for os_4 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Oct 29 2015 17:45:51 for os_4 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

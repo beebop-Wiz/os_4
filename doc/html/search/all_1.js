@@ -1,5 +1,31 @@
 var searchData=
 [
-  ['kernel_2ec',['kernel.c',['../kernel_8c.html',1,'']]],
-  ['kernel_5fmain',['kernel_main',['../kernel_8c.html#ada8402e0c504af8cafef5cc76c076003',1,'kernel.c']]]
+  ['cmode_5f98dm',['CMODE_98DM',['../vga_8h.html#ab7aa98fe6737a410a896eacaca8e2919',1,'vga.h']]],
+  ['cmode_5fdcr',['CMODE_DCR',['../vga_8h.html#ad0d84123842fb0beff42a53db717ff2d',1,'vga.h']]],
+  ['cmode_5fs4',['CMODE_S4',['../vga_8h.html#a11cb9bf20c9d6f8abeb7a99c01ff7c66',1,'vga.h']]],
+  ['cmode_5fsd',['CMODE_SD',['../vga_8h.html#a06e34e9ee4952ef22a93f824d3bafd52',1,'vga.h']]],
+  ['cmode_5fslr',['CMODE_SLR',['../vga_8h.html#af77e7949af47e71bb4a07c9d1dfc6e5a',1,'vga.h']]],
+  ['col',['col',['../kernel_8c.html#a76453a26fc446453c0ace6a7faf3063e',1,'kernel.c']]],
+  ['crtc_5fhble',['CRTC_HBLE',['../vga_8h.html#abbb33e888ffff1a4d435673e9ac34b7b',1,'vga.h']]],
+  ['crtc_5fhbls',['CRTC_HBLS',['../vga_8h.html#af60ad0aa89abafef0b6c5f0d7a8ed5d5',1,'vga.h']]],
+  ['crtc_5fhdee',['CRTC_HDEE',['../vga_8h.html#a25ae64dd9457afa0314f3dfb9a6434e9',1,'vga.h']]],
+  ['crtc_5fhrte',['CRTC_HRTE',['../vga_8h.html#abfe5222c90908c2b031be39434f0f612',1,'vga.h']]],
+  ['crtc_5fhrts',['CRTC_HRTS',['../vga_8h.html#a0d9cc090105731c77fa41a6c5f8a8f94',1,'vga.h']]],
+  ['crtc_5fhtotal',['CRTC_HTOTAL',['../vga_8h.html#acbd413d7f16fed55ce7b6dca80f8094b',1,'vga.h']]],
+  ['crtc_5flwidth',['CRTC_LWIDTH',['../vga_8h.html#ac5de12adde1e7164bacb893849e83659',1,'vga.h']]],
+  ['crtc_5fmaxscn',['CRTC_MAXSCN',['../vga_8h.html#a91594ce7c81441ac654bac1e0884e1a6',1,'vga.h']]],
+  ['crtc_5fmctl',['CRTC_MCTL',['../vga_8h.html#a72a035619a6a3afb9fc24105ab77dfb4',1,'vga.h']]],
+  ['crtc_5fofreg',['CRTC_OFREG',['../vga_8h.html#a0ba498fec085fee19e0c99728e47c1f6',1,'vga.h']]],
+  ['crtc_5fprscan',['CRTC_PRSCAN',['../vga_8h.html#a1baf1b8464a763c694b6595c1b79ca7f',1,'vga.h']]],
+  ['crtc_5fundloc',['CRTC_UNDLOC',['../vga_8h.html#a01ed24f49e638969b74180e0eb606af1',1,'vga.h']]],
+  ['crtc_5fvble',['CRTC_VBLE',['../vga_8h.html#a243258a8e45628ea6f4d50a5522ea43b',1,'vga.h']]],
+  ['crtc_5fvbls',['CRTC_VBLS',['../vga_8h.html#aca57cdc7059066048f1d3a13ae49795d',1,'vga.h']]],
+  ['crtc_5fvdee',['CRTC_VDEE',['../vga_8h.html#a21965da476bfc0a677bccf6e50d191e7',1,'vga.h']]],
+  ['crtc_5fvrte',['CRTC_VRTE',['../vga_8h.html#a4875db97e7aa6895e251b71b0d9aea67',1,'vga.h']]],
+  ['crtc_5fvrts',['CRTC_VRTS',['../vga_8h.html#ac3e8ca31f339a9f2b987326340cc721f',1,'vga.h']]],
+  ['crtc_5fvtotal',['CRTC_VTOTAL',['../vga_8h.html#a096bbb3087184390dc4e46a78e7776d8',1,'vga.h']]],
+  ['csel_5fa',['CSEL_A',['../vga_8h.html#ad0b2d73aa98c5eb1c73f627e249588b3',1,'vga.h']]],
+  ['csel_5fb',['CSEL_B',['../vga_8h.html#a57101cbcde6a0b308e6f78d451b1d05a',1,'vga.h']]],
+  ['cx',['cx',['../vgatext_8c.html#af905a9989361d094908ad04e08f6429d',1,'vgatext.c']]],
+  ['cy',['cy',['../vgatext_8c.html#ad36501a70b25e18bcf48dd6e03392305',1,'vgatext.c']]]
 ];
