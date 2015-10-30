@@ -6,10 +6,10 @@
 #include <fcntl.h>
 #include <math.h>
 
-#define BOOTLOADER_ASM "src/bootloader.nasm"
-#define BOOTLOADER_OBJ "bin/bootloader"
-#define OS_BINARY "bin/os_4.bin"
-#define OUTPUT "os_4.img"
+#define BOOTLOADER_ASM "bootloader.nasm"
+#define BOOTLOADER_OBJ "../bin/bootloader"
+#define OS_BINARY "../bin/os_4.bin"
+#define OUTPUT "../os_4.img"
 
 struct elf_header {
   char magic[4];

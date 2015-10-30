@@ -26,6 +26,13 @@ add_dependencies(os_4.bin version)
 
 target_link_libraries(os_4.bin "-T linker.ld" -ffreestanding -nostdlib -O2 gcc)
 
+add_custom_command(
+  TARGET os_4.bin
+  POST_BUILD
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../mkimg
+  COMMENT "Generating OS image..."
+  )
+
 # Build the C library (libc.a)
 
 # add_library(c STATIC ../libc/src/crt0.s)

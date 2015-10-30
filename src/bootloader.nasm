@@ -1,25 +1,5 @@
 	[bits 16]
 	[org 0]
-%macro debugb 1
-	push ax
-	mov al,%1
-	mov ah,0x0e
-	int 0x10
-	pop ax
-%endmacro
-
-%macro debugw 1 ; prints little-endian
-	push ax
-	mov ax,%1
-	mov ah,0x0e
-	int 0x10
-	mov ax,%1
-	mov al,ah
-	mov ah,0x0e
-	int 0x10
-	pop ax
-%endmacro
-	
 	jmp 0x7c0:start
 
 start:
@@ -42,13 +22,6 @@ start:
 	mov dl, 0x80
 	int 0x13
 	jc err
-	mov al,ah
-	mov ah,0x0e
-	int 0x10
-	add cx,0x20
-	mov al,cl
-	mov ah,0x0e
-	int 0x10
 	jmp ssm
 err:
 	mov al,'E'
@@ -104,18 +77,14 @@ read_chunk:
 	
 	mov ah, 0x42
 	int 0x13
-
 	jc err
-
-	mov al,'C'
-	mov ah,0x0e
-	int 0x10
 	jmp read_chunk
 done:
 	push ax
 	push bx
-	mov ax, 0x0e00
-	mov al, 'F'
+	; set screen mode 0x13
+	mov al,0x13
+	mov ah,0
 	int 0x10
 	cli
 	xor eax, eax
@@ -143,7 +112,6 @@ done:
 	retf
 	[bits 32]
 pmode:
-	mov word [0xB8000],'FF'
 	xor ebx, ebx
 	pop bx
 	pop ax
