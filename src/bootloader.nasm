@@ -1,13 +1,10 @@
 	[bits 16]
 	[org 0]
 	jmp 0x7c0:start
-
 start:
 ; set up segments
 	mov ax,cs
-	mov ds,ax
-	mov es,ax
-	
+	mov ds,ax	
 ; enable A20
 	mov ax, 0x2401
 	int 0x15
@@ -22,33 +19,16 @@ start:
 	mov dl, 0x80
 	int 0x13
 	jc err
-	jmp ssm
-err:
-	mov al,'E'
-	mov ah,0x0e
-	int 0x10
-	hlt
-	jmp err
-ssm:
 ; read one sector (OS information). first word is # of sectors, second
 ; word is memory address high, third word is memory address low
 	mov di,1
 read_chunk:
-	mov ax,cs
-	mov ds,ax
-	mov bx,0x0000
-	mov byte [a_size],16
-	mov byte [a_res],0
 	mov word [a_nsect],1
 	mov word [a_buf_lo],0x0000
 	mov word [a_buf_hi],0x0100
 	mov [a_lba_1],di
 	inc di
-	mov word [a_lba_2],0
-	mov word [a_lba_3],0
-	mov word [a_lba_4],0
 	mov si,address
-	mov dl,0x80
 	mov ah, 0x42
 	int 0x13
 	jc err
@@ -62,18 +42,11 @@ read_chunk:
 	test cx,cx
 	jz done
 
-	mov byte [a_size],16
-	mov byte [a_res],0
 	mov [a_nsect],cx
 	mov [a_buf_lo],bx
 	mov [a_buf_hi],ax
 	mov [a_lba_1],di
-	mov word [a_lba_2],0
-	mov word [a_lba_3],0
-	mov word [a_lba_4],0
 	add di, cx
-	mov si,address
-	mov dl,0x80
 	
 	mov ah, 0x42
 	int 0x13
@@ -124,10 +97,17 @@ halt:
 	cli
 	hlt
 	jmp halt
+	[bits 16]
+err:
+	mov al,'E'
+	mov ah,0x0e
+	int 0x10
+	hlt
+	jmp err
 
 align 4
 address:
-	a_size   db 0
+	a_size   db 16
 	a_res    db 0
 	a_nsect  dw 0
 	a_buf_lo dw 0
@@ -166,6 +146,3 @@ db 0x92
 db 0xcf
 db 0
 gdt_end:
-times 510-($-$$) db 0
-db 0x55
-db 0xAA

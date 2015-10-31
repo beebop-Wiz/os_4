@@ -73,6 +73,8 @@ int main(void) {
 
   // First, write the bootloader.
   read(loaderfd, buf, 512);
+  buf[510] = 0x55;
+  buf[511] = 0xaa;
   write(devfd, buf, 512);
   for(i = 0; i < 512; i++) buf[i] = 0;
   printf("Wrote bootloader.\n");
