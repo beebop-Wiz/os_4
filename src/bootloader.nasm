@@ -145,4 +145,18 @@ db 0
 db 0x92
 db 0xcf
 db 0
+; 0x18: 16-bit pmode code
+dw 0xffff
+dw 0
+db 0
+db 0x9a
+db 0x8f
+db 0
+; 0x20: 16-bit pmode data
+dw 0xffff
+dw 0
+db 0
+db 0x92
+db 0x8f
+db 0
 gdt_end:

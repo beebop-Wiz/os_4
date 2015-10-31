@@ -6,6 +6,13 @@ ENTRY(_start)
    kernel image. */
 SECTIONS
 {
+	. = 0x4000;
+	.rm BLOCK(4K) : ALIGN(4K)
+	{
+		*(.rmcode)
+		*(.rmdata)
+		*(.rmbss)
+	}
 	/* We load at 10K because f*** conventions */
         . = 0x10000;
 	
@@ -14,7 +21,6 @@ SECTIONS
 	   Next we'll put the .text section. */
 	.text BLOCK(4K) : ALIGN(4K)
 	{
-		*(.multiboot)
 		*(.text)
 	}
 

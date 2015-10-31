@@ -162,6 +162,38 @@ boot.nasm.o:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/boot.nasm.o
 .PHONY : boot.nasm.o
 
+idt.o: idt.c.o
+.PHONY : idt.o
+
+# target to build an object file
+idt.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.c.o
+.PHONY : idt.c.o
+
+idt.i: idt.c.i
+.PHONY : idt.i
+
+# target to preprocess a source file
+idt.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.c.i
+.PHONY : idt.c.i
+
+idt.s: idt.c.s
+.PHONY : idt.s
+
+# target to generate assembly for a file
+idt.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.c.s
+.PHONY : idt.c.s
+
+idt.o: idt.nasm.o
+.PHONY : idt.o
+
+# target to build an object file
+idt.nasm.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.nasm.o
+.PHONY : idt.nasm.o
+
 kernel.o: kernel.c.o
 .PHONY : kernel.o
 
@@ -209,6 +241,62 @@ port.s: port.c.s
 port.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/port.c.s
 .PHONY : port.c.s
+
+real.o: real.c.o
+.PHONY : real.o
+
+# target to build an object file
+real.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/real.c.o
+.PHONY : real.c.o
+
+real.i: real.c.i
+.PHONY : real.i
+
+# target to preprocess a source file
+real.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/real.c.i
+.PHONY : real.c.i
+
+real.s: real.c.s
+.PHONY : real.s
+
+# target to generate assembly for a file
+real.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/real.c.s
+.PHONY : real.c.s
+
+real.o: real.nasm.o
+.PHONY : real.o
+
+# target to build an object file
+real.nasm.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/real.nasm.o
+.PHONY : real.nasm.o
+
+vbe.o: vbe.c.o
+.PHONY : vbe.o
+
+# target to build an object file
+vbe.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vbe.c.o
+.PHONY : vbe.c.o
+
+vbe.i: vbe.c.i
+.PHONY : vbe.i
+
+# target to preprocess a source file
+vbe.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vbe.c.i
+.PHONY : vbe.c.i
+
+vbe.s: vbe.c.s
+.PHONY : vbe.s
+
+# target to generate assembly for a file
+vbe.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vbe.c.s
+.PHONY : vbe.c.s
 
 vga.o: vga.c.o
 .PHONY : vga.o
@@ -271,12 +359,23 @@ help:
 	@echo "... test"
 	@echo "... version"
 	@echo "... boot.o"
+	@echo "... idt.o"
+	@echo "... idt.i"
+	@echo "... idt.s"
+	@echo "... idt.o"
 	@echo "... kernel.o"
 	@echo "... kernel.i"
 	@echo "... kernel.s"
 	@echo "... port.o"
 	@echo "... port.i"
 	@echo "... port.s"
+	@echo "... real.o"
+	@echo "... real.i"
+	@echo "... real.s"
+	@echo "... real.o"
+	@echo "... vbe.o"
+	@echo "... vbe.i"
+	@echo "... vbe.s"
 	@echo "... vga.o"
 	@echo "... vga.i"
 	@echo "... vga.s"
