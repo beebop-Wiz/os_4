@@ -5,13 +5,21 @@ This graph shows which files directly or indirectly include this file\+:
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=188pt]{vgatext_8h__dep__incl}
+\includegraphics[width=314pt]{vgatext_8h__dep__incl}
 \end{center}
 \end{figure}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 void \hyperlink{vgatext_8h_a93c9d4d92c5dc7fc550f3cee75aed4bb}{init\+\_\+vgatext} (void)
+\item 
+void \hyperlink{vgatext_8h_afe9f6dcd41f7b397f34364f1072e3018}{vga\+\_\+putchar} (char c)
+\item 
+void \hyperlink{vgatext_8h_a72685eb503047a2aac714ab6f51c77b5}{vga\+\_\+puts} (char $\ast$s)
+\item 
+void \hyperlink{vgatext_8h_a790630dff71f73da4058c7ed5676740c}{vga\+\_\+redraw} ()
+\item 
+void \hyperlink{vgatext_8h_a560844c73573b4b9334fcc427d1c1b09}{vga\+\_\+scroll} ()
 \end{DoxyCompactItemize}
 
 
@@ -23,4 +31,44 @@ void \hyperlink{vgatext_8h_a93c9d4d92c5dc7fc550f3cee75aed4bb}{init\+\_\+vgatext}
 \item[{void}]{}
 \end{DoxyParamCaption}
 )}\label{vgatext_8h_a93c9d4d92c5dc7fc550f3cee75aed4bb}
-Sets up the V\+G\+A text rendering. Resets the cursor position and color info. 
+Sets up the V\+G\+A text rendering. Resets the cursor position and color info. \hypertarget{vgatext_8h_afe9f6dcd41f7b397f34364f1072e3018}{}\index{vgatext.\+h@{vgatext.\+h}!vga\+\_\+putchar@{vga\+\_\+putchar}}
+\index{vga\+\_\+putchar@{vga\+\_\+putchar}!vgatext.\+h@{vgatext.\+h}}
+\subsubsection[{vga\+\_\+putchar}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+putchar (
+\begin{DoxyParamCaption}
+\item[{char}]{c}
+\end{DoxyParamCaption}
+)}\label{vgatext_8h_afe9f6dcd41f7b397f34364f1072e3018}
+Prints one character. Specials (~\newline
+, ) work. Redraws the screen on a ~\newline
+. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em c} & The character to print. \\
+\hline
+\end{DoxyParams}
+\hypertarget{vgatext_8h_a72685eb503047a2aac714ab6f51c77b5}{}\index{vgatext.\+h@{vgatext.\+h}!vga\+\_\+puts@{vga\+\_\+puts}}
+\index{vga\+\_\+puts@{vga\+\_\+puts}!vgatext.\+h@{vgatext.\+h}}
+\subsubsection[{vga\+\_\+puts}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+puts (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{s}
+\end{DoxyParamCaption}
+)}\label{vgatext_8h_a72685eb503047a2aac714ab6f51c77b5}
+Writes a null-\/terminated string. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em s} & The string to print. \\
+\hline
+\end{DoxyParams}
+\hypertarget{vgatext_8h_a790630dff71f73da4058c7ed5676740c}{}\index{vgatext.\+h@{vgatext.\+h}!vga\+\_\+redraw@{vga\+\_\+redraw}}
+\index{vga\+\_\+redraw@{vga\+\_\+redraw}!vgatext.\+h@{vgatext.\+h}}
+\subsubsection[{vga\+\_\+redraw}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+redraw (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{vgatext_8h_a790630dff71f73da4058c7ed5676740c}
+Redraws the display from the terminal data. \hypertarget{vgatext_8h_a560844c73573b4b9334fcc427d1c1b09}{}\index{vgatext.\+h@{vgatext.\+h}!vga\+\_\+scroll@{vga\+\_\+scroll}}
+\index{vga\+\_\+scroll@{vga\+\_\+scroll}!vgatext.\+h@{vgatext.\+h}}
+\subsubsection[{vga\+\_\+scroll}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+scroll (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{vgatext_8h_a560844c73573b4b9334fcc427d1c1b09}
+Scrolls the display by one line. Does N\+O\+T erase the bottom line at present. 

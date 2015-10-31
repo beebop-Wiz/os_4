@@ -178,6 +178,19 @@ version/fast:
 .PHONY : version/fast
 
 #=============================================================================
+# Target rules for targets named doc
+
+# Build rule for target.
+doc: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 doc
+.PHONY : doc
+
+# fast build rule for target.
+doc/fast:
+	$(MAKE) -f doc/CMakeFiles/doc.dir/build.make doc/CMakeFiles/doc.dir/build
+.PHONY : doc/fast
+
+#=============================================================================
 # Target rules for targets named regen_tests
 
 # Build rule for target.
@@ -252,6 +265,7 @@ help:
 	@echo "... image"
 	@echo "... os_4.bin"
 	@echo "... version"
+	@echo "... doc"
 	@echo "... regen_tests"
 	@echo "... mkimg.o"
 	@echo "... mkimg.i"

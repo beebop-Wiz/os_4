@@ -1,14 +1,28 @@
 \hypertarget{vgatext_8c}{}\section{/home/beebop/src/os\+\_\+4/src/vgatext.c File Reference}
 \label{vgatext_8c}\index{/home/beebop/src/os\+\_\+4/src/vgatext.\+c@{/home/beebop/src/os\+\_\+4/src/vgatext.\+c}}
 {\ttfamily \#include \char`\"{}vgatext.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}vga.\+h\char`\"{}}\\*
 Include dependency graph for vgatext.\+c\+:
 \nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=188pt]{vgatext_8c__incl}
+\includegraphics[width=196pt]{vgatext_8c__incl}
 \end{center}
 \end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{vgatext_8c_a93c9d4d92c5dc7fc550f3cee75aed4bb}{init\+\_\+vgatext} (void)
+\item 
+void \hyperlink{vgatext_8c_aea1cde0c43fb8db3fdcb8e2c4e4631b2}{vga\+\_\+refresh} (void)
+\item 
+void \hyperlink{vgatext_8c_a560844c73573b4b9334fcc427d1c1b09}{vga\+\_\+scroll} ()
+\item 
+void \hyperlink{vgatext_8c_afe9f6dcd41f7b397f34364f1072e3018}{vga\+\_\+putchar} (char c)
+\item 
+void \hyperlink{vgatext_8c_a72685eb503047a2aac714ab6f51c77b5}{vga\+\_\+puts} (char $\ast$s)
+\end{DoxyCompactItemize}
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
@@ -17,8 +31,60 @@ char \hyperlink{vgatext_8c_ad260e34a3af44315bcf8cb2d2081b98a}{font8x8\+\_\+basic
 int \hyperlink{vgatext_8c_af905a9989361d094908ad04e08f6429d}{cx}
 \item 
 int \hyperlink{vgatext_8c_ad36501a70b25e18bcf48dd6e03392305}{cy}
+\item 
+char \hyperlink{vgatext_8c_a45bbd06e999771e0a40cb3f06536709e}{term} \mbox{[}40\mbox{]}\mbox{[}25\mbox{]}
 \end{DoxyCompactItemize}
 
+
+\subsection{Function Documentation}
+\hypertarget{vgatext_8c_a93c9d4d92c5dc7fc550f3cee75aed4bb}{}\index{vgatext.\+c@{vgatext.\+c}!init\+\_\+vgatext@{init\+\_\+vgatext}}
+\index{init\+\_\+vgatext@{init\+\_\+vgatext}!vgatext.\+c@{vgatext.\+c}}
+\subsubsection[{init\+\_\+vgatext}]{\setlength{\rightskip}{0pt plus 5cm}void init\+\_\+vgatext (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)}\label{vgatext_8c_a93c9d4d92c5dc7fc550f3cee75aed4bb}
+Sets up the V\+G\+A text rendering. Resets the cursor position and color info. \hypertarget{vgatext_8c_afe9f6dcd41f7b397f34364f1072e3018}{}\index{vgatext.\+c@{vgatext.\+c}!vga\+\_\+putchar@{vga\+\_\+putchar}}
+\index{vga\+\_\+putchar@{vga\+\_\+putchar}!vgatext.\+c@{vgatext.\+c}}
+\subsubsection[{vga\+\_\+putchar}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+putchar (
+\begin{DoxyParamCaption}
+\item[{char}]{c}
+\end{DoxyParamCaption}
+)}\label{vgatext_8c_afe9f6dcd41f7b397f34364f1072e3018}
+Prints one character. Specials (~\newline
+, ) work. Redraws the screen on a ~\newline
+. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em c} & The character to print. \\
+\hline
+\end{DoxyParams}
+\hypertarget{vgatext_8c_a72685eb503047a2aac714ab6f51c77b5}{}\index{vgatext.\+c@{vgatext.\+c}!vga\+\_\+puts@{vga\+\_\+puts}}
+\index{vga\+\_\+puts@{vga\+\_\+puts}!vgatext.\+c@{vgatext.\+c}}
+\subsubsection[{vga\+\_\+puts}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+puts (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{s}
+\end{DoxyParamCaption}
+)}\label{vgatext_8c_a72685eb503047a2aac714ab6f51c77b5}
+Writes a null-\/terminated string. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em s} & The string to print. \\
+\hline
+\end{DoxyParams}
+\hypertarget{vgatext_8c_aea1cde0c43fb8db3fdcb8e2c4e4631b2}{}\index{vgatext.\+c@{vgatext.\+c}!vga\+\_\+refresh@{vga\+\_\+refresh}}
+\index{vga\+\_\+refresh@{vga\+\_\+refresh}!vgatext.\+c@{vgatext.\+c}}
+\subsubsection[{vga\+\_\+refresh}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+refresh (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)}\label{vgatext_8c_aea1cde0c43fb8db3fdcb8e2c4e4631b2}
+\hypertarget{vgatext_8c_a560844c73573b4b9334fcc427d1c1b09}{}\index{vgatext.\+c@{vgatext.\+c}!vga\+\_\+scroll@{vga\+\_\+scroll}}
+\index{vga\+\_\+scroll@{vga\+\_\+scroll}!vgatext.\+c@{vgatext.\+c}}
+\subsubsection[{vga\+\_\+scroll}]{\setlength{\rightskip}{0pt plus 5cm}void vga\+\_\+scroll (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{vgatext_8c_a560844c73573b4b9334fcc427d1c1b09}
+Scrolls the display by one line. Does N\+O\+T erase the bottom line at present. 
 
 \subsection{Variable Documentation}
 \hypertarget{vgatext_8c_af905a9989361d094908ad04e08f6429d}{}\index{vgatext.\+c@{vgatext.\+c}!cx@{cx}}
@@ -30,3 +96,6 @@ int \hyperlink{vgatext_8c_ad36501a70b25e18bcf48dd6e03392305}{cy}
 \hypertarget{vgatext_8c_ad260e34a3af44315bcf8cb2d2081b98a}{}\index{vgatext.\+c@{vgatext.\+c}!font8x8\+\_\+basic@{font8x8\+\_\+basic}}
 \index{font8x8\+\_\+basic@{font8x8\+\_\+basic}!vgatext.\+c@{vgatext.\+c}}
 \subsubsection[{font8x8\+\_\+basic}]{\setlength{\rightskip}{0pt plus 5cm}char font8x8\+\_\+basic\mbox{[}128\mbox{]}\mbox{[}8\mbox{]}}\label{vgatext_8c_ad260e34a3af44315bcf8cb2d2081b98a}
+\hypertarget{vgatext_8c_a45bbd06e999771e0a40cb3f06536709e}{}\index{vgatext.\+c@{vgatext.\+c}!term@{term}}
+\index{term@{term}!vgatext.\+c@{vgatext.\+c}}
+\subsubsection[{term}]{\setlength{\rightskip}{0pt plus 5cm}char term\mbox{[}40\mbox{]}\mbox{[}25\mbox{]}}\label{vgatext_8c_a45bbd06e999771e0a40cb3f06536709e}

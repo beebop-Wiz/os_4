@@ -5,7 +5,6 @@ var searchData=
   ['cmode_5fs4',['CMODE_S4',['../vga_8h.html#a11cb9bf20c9d6f8abeb7a99c01ff7c66',1,'vga.h']]],
   ['cmode_5fsd',['CMODE_SD',['../vga_8h.html#a06e34e9ee4952ef22a93f824d3bafd52',1,'vga.h']]],
   ['cmode_5fslr',['CMODE_SLR',['../vga_8h.html#af77e7949af47e71bb4a07c9d1dfc6e5a',1,'vga.h']]],
-  ['col',['col',['../kernel_8c.html#a76453a26fc446453c0ace6a7faf3063e',1,'kernel.c']]],
   ['crtc_5fhble',['CRTC_HBLE',['../vga_8h.html#abbb33e888ffff1a4d435673e9ac34b7b',1,'vga.h']]],
   ['crtc_5fhbls',['CRTC_HBLS',['../vga_8h.html#af60ad0aa89abafef0b6c5f0d7a8ed5d5',1,'vga.h']]],
   ['crtc_5fhdee',['CRTC_HDEE',['../vga_8h.html#a25ae64dd9457afa0314f3dfb9a6434e9',1,'vga.h']]],

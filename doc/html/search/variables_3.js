@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['vga',['vga',['../vga_8c.html#a13e9a23013ffa1fef2c55e4f349da51c',1,'vga.c']]]
+  ['term',['term',['../vgatext_8c.html#a45bbd06e999771e0a40cb3f06536709e',1,'vgatext.c']]]
 ];
