@@ -10,10 +10,11 @@ dw 0 ; 8 - si
 dw 0 ; 10 - di
 dw 0 ; 12 - sp
 dw 0 ; 14 - bp
-dw 0 ; 16 - es
-dw 0 ; 18 - fs
-dw 0 ; 20 - gs
-db 0 ; 22 - int no
+dw 0 ; 16 - ds
+dw 0 ; 18 - es
+dw 0 ; 20 - fs
+dw 0 ; 22 - gs
+db 0 ; 24 - int no
 global pmode_to_real
 pmode_to_real:
 	mov [ssp],esp
@@ -55,25 +56,38 @@ goreal:
 	push ds
 	pusha
 	sti
-	mov ax,[rmregs]
+	mov ax,[rmregs+0]
 	mov bx,[rmregs+2]
+;       mov cx,[rmregs+4]
+	mov dx,[rmregs+6]
+	mov si,[rmregs+8]
 	mov di,[rmregs+10]
-	mov cx,[rmregs+16]
+	mov cx,[rmregs+18]
 	mov es,cx
 	xor cx,cx
-	mov cl,[rmregs+22]
-	sub cx,0x10
-	test cx,cx
-	jz int_10
+	mov cl,[rmregs+24]
+	cmp cx,0x10
+	je int_10
+	cmp cx,0x13
+	je int_13
 	jmp ie
 int_10:
+	mov cx,[rmregs+16]
+	mov ds,cx
 	mov cx,[rmregs+4]
 	int 0x10
+	jmp ie
+int_13:
+	mov cx,[rmregs+16]
+	mov ds,cx
+	mov cx,[rmregs+4]
+	int 0x13
 	jmp ie
 ie:
 	mov [rmregs],ax
 	mov [rmregs+2],bx
-	mov [rmregs+3],cx
+	mov [rmregs+4],cx
+	mov [rmregs+6],dx
 	cli
 	popa
 	pop ds
@@ -102,4 +116,8 @@ resb 512
 global vbemode
 vbemode:
 resb 256
+global rmsector
+rmsector:
+resb 10
+	
 	

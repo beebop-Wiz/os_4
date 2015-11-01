@@ -3,20 +3,29 @@
 #include "version.h"
 #include "idt.h"
 #include "vbe.h"
+#include "malloc.h"
 
 void kernel_main() {
   vbe_load_data();
   init_vga();
   init_vgatext();
-  *((unsigned int *) 0xFD000000) = 0xFFFFFFFF;
-  vga_write_pix(10, 10, 0xeeeeee);
-  vga_puts("000000000011111111112222222222333333333344444444445555555555666666666677777777778888888888999999999\n");
-  vga_puts("012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678\n");
   vga_puts("Hello, World!\n");
+  init_malloc();
   vga_puts("Booted os_4 " VERSION ".\n");
   setup_idt();
   asm volatile ("sti");
   asm volatile ("int $0x3");
   asm volatile ("cli");
+  vga_puts("Attempting some MALLOC tests.\n");
+  void *a = malloc(20);
+  vga_itoa(a);
+  vga_puts("\n");
+  void *b = malloc(20);
+  vga_itoa(b);
+  vga_puts("\n");
+  free(a);
+  a = malloc(10);
+  vga_itoa(a);
+  vga_puts("\n");
   for(;;);
 }

@@ -3,7 +3,7 @@
 
 struct realmode_regs {
   unsigned short ax, bx, cx, dx, si, di, sp, bp;
-  unsigned short es, fs, gs;
+  unsigned short ds, es, fs, gs;
   unsigned char int_no;
 } __attribute__ ((packed));
 

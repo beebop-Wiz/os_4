@@ -139,6 +139,19 @@ run_test/fast:
 .PHONY : run_test/fast
 
 #=============================================================================
+# Target rules for targets named boot2.bin
+
+# Build rule for target.
+boot2.bin: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 boot2.bin
+.PHONY : boot2.bin
+
+# fast build rule for target.
+boot2.bin/fast:
+	$(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/build
+.PHONY : boot2.bin/fast
+
+#=============================================================================
 # Target rules for targets named image
 
 # Build rule for target.
@@ -262,6 +275,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... run_test"
 	@echo "... test"
+	@echo "... boot2.bin"
 	@echo "... image"
 	@echo "... os_4.bin"
 	@echo "... version"

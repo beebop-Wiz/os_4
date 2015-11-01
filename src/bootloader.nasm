@@ -160,3 +160,4 @@ db 0x92
 db 0x8f
 db 0
 gdt_end:
+dw 0

@@ -113,6 +113,20 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+src/CMakeFiles/boot2.bin.dir/rule:
+	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/boot2.bin.dir/rule
+.PHONY : src/CMakeFiles/boot2.bin.dir/rule
+
+# Convenience name for target.
+boot2.bin: src/CMakeFiles/boot2.bin.dir/rule
+.PHONY : boot2.bin
+
+# fast build rule for target.
+boot2.bin/fast:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/build
+.PHONY : boot2.bin/fast
+
+# Convenience name for target.
 src/CMakeFiles/image.dir/rule:
 	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/image.dir/rule
 .PHONY : src/CMakeFiles/image.dir/rule
@@ -159,8 +173,32 @@ boot.o: boot.nasm.o
 
 # target to build an object file
 boot.nasm.o:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/boot.nasm.o
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/boot.nasm.o
 .PHONY : boot.nasm.o
+
+boot2.o: boot2.c.o
+.PHONY : boot2.o
+
+# target to build an object file
+boot2.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/boot2.c.o
+.PHONY : boot2.c.o
+
+boot2.i: boot2.c.i
+.PHONY : boot2.i
+
+# target to preprocess a source file
+boot2.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/boot2.c.i
+.PHONY : boot2.c.i
+
+boot2.s: boot2.c.s
+.PHONY : boot2.s
+
+# target to generate assembly for a file
+boot2.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/boot2.c.s
+.PHONY : boot2.c.s
 
 idt.o: idt.c.o
 .PHONY : idt.o
@@ -218,11 +256,36 @@ kernel.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/kernel.c.s
 .PHONY : kernel.c.s
 
+malloc.o: malloc.c.o
+.PHONY : malloc.o
+
+# target to build an object file
+malloc.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/malloc.c.o
+.PHONY : malloc.c.o
+
+malloc.i: malloc.c.i
+.PHONY : malloc.i
+
+# target to preprocess a source file
+malloc.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/malloc.c.i
+.PHONY : malloc.c.i
+
+malloc.s: malloc.c.s
+.PHONY : malloc.s
+
+# target to generate assembly for a file
+malloc.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/malloc.c.s
+.PHONY : malloc.c.s
+
 port.o: port.c.o
 .PHONY : port.o
 
 # target to build an object file
 port.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/port.c.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/port.c.o
 .PHONY : port.c.o
 
@@ -231,6 +294,7 @@ port.i: port.c.i
 
 # target to preprocess a source file
 port.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/port.c.i
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/port.c.i
 .PHONY : port.c.i
 
@@ -239,6 +303,7 @@ port.s: port.c.s
 
 # target to generate assembly for a file
 port.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/port.c.s
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/port.c.s
 .PHONY : port.c.s
 
@@ -247,6 +312,7 @@ real.o: real.c.o
 
 # target to build an object file
 real.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/real.c.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/real.c.o
 .PHONY : real.c.o
 
@@ -255,6 +321,7 @@ real.i: real.c.i
 
 # target to preprocess a source file
 real.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/real.c.i
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/real.c.i
 .PHONY : real.c.i
 
@@ -263,6 +330,7 @@ real.s: real.c.s
 
 # target to generate assembly for a file
 real.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/real.c.s
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/real.c.s
 .PHONY : real.c.s
 
@@ -271,6 +339,7 @@ real.o: real.nasm.o
 
 # target to build an object file
 real.nasm.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/real.nasm.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/real.nasm.o
 .PHONY : real.nasm.o
 
@@ -279,6 +348,7 @@ vbe.o: vbe.c.o
 
 # target to build an object file
 vbe.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vbe.c.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vbe.c.o
 .PHONY : vbe.c.o
 
@@ -287,6 +357,7 @@ vbe.i: vbe.c.i
 
 # target to preprocess a source file
 vbe.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vbe.c.i
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vbe.c.i
 .PHONY : vbe.c.i
 
@@ -295,6 +366,7 @@ vbe.s: vbe.c.s
 
 # target to generate assembly for a file
 vbe.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vbe.c.s
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vbe.c.s
 .PHONY : vbe.c.s
 
@@ -303,6 +375,7 @@ vga.o: vga.c.o
 
 # target to build an object file
 vga.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vga.c.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vga.c.o
 .PHONY : vga.c.o
 
@@ -311,6 +384,7 @@ vga.i: vga.c.i
 
 # target to preprocess a source file
 vga.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vga.c.i
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vga.c.i
 .PHONY : vga.c.i
 
@@ -319,6 +393,7 @@ vga.s: vga.c.s
 
 # target to generate assembly for a file
 vga.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vga.c.s
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vga.c.s
 .PHONY : vga.c.s
 
@@ -327,6 +402,7 @@ vgatext.o: vgatext.c.o
 
 # target to build an object file
 vgatext.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vgatext.c.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vgatext.c.o
 .PHONY : vgatext.c.o
 
@@ -335,6 +411,7 @@ vgatext.i: vgatext.c.i
 
 # target to preprocess a source file
 vgatext.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vgatext.c.i
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vgatext.c.i
 .PHONY : vgatext.c.i
 
@@ -343,6 +420,7 @@ vgatext.s: vgatext.c.s
 
 # target to generate assembly for a file
 vgatext.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vgatext.c.s
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vgatext.c.s
 .PHONY : vgatext.c.s
 
@@ -352,6 +430,7 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... boot2.bin"
 	@echo "... edit_cache"
 	@echo "... image"
 	@echo "... os_4.bin"
@@ -359,6 +438,9 @@ help:
 	@echo "... test"
 	@echo "... version"
 	@echo "... boot.o"
+	@echo "... boot2.o"
+	@echo "... boot2.i"
+	@echo "... boot2.s"
 	@echo "... idt.o"
 	@echo "... idt.i"
 	@echo "... idt.s"
@@ -366,6 +448,9 @@ help:
 	@echo "... kernel.o"
 	@echo "... kernel.i"
 	@echo "... kernel.s"
+	@echo "... malloc.o"
+	@echo "... malloc.i"
+	@echo "... malloc.s"
 	@echo "... port.o"
 	@echo "... port.i"
 	@echo "... port.s"

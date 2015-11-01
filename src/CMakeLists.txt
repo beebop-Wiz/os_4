@@ -12,6 +12,11 @@ set(CMAKE_C_COMPILER ../gcc-cross/bin/i686-elf-gcc)
 set(CMAKE_C_FLAGS "-std=gnu99 -g")
 enable_language(ASM_NASM)
 
+# Build the second stage bootstrap (boot2.bin)
+
+add_executable(boot2.bin boot2.c vga.c vgatext.c boot.nasm port.c vbe.c real.nasm real.c)
+target_link_libraries(boot2.bin "-T boot2.ld" -ffreestanding -nostdlib -O2 gcc)
+
 # Build the kernel (os_4.bin)
 
 add_custom_command(
@@ -22,7 +27,7 @@ add_custom_command(
   )
 add_custom_target(version DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/version.h)
 
-add_executable(os_4.bin boot.nasm kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c)
+add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c)
 add_dependencies(os_4.bin version)
 
 target_link_libraries(os_4.bin "-T linker.ld" -ffreestanding -nostdlib -O2 gcc)
