@@ -132,25 +132,28 @@ char font8x8_basic[128][8] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}    // U+007F
 };
 
+#define TTY_HEIGHT (600/8)
+#define TTY_WIDTH (800/8)
+
 int cx, cy;
-char term[40][25];
+char term[TTY_WIDTH][TTY_HEIGHT];
 void init_vgatext(void) {
-  for(cx = 0; cx < 40; cx++)
-    for(cy = 0; cy < 20; cy++)
+  for(cx = 0; cx < TTY_WIDTH; cx++)
+    for(cy = 0; cy < TTY_HEIGHT; cy++)
       term[cx][cy] = ' ';
   cx = cy = 0;
 }
 
 void vga_refresh(void) {
   int x, y, tx, ty;
-  for(x = 0; x < 40; x++) {
-    for(y = 0; y < 20; y++) {
+  for(x = 0; x < TTY_WIDTH; x++) {
+    for(y = 0; y < TTY_HEIGHT; y++) {
       for(ty = 0; ty < 8; ty++) {
 	for(tx = 0; tx < 8; tx++) {
 	  vga_write_pix(
 			x * 8 + tx,
 			y * 8 + ty,
-			(font8x8_basic[(int) term[x][y]][ty] & (1 << tx)) ? 7 : 0);
+			(font8x8_basic[(int) term[x][y]][ty] & (1 << tx)) ? 0xFFFFFFFF : 0);
 	}
       }
     }
@@ -159,8 +162,8 @@ void vga_refresh(void) {
 
 void vga_scroll() {
   int x, y;
-  for(x = 0; x < 40; x++) {
-    for(y = 0; y < 24; y++) {
+  for(x = 0; x < TTY_WIDTH; x++) {
+    for(y = 0; y < TTY_HEIGHT; y++) {
       term[x][y] = term[x][y+1];
     }
   }
@@ -177,12 +180,12 @@ void vga_putchar(char c) {
     term[cx++][cy] = c;
     break;
   }
-  if(cx > 39) {
+  if(cx > TTY_WIDTH - 1) {
     cx = 0;
     cy++;
   }
-  if(cy > 24) {
-    cy = 24;
+  if(cy > TTY_HEIGHT - 1) {
+    cy = TTY_HEIGHT - 1;
     vga_scroll();
   }
   outb(0x3f8, c);

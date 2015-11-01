@@ -1,41 +1,19 @@
 #include "vga.h"
 #include "port.h"
 
-unsigned char *vga = (unsigned char *) 0xA0000;
+#define VGA_WIDTH 800
+#define VGA_HEIGHT 600
 
-unsigned char palette[256][3] = {
-  {0, 0, 0},
-  {32, 0, 0},
-  {0, 32, 0},
-  {32, 32, 0},
-  {0, 0, 32},
-  {32, 0, 32},
-  {0, 32, 32},
-  {48, 48, 48},
-  {32, 32, 32},
-  {63, 0, 0},
-  {0, 63, 0},
-  {63, 63, 0},
-  {0, 0, 63},
-  {63, 0, 63},
-  {0, 63, 63},
-  {63, 63, 63}
-};
+#define VGA_LOC(x, y) ((unsigned int *) (vga + (VGA_WIDTH * y + x) * 3))
+
+unsigned char *vga = (unsigned char *) 0xFD000000;
 
 void init_vga(void) {
-// Load palette
-  int pi;
-  for(pi = 0; pi < 256; pi++) {
-    outb(VGA_DAC1, pi);
-    outb(VGA_DAC2, palette[pi][0]);
-    outb(VGA_DAC2, palette[pi][1]);
-    outb(VGA_DAC2, palette[pi][2]);
-  }
-  outb(VGA_ATTR, 0x20);
+  vga_itoa(VGA_LOC(1, 0));
   int x, y;
-  for(y = 0; y < 200; y++) {
-    for(x = 0; x < 320; x++) {
-      vga[320 * y + x] = 0;
+  for(y = 0; y < VGA_HEIGHT; y++) {
+    for(x = 0; x < VGA_WIDTH; x++) {
+      *VGA_LOC(x, y) = 0;
     }
   }
   return;
@@ -43,15 +21,15 @@ void init_vga(void) {
 
 void vga_clear() {
     int x, y;
-  for(y = 0; y < 200; y++) {
-    for(x = 0; x < 320; x++) {
-      vga[320 * y + x] = 0;
+  for(y = 0; y < 600; y++) {
+    for(x = 0; x < 800; x++) {
+      *VGA_LOC(x, y) = 0;
     }
   }
 }
 
 void vga_write_pix(int x, int y, int color) {
-  vga[320 * y + x] = color;
+  *VGA_LOC(x, y) = color;
 }
 
 void vga_set_palette(int idx, unsigned char r, unsigned char g, unsigned char b) {
