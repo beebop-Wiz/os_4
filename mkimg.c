@@ -54,7 +54,8 @@ struct bheader {
     } o;
     u_int32_t l;
   } addr;
-  u_int8_t pad[506];
+  u_int32_t ksize;
+  u_int8_t pad[502];
 } __attribute__ ((packed));
 
 int main(void) {
@@ -62,6 +63,7 @@ int main(void) {
   stat(BOOT2_BINARY, &fs);
   int nsectors = (fs.st_size / 512) + 1;
   printf("The 2nd stage bootstrap occupies %d sectors.\n", nsectors);
+  int knsectors;
   printf("Compiling bootloader...\n");
   system("nasm -f bin -o " BOOTLOADER_OBJ " " BOOTLOADER_ASM);
   printf("Opening files...\n");
@@ -127,7 +129,12 @@ int main(void) {
 	 "%d (%d total), entry %x\n", osh.bits, osh.endian,
 	 osh.header_pos, osh.ptsize, osh.ptidx, osh.ptsize * osh.ptidx,
 	 osh.entry);
-
+  bh.ksize = osh.ptidx;
+  for(i = 0; i < osh.ptidx; i++) {
+    lseek(osfd, osh.header_pos + i * osh.ptsize, SEEK_SET);
+    read(osfd, &ph, osh.ptsize);
+    bh.ksize += ph.p_filesz / 512 + 1;
+  }
   for(i = 0; i < osh.ptidx; i++) {
     lseek(osfd, osh.header_pos + i * osh.ptsize, SEEK_SET);
     read(osfd, &ph, osh.ptsize);

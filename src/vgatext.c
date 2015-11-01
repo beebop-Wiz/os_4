@@ -296,6 +296,9 @@ void printf(const char *fmt, ...) {
       case 's':
 	vga_puts(__builtin_va_arg(ap, char *));
 	break;
+      case '%':
+	vga_putchar('%');
+	break;
       }
     } else {
       vga_putchar(gc(fmt));

@@ -13,6 +13,9 @@ void init_malloc() {
   ptr->next = 0;
 }
 
+#define PTR_ADD(a, b, t) ((t) (((unsigned int) (a)) + ((unsigned int) (b))))
+#define PTR_SUB(a, b, t) PTR_ADD((a), -((unsigned int) (b)), t)
+
 void *malloc(unsigned int size) {
   // Simple first fit allocation.
   struct malloc_header *ptr = MALLOC_ARENA;
@@ -21,12 +24,12 @@ void *malloc(unsigned int size) {
   while(ptr->next) {
     if(ptr->type == BLOCK_FREE && ptr->length < size + sizeof(struct malloc_header)) {
       // found a free block
-      printf("Found a free, allocated block at offset %x\n", 
-	     (unsigned int) ptr - (unsigned int) MALLOC_ARENA);
+      printf("Found a free, allocated block at offset %x\n",
+	     PTR_SUB(ptr, MALLOC_ARENA, unsigned int));
       ptr->type = BLOCK_USED;
       ptr->length = size;
       ptr->owner = __builtin_return_address(0);
-      return (void *) ((void *) ptr) + sizeof(struct malloc_header);
+      return PTR_ADD(ptr, sizeof(struct malloc_header), void *);
     }
     ptr = ptr->next;
   }
@@ -34,22 +37,22 @@ void *malloc(unsigned int size) {
   // last block.
   if(ptr->type == BLOCK_FREE && ptr->length < size + sizeof(struct malloc_header)) {
     // found a free block
-    printf("Found a free, allocated block at offset %x (last block)\n", 
-	   (unsigned int) ptr - (unsigned int) MALLOC_ARENA);
+    printf("Found a free, allocated block at offset %x (last block)\n",
+	   PTR_SUB(ptr, MALLOC_ARENA, unsigned int));
     ptr->type = BLOCK_USED;
     ptr->length = size;
     ptr->owner = __builtin_return_address(0);
-    return (void *) ((void *) ptr) + sizeof(struct malloc_header);
+    return PTR_ADD(ptr, sizeof(struct malloc_header), void *);
   }
   printf("Found no free blocks.\n");
   // ok, now we definitely have to allocate one
-  ptr->next = (struct malloc_header *) ((void *) ptr) + sizeof(struct malloc_header) + ptr->length;
+  ptr->next = PTR_ADD(ptr, sizeof(struct malloc_header) + ptr->length, struct malloc_header *);
   ptr->next->magic = MALLOC_MAGIC;
   ptr->next->type = BLOCK_USED;
   ptr->next->length = size;
   ptr->next->owner = __builtin_return_address(0);
   printf("New block allocated.\n");
-  return (void *) ((void *) ptr->next) + sizeof(struct malloc_header);
+  return PTR_ADD(ptr->next, sizeof(struct malloc_header), void *);
 }
 
 void free(void *mem) {

@@ -26,7 +26,8 @@ struct bheader {
     unsigned int l;
     void (*fn)();
   } addr;
-  unsigned char pad[506];
+  unsigned int ksize;
+  unsigned char pad[502];
 } __attribute__ ((packed)) bh;
 
 void read_sector(unsigned int lba, unsigned char *mem) {
@@ -57,8 +58,10 @@ void boot2_main() {
   vga_itoa(sector_offset);
   vga_puts("\n");
   int lba = sector_offset;
+  int knsectors = -1;
   do {
     read_sector(lba++, (unsigned char *) &bh);
+    knsectors = bh.ksize;
     vga_puts("Read chunk, size = ");
     vga_itoa(bh.nsectors);
     vga_puts(" linear ");
@@ -68,9 +71,7 @@ void boot2_main() {
     vga_puts("Copying...\n");
     int i;
     for(i = 0; i < bh.nsectors; i++) {
-      vga_puts("    LBA ");
-      vga_itoa(lba);
-      vga_puts("\n");
+      printf("    LBA %d (%d%%)\n", lba, ((lba - sector_offset) * 100) / knsectors);
       read_sector(lba, bh.addr.l);
       lba++;
       bh.addr.l += 512;
