@@ -1,6 +1,8 @@
 #ifndef VGATEXT_H
 #define VGATEXT_H
 
+#define vga_itoa(i) vga_itoa_u(i, 10)
+
 /**
  * Sets up the VGA text rendering.
  * Resets the cursor position and color info.
@@ -30,5 +32,7 @@ void vga_redraw();
  * present.
  */
 void vga_scroll();
+
+void printf(const char *fmt, ...);
 
 #endif

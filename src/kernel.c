@@ -18,14 +18,11 @@ void kernel_main() {
   asm volatile ("cli");
   vga_puts("Attempting some MALLOC tests.\n");
   void *a = malloc(20);
-  vga_itoa(a);
-  vga_puts("\n");
+  printf("A = %x\n", a);
   void *b = malloc(20);
-  vga_itoa(b);
-  vga_puts("\n");
+  printf("B = %x\n", b);
   free(a);
   a = malloc(10);
-  vga_itoa(a);
-  vga_puts("\n");
+  printf("A = %x\n", a);
   for(;;);
 }

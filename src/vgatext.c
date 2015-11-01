@@ -1,5 +1,6 @@
 #include "vgatext.h"
 #include "vga.h"
+#include "port.h"
 
 char font8x8_basic[128][8] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+0000 (nul)
@@ -198,9 +199,107 @@ void vga_puts(char *s) {
   }
 }
 
-void vga_itoa(unsigned int i) {
-  if(i >= 10)
-    vga_itoa(i / 10);
-  vga_putchar(i % 10 + '0');
+const char digits[] = "0123456789abcdef";
+
+void vga_itoa_u(unsigned long i, int radix) {
+  if(i >= radix)
+    vga_itoa_u(i / radix, radix);
+  vga_putchar(digits[i % radix]);
 }
-  
+
+void vga_itoa_s(signed long i, int radix) {
+  if(i < 0) {
+    i = -i;
+    vga_putchar('-');
+  }
+  vga_itoa_u((unsigned long) i, radix);
+}
+
+#define gc(f) (*((f)++))
+#define ugc(f) *(--(f))
+
+#define LEN_8  0
+#define LEN_16 1
+#define LEN_32 2
+#define LEN_64 3
+
+void printf(const char *fmt, ...) {
+  __builtin_va_list ap;
+  __builtin_va_start(ap, fmt);
+  char c;
+  int flags;
+  int width, precision, length = -1;
+  while(*fmt) {
+    if(*fmt == '%') {
+      fmt++;
+      switch(c = gc(fmt)) {
+      case 'h':
+	if((c = gc(fmt)) == 'h') {
+	  length = LEN_8;
+	} else {
+	  length = LEN_16;
+	  ugc(fmt);
+	}
+	break;
+      case 'l':
+	if((c = gc(fmt)) == 'l') {
+	  length = LEN_64;
+	} else {
+	  length = LEN_32;
+	  ugc(fmt);
+	}
+	break;
+      case 'd':
+      case 'i':
+	switch(length) {
+	case LEN_64:
+	  vga_itoa_s(__builtin_va_arg(ap, signed long), 10);
+	  break;
+	default:
+	  vga_itoa_s(__builtin_va_arg(ap, signed int), 10);
+	  break;
+	}
+	break;
+      case 'u':
+	switch(length) {
+	case LEN_64:
+	  vga_itoa_u(__builtin_va_arg(ap, unsigned long), 10);
+	  break;
+	default:
+	  vga_itoa_u(__builtin_va_arg(ap, unsigned int), 10);
+	  break;
+	}
+	break;
+      case 'o':
+	switch(length) {
+	case LEN_64:
+	  vga_itoa_u(__builtin_va_arg(ap, unsigned long), 8);
+	  break;
+	default:
+	  vga_itoa_u(__builtin_va_arg(ap, unsigned int), 8);
+	  break;
+	}
+	break;
+      case 'x':
+	switch(length) {
+	case LEN_64:
+	  vga_itoa_u(__builtin_va_arg(ap, unsigned long), 16);
+	  break;
+	default:
+	  vga_itoa_u(__builtin_va_arg(ap, unsigned int), 16);
+	  break;
+	}
+	break;
+      case 'c':
+	vga_putchar(__builtin_va_arg(ap, unsigned int));
+	break;
+      case 's':
+	vga_puts(__builtin_va_arg(ap, char *));
+	break;
+      }
+    } else {
+      vga_putchar(gc(fmt));
+    }
+  }
+  __builtin_va_end(ap);
+}

@@ -1,4 +1,5 @@
 #include "vbe.h"
+#include "vgatext.h"
 #include "real.h"
 
 extern struct vbe_info vbeinfo;

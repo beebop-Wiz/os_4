@@ -16,16 +16,13 @@ void init_malloc() {
 void *malloc(unsigned int size) {
   // Simple first fit allocation.
   struct malloc_header *ptr = MALLOC_ARENA;
-  vga_puts("Beginning allocation of ");
-  vga_itoa(size);
-  vga_puts(" bytes.\n");
+  printf("Beginning allocation of %d bytes.\n", size);
   // traverse the array looking for free blocks
   while(ptr->next) {
     if(ptr->type == BLOCK_FREE && ptr->length < size + sizeof(struct malloc_header)) {
       // found a free block
-      vga_puts("Found a free, allocated block at offset ");
-      vga_itoa((unsigned int) ptr - (unsigned int) MALLOC_ARENA);
-      vga_puts(".\n");
+      printf("Found a free, allocated block at offset %x\n", 
+	     (unsigned int) ptr - (unsigned int) MALLOC_ARENA);
       ptr->type = BLOCK_USED;
       ptr->length = size;
       ptr->owner = __builtin_return_address(0);
@@ -37,22 +34,21 @@ void *malloc(unsigned int size) {
   // last block.
   if(ptr->type == BLOCK_FREE && ptr->length < size + sizeof(struct malloc_header)) {
     // found a free block
-    vga_puts("Found a free, allocated block at offset ");
-    vga_itoa((unsigned int) ptr - (unsigned int) MALLOC_ARENA);
-    vga_puts(". (last block)\n");
+    printf("Found a free, allocated block at offset %x (last block)\n", 
+	   (unsigned int) ptr - (unsigned int) MALLOC_ARENA);
     ptr->type = BLOCK_USED;
     ptr->length = size;
     ptr->owner = __builtin_return_address(0);
     return (void *) ((void *) ptr) + sizeof(struct malloc_header);
   }
-  vga_puts("Found no free blocks.\n");
+  printf("Found no free blocks.\n");
   // ok, now we definitely have to allocate one
   ptr->next = (struct malloc_header *) ((void *) ptr) + sizeof(struct malloc_header) + ptr->length;
   ptr->next->magic = MALLOC_MAGIC;
   ptr->next->type = BLOCK_USED;
   ptr->next->length = size;
   ptr->next->owner = __builtin_return_address(0);
-  vga_puts("New block allocated.\n");
+  printf("New block allocated.\n");
   return (void *) ((void *) ptr->next) + sizeof(struct malloc_header);
 }
 

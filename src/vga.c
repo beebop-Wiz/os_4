@@ -1,4 +1,5 @@
 #include "vga.h"
+#include "vgatext.h"
 #include "port.h"
 
 #define VGA_WIDTH 800
