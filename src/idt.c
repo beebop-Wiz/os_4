@@ -30,7 +30,7 @@ char *exc[] = {
 
 void bsod(regs_t r) {
   vga_setwin(90, 70, 30, 30);
-  vga_rect(0, 0, 800, 600, BLUE);
+  vga_clearcolor(BLUE);
   vga_set_color(WHITE, BLUE);
   vga_clear_text();
   printf("Kernel panic: err %x (%s)\n", r.int_no, exc[r.int_no]);

@@ -143,6 +143,7 @@ unsigned int cx, cy;
 struct {
   char c;
   unsigned int fgcolor, bgcolor;
+  unsigned char mod;
 } term[TTY_WIDTH][TTY_HEIGHT];
 
 void init_vgatext(void) {
@@ -151,6 +152,7 @@ void init_vgatext(void) {
       term[cx][cy].c = ' ';
       term[cx][cy].fgcolor = 0x93a1a1;
       term[cx][cy].bgcolor = 0x073642;
+      term[cx][cy].mod = 1;
     }
   ww = TTY_WIDTH;
   wh = TTY_HEIGHT;
@@ -171,6 +173,7 @@ void vga_clear_text() {
       term[cx][cy].c = ' ';
       term[cx][cy].fgcolor = cfg;
       term[cx][cy].bgcolor = cbg;
+      term[cx][cy].mod = 1;
     }
   cx = cy = 0;
   vga_redraw();
@@ -187,13 +190,16 @@ void vga_redraw(void) {
   unsigned int x, y, tx, ty;
   for(x = 0; x < ww; x++) {
     for(y = 0; y < wh; y++) {
-      for(ty = 0; ty < 8; ty++) {
-	for(tx = 0; tx < 8; tx++) {
-	  vga_write_pix(
-			x * 8 + tx + wx,
-			y * 8 + ty + wy,
-			(font8x8_basic[(int) term[x][y].c][ty] & (1 << tx)) ? term[x][y].fgcolor : term[x][y].bgcolor);
+      if(term[x][y].mod) {
+	for(ty = 0; ty < 8; ty++) {
+	  for(tx = 0; tx < 8; tx++) {
+	    vga_write_pix(
+			  x * 8 + tx + wx,
+			  y * 8 + ty + wy,
+			  (font8x8_basic[(int) term[x][y].c][ty] & (1 << tx)) ? term[x][y].fgcolor : term[x][y].bgcolor);
+	  }
 	}
+	term[x][y].mod = 0;
       }
     }
   }
@@ -206,6 +212,7 @@ void vga_scroll() {
       term[x][y].c = term[x][y+1].c;
       term[x][y].fgcolor = term[x][y+1].fgcolor;
       term[x][y].bgcolor = term[x][y+1].bgcolor;
+      term[x][y].mod = 1;
     }
   }
 }
@@ -218,6 +225,7 @@ void vga_putchar(char c) {
     vga_redraw();
     break;
   default:
+    term[cx][cy].mod = 1;
     term[cx][cy].c = c;
     term[cx][cy].fgcolor = cfg;
     term[cx++][cy].bgcolor = cbg;
