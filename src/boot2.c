@@ -66,10 +66,10 @@ void boot2_main() {
   init_vga();
   init_vgatext();
   setup_idt();
-  vga_rect(0, 0, 800, 600, 0x007766);
-  vga_rect(PAD_X, PAD_Y, PAD_WIDTH, PAD_HEIGHT, 0x008877);
+  vga_rect(0, 0, 800, 600, 0x002b36);
+  vga_rect(PAD_X, PAD_Y, PAD_WIDTH, PAD_HEIGHT, 0x586e75);
   vga_setwin(80, 24, 80, 108);
-  vga_set_color(0xffffff, 0x007766);
+  vga_set_color(0x93a1a1, 0x002b36);
   vga_clear_text();
   printf("Loaded second stage bootstrap.\n");
   printf("Loading kernel from LBA %d\n", sector_offset);
@@ -87,7 +87,7 @@ void boot2_main() {
       read_sector(lba, bh.addr.l);
       lba++;
       bh.addr.l += 512;
-      vga_rect(BAR_X, BAR_Y, ((lba - sector_offset) * BAR_WIDTH) / knsectors, BAR_HEIGHT, 0x00ffcc);
+      vga_rect(BAR_X, BAR_Y, ((lba - sector_offset) * BAR_WIDTH) / knsectors, BAR_HEIGHT, 0x2aa198);
     }
   } while(bh.nsectors);
   printf("Booting (%x)\n", bh.addr.l);

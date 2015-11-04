@@ -149,15 +149,15 @@ void init_vgatext(void) {
   for(cx = 0; cx < TTY_WIDTH; cx++)
     for(cy = 0; cy < TTY_HEIGHT; cy++) {
       term[cx][cy].c = ' ';
-      term[cx][cy].fgcolor = 0xffffff;
-      term[cx][cy].bgcolor = 0x000000;
+      term[cx][cy].fgcolor = 0x93a1a1;
+      term[cx][cy].bgcolor = 0x073642;
     }
   ww = TTY_WIDTH;
   wh = TTY_HEIGHT;
   wx = wy = 0;
   cx = cy = 0;
-  cfg = 0xffffff;
-  cbg = 0x000000;
+  cfg = 0x93a1a1;
+  cbg = 0x073642;
 }
 
 void vga_set_color(int fg, int bg) {

@@ -25,20 +25,21 @@ char *exc[] = {
   "Machine Check"
 };
 
-#define BLUE 0x000077
-#define WHITE 0xffffff
+#define BLUE 0x002b36
+#define WHITE 0x268bd2
 
 void bsod(regs_t r) {
   vga_setwin(90, 70, 30, 30);
   vga_rect(0, 0, 800, 600, BLUE);
   vga_set_color(WHITE, BLUE);
   vga_clear_text();
-  printf("STOP: err %x (%s)\n", r.int_no, exc[r.int_no]);
+  printf("Kernel panic: err %x (%s)\n", r.int_no, exc[r.int_no]);
   printf("\tCS:EIP %x:%x\n", r.cs, r.eip);
   printf("\tEDI: %x ESI: %x EBP: %x ESP: %x\n", r.edi, r.esi, r.ebp, r.esp);
   printf("\tEBX: %x EDX: %x ECX: %x EAX: %x\n", r.ebx, r.edx, r.ecx, r.eax);
   printf("Err: %x flags %x\n", r.err, r.eflags);
-  for(;;);
+  printf("\n\n\nWill now halt.\n");
+  for(;;) asm volatile ("hlt");
 }
 
 void c_intr(regs_t r) {
