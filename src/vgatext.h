@@ -28,11 +28,34 @@ void vga_puts(char *s);
 void vga_redraw();
 
 /**
+ * Clears the display.
+ */
+
+void vga_clear_text();
+
+
+/**
+ * Sets the current text color.
+ */
+
+void vga_set_color(int fg, int bg);
+
+/**
  * Scrolls the display by one line. Does NOT erase the bottom line at
  * present.
  */
 void vga_scroll();
 
+/**
+ * Sets the VGA window size and offset.
+ */
+
+void vga_setwin(int w, int h, int x, int y);
+
+/**
+ * you should know what printf does.
+ * @param[in] fmt Format string
+ */
 void printf(const char *fmt, ...);
 
 #endif

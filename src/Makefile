@@ -205,6 +205,7 @@ idt.o: idt.c.o
 
 # target to build an object file
 idt.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/idt.c.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.c.o
 .PHONY : idt.c.o
 
@@ -213,6 +214,7 @@ idt.i: idt.c.i
 
 # target to preprocess a source file
 idt.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/idt.c.i
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.c.i
 .PHONY : idt.c.i
 
@@ -221,6 +223,7 @@ idt.s: idt.c.s
 
 # target to generate assembly for a file
 idt.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/idt.c.s
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.c.s
 .PHONY : idt.c.s
 
@@ -229,6 +232,7 @@ idt.o: idt.nasm.o
 
 # target to build an object file
 idt.nasm.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/idt.nasm.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.nasm.o
 .PHONY : idt.nasm.o
 
@@ -397,6 +401,33 @@ vga.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vga.c.s
 .PHONY : vga.c.s
 
+vgadraw.o: vgadraw.c.o
+.PHONY : vgadraw.o
+
+# target to build an object file
+vgadraw.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vgadraw.c.o
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vgadraw.c.o
+.PHONY : vgadraw.c.o
+
+vgadraw.i: vgadraw.c.i
+.PHONY : vgadraw.i
+
+# target to preprocess a source file
+vgadraw.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vgadraw.c.i
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vgadraw.c.i
+.PHONY : vgadraw.c.i
+
+vgadraw.s: vgadraw.c.s
+.PHONY : vgadraw.s
+
+# target to generate assembly for a file
+vgadraw.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/vgadraw.c.s
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/vgadraw.c.s
+.PHONY : vgadraw.c.s
+
 vgatext.o: vgatext.c.o
 .PHONY : vgatext.o
 
@@ -464,6 +495,9 @@ help:
 	@echo "... vga.o"
 	@echo "... vga.i"
 	@echo "... vga.s"
+	@echo "... vgadraw.o"
+	@echo "... vgadraw.i"
+	@echo "... vgadraw.s"
 	@echo "... vgatext.o"
 	@echo "... vgatext.i"
 	@echo "... vgatext.s"

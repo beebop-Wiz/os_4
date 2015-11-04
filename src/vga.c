@@ -30,7 +30,13 @@ void vga_clear() {
 }
 
 void vga_write_pix(int x, int y, int color) {
-  *VGA_LOC(x, y) = color;
+  // fuck 24 bit color
+  unsigned char *b = (vga + (VGA_WIDTH * y + x) * 3);
+  unsigned char *g = b + 1;
+  unsigned char *r = b + 2;
+  *r = (unsigned char) ((color & 0xFF0000) >> 16);
+  *g = (unsigned char) ((color & 0x00FF00) >> 8);
+  *b = (unsigned char) (color & 0x0000FF);
 }
 
 void vga_set_palette(int idx, unsigned char r, unsigned char g, unsigned char b) {

@@ -1,10 +1,52 @@
 #include "idt.h"
 #include "vgatext.h"
+#include "vgadraw.h"
+
+char *exc[] = {
+  "Divide by zero",
+  "Debug",
+  "NMI",
+  "Breakpoint",
+  "Overflow",
+  "Bound Range Exceeded",
+  "Invalid Opcode",
+  "Device Not Available",
+  "Double Fault",
+  "Coprocessor Segment Overrun (CH)",
+  "Invalid TSS",
+  "Segment Not Present",
+  "Stack-Segment Fault",
+  "General Protection Fault",
+  "Page Fault",
+  "Reserved Exception (CH)",
+  "x87 Floating Point Exception",
+  "Alignment Check",
+  "Machine Check"
+};
+
+#define BLUE 0x000077
+#define WHITE 0xffffff
+
+void bsod(regs_t r) {
+  vga_setwin(90, 70, 30, 30);
+  vga_rect(0, 0, 800, 600, BLUE);
+  vga_set_color(WHITE, BLUE);
+  vga_clear_text();
+  printf("STOP: err %x (%s)\n", r.int_no, exc[r.int_no]);
+  printf("\tCS:EIP %x:%x\n", r.cs, r.eip);
+  printf("\tEDI: %x ESI: %x EBP: %x ESP: %x\n", r.edi, r.esi, r.ebp, r.esp);
+  printf("\tEBX: %x EDX: %x ECX: %x EAX: %x\n", r.ebx, r.edx, r.ecx, r.eax);
+  printf("Err: %x flags %x\n", r.err, r.eflags);
+  for(;;);
+}
 
 void c_intr(regs_t r) {
   vga_puts("Recieved interrupt `");
   vga_putchar(r.int_no + '@');
   vga_puts("`\n");
+  if(r.int_no < 19) {
+    bsod(r);
+  }
 }
 
 idt_gate_t idt[256];

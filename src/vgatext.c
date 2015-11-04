@@ -133,28 +133,66 @@ char font8x8_basic[128][8] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}    // U+007F
 };
 
+unsigned int ww, wh, wx, wy;
+int cfg, cbg;
+
 #define TTY_HEIGHT (600/8)
 #define TTY_WIDTH (800/8)
 
 int cx, cy;
-char term[TTY_WIDTH][TTY_HEIGHT];
+struct {
+  char c;
+  unsigned int fgcolor, bgcolor;
+} term[TTY_WIDTH][TTY_HEIGHT];
+
 void init_vgatext(void) {
   for(cx = 0; cx < TTY_WIDTH; cx++)
-    for(cy = 0; cy < TTY_HEIGHT; cy++)
-      term[cx][cy] = ' ';
+    for(cy = 0; cy < TTY_HEIGHT; cy++) {
+      term[cx][cy].c = ' ';
+      term[cx][cy].fgcolor = 0xffffff;
+      term[cx][cy].bgcolor = 0x000000;
+    }
+  ww = TTY_WIDTH;
+  wh = TTY_HEIGHT;
+  wx = wy = 0;
   cx = cy = 0;
+  cfg = 0xffffff;
+  cbg = 0x000000;
+}
+
+void vga_set_color(int fg, int bg) {
+  cfg = fg;
+  cbg = bg;
+}
+
+void vga_clear_text() {
+  for(cx = 0; cx < TTY_WIDTH; cx++)
+    for(cy = 0; cy < TTY_HEIGHT; cy++) {
+      term[cx][cy].c = ' ';
+      term[cx][cy].fgcolor = cfg;
+      term[cx][cy].bgcolor = cbg;
+    }
+  cx = cy = 0;
+  vga_refresh();
+}
+
+void vga_setwin(int w, int h, int x, int y) {
+  ww = w;
+  wh = h;
+  wx = x;
+  wy = y;
 }
 
 void vga_refresh(void) {
   int x, y, tx, ty;
-  for(x = 0; x < TTY_WIDTH; x++) {
-    for(y = 0; y < TTY_HEIGHT; y++) {
+  for(x = 0; x < ww; x++) {
+    for(y = 0; y < wh; y++) {
       for(ty = 0; ty < 8; ty++) {
 	for(tx = 0; tx < 8; tx++) {
 	  vga_write_pix(
-			x * 8 + tx,
-			y * 8 + ty,
-			(font8x8_basic[(int) term[x][y]][ty] & (1 << tx)) ? 0xFFFFFFFF : 0);
+			x * 8 + tx + wx,
+			y * 8 + ty + wy,
+			(font8x8_basic[(int) term[x][y].c][ty] & (1 << tx)) ? term[x][y].fgcolor : term[x][y].bgcolor);
 	}
       }
     }
@@ -163,9 +201,11 @@ void vga_refresh(void) {
 
 void vga_scroll() {
   int x, y;
-  for(x = 0; x < TTY_WIDTH; x++) {
-    for(y = 0; y < TTY_HEIGHT; y++) {
-      term[x][y] = term[x][y+1];
+  for(x = 0; x < ww; x++) {
+    for(y = 0; y < wh; y++) {
+      term[x][y].c = term[x][y+1].c;
+      term[x][y].fgcolor = term[x][y+1].fgcolor;
+      term[x][y].bgcolor = term[x][y+1].bgcolor;
     }
   }
 }
@@ -178,15 +218,17 @@ void vga_putchar(char c) {
     vga_refresh();
     break;
   default:
-    term[cx++][cy] = c;
+    term[cx][cy].c = c;
+    term[cx][cy].fgcolor = cfg;
+    term[cx++][cy].bgcolor = cbg;
     break;
   }
-  if(cx > TTY_WIDTH - 1) {
+  if(cx > ww - 1) {
     cx = 0;
     cy++;
   }
-  if(cy > TTY_HEIGHT - 1) {
-    cy = TTY_HEIGHT - 1;
+  if(cy > wh - 1) {
+    cy = wh - 1;
     vga_scroll();
   }
   outb(0x3f8, c);
