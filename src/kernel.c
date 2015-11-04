@@ -9,11 +9,11 @@ void kernel_main() {
   vbe_load_data();
   init_vga();
   init_vgatext();
-  vga_puts("Hello, World!\n");
+  printf("Hello, World!\n");
   init_malloc();
-  vga_puts("Booted os_4 " VERSION ".\n");
+  printf("Booted os_4 %s\n", VERSION);
   setup_idt();
-  vga_puts("Attempting some MALLOC tests.\n");
+  printf("Testing malloc() and free()\n");
   void *a = malloc(20);
   printf("A = %x\n", a);
   void *b = malloc(20);

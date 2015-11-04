@@ -10,7 +10,6 @@
 unsigned char *vga = (unsigned char *) 0xFD000000;
 
 void init_vga(void) {
-  vga_itoa(VGA_LOC(1, 0));
   int x, y;
   for(y = 0; y < VGA_HEIGHT; y++) {
     for(x = 0; x < VGA_WIDTH; x++) {
@@ -21,7 +20,7 @@ void init_vga(void) {
 }
 
 void vga_clear() {
-    int x, y;
+  int x, y;
   for(y = 0; y < 600; y++) {
     for(x = 0; x < 800; x++) {
       *VGA_LOC(x, y) = 0;
@@ -30,7 +29,7 @@ void vga_clear() {
 }
 
 void vga_write_pix(int x, int y, int color) {
-  // fuck 24 bit color
+  // fuck 24 bit color. 32 bits would make this so much faster.
   unsigned char *b = (vga + (VGA_WIDTH * y + x) * 3);
   unsigned char *g = b + 1;
   unsigned char *r = b + 2;

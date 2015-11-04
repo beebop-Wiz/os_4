@@ -2,7 +2,7 @@
 #include "vga.h"
 #include "port.h"
 
-char font8x8_basic[128][8] = {
+unsigned char font8x8_basic[128][8] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+0000 (nul)
     { 0x7e, 0x81, 0xa5, 0x81, 0xbd, 0x99, 0x81, 0x7e},   // U+0001
     { 0x7e, 0xff, 0xdb, 0xff, 0xc3, 0xe7, 0xff, 0x7e},   // U+0002
@@ -139,7 +139,7 @@ int cfg, cbg;
 #define TTY_HEIGHT (600/8)
 #define TTY_WIDTH (800/8)
 
-int cx, cy;
+unsigned int cx, cy;
 struct {
   char c;
   unsigned int fgcolor, bgcolor;
@@ -173,7 +173,7 @@ void vga_clear_text() {
       term[cx][cy].bgcolor = cbg;
     }
   cx = cy = 0;
-  vga_refresh();
+  vga_redraw();
 }
 
 void vga_setwin(int w, int h, int x, int y) {
@@ -183,8 +183,8 @@ void vga_setwin(int w, int h, int x, int y) {
   wy = y;
 }
 
-void vga_refresh(void) {
-  int x, y, tx, ty;
+void vga_redraw(void) {
+  unsigned int x, y, tx, ty;
   for(x = 0; x < ww; x++) {
     for(y = 0; y < wh; y++) {
       for(ty = 0; ty < 8; ty++) {
@@ -200,7 +200,7 @@ void vga_refresh(void) {
 }
 
 void vga_scroll() {
-  int x, y;
+  unsigned int x, y;
   for(x = 0; x < ww; x++) {
     for(y = 0; y < wh; y++) {
       term[x][y].c = term[x][y+1].c;
@@ -215,7 +215,7 @@ void vga_putchar(char c) {
   case '\n':
     cx = 0;
     cy++;
-    vga_refresh();
+    vga_redraw();
     break;
   default:
     term[cx][cy].c = c;
@@ -243,7 +243,7 @@ void vga_puts(char *s) {
 
 const char digits[] = "0123456789abcdef";
 
-void vga_itoa_u(unsigned long i, int radix) {
+void vga_itoa_u(unsigned long i, unsigned int radix) {
   if(i >= radix)
     vga_itoa_u(i / radix, radix);
   vga_putchar(digits[i % radix]);
@@ -258,7 +258,7 @@ void vga_itoa_s(signed long i, int radix) {
 }
 
 #define gc(f) (*((f)++))
-#define ugc(f) *(--(f))
+#define ugc(f) --(f)
 
 #define LEN_8  0
 #define LEN_16 1
@@ -269,8 +269,7 @@ void printf(const char *fmt, ...) {
   __builtin_va_list ap;
   __builtin_va_start(ap, fmt);
   char c;
-  int flags;
-  int width, precision, length = -1;
+  int length = -1;
   while(*fmt) {
     if(*fmt == '%') {
       fmt++;

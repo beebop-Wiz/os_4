@@ -1,6 +1,7 @@
 #include "idt.h"
 #include "vgatext.h"
 #include "vgadraw.h"
+#include "port.h"
 
 char *exc[] = {
   "Divide by zero",
@@ -41,9 +42,7 @@ void bsod(regs_t r) {
 }
 
 void c_intr(regs_t r) {
-  vga_puts("Recieved interrupt `");
-  vga_putchar(r.int_no + '@');
-  vga_puts("`\n");
+  printf("Recieved interrupt %d\n", r.int_no);
   if(r.int_no < 19) {
     bsod(r);
   }

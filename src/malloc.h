@@ -13,6 +13,7 @@ struct malloc_header {
   struct malloc_header *next;
 };
 
+void init_malloc();
 void *malloc(unsigned int size);
 void free(void *mem);
 

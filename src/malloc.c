@@ -28,7 +28,7 @@ void *malloc(unsigned int size) {
 	     PTR_SUB(ptr, MALLOC_ARENA, unsigned int));
       ptr->type = BLOCK_USED;
       ptr->length = size;
-      ptr->owner = __builtin_return_address(0);
+      ptr->owner = (void (*)()) __builtin_return_address(0);
       return PTR_ADD(ptr, sizeof(struct malloc_header), void *);
     }
     ptr = ptr->next;
@@ -41,7 +41,7 @@ void *malloc(unsigned int size) {
 	   PTR_SUB(ptr, MALLOC_ARENA, unsigned int));
     ptr->type = BLOCK_USED;
     ptr->length = size;
-    ptr->owner = __builtin_return_address(0);
+    ptr->owner = (void (*)()) __builtin_return_address(0);
     return PTR_ADD(ptr, sizeof(struct malloc_header), void *);
   }
   printf("Found no free blocks.\n");
@@ -50,7 +50,7 @@ void *malloc(unsigned int size) {
   ptr->next->magic = MALLOC_MAGIC;
   ptr->next->type = BLOCK_USED;
   ptr->next->length = size;
-  ptr->next->owner = __builtin_return_address(0);
+  ptr->next->owner = (void (*)()) __builtin_return_address(0);
   printf("New block allocated.\n");
   return PTR_ADD(ptr->next, sizeof(struct malloc_header), void *);
 }
@@ -59,8 +59,6 @@ void free(void *mem) {
   struct malloc_header *ptr = (struct malloc_header *) mem - 1;
   ptr->type = BLOCK_FREE;
   ptr->owner = 0;
-  vga_puts("Freed ");
-  vga_itoa(ptr->length);
-  vga_puts(" bytes.\n");
+  printf("Freed %d bytes\n", ptr->length);
 }
 

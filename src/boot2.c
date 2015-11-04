@@ -2,6 +2,7 @@
 #include "vbe.h"
 #include "vga.h"
 #include "vgatext.h"
+#include "vgadraw.h"
 #include "idt.h"
 
 extern char vbeinfo[512];
@@ -24,7 +25,7 @@ struct bheader {
     struct {
       unsigned short memaddr_hi, memaddr_lo;
     } o;
-    unsigned int l;
+    unsigned char *l;
     void (*fn)();
   } addr;
   unsigned int ksize;
@@ -70,22 +71,16 @@ void boot2_main() {
   vga_setwin(80, 24, 80, 108);
   vga_set_color(0xffffff, 0x007766);
   vga_clear_text();
-  vga_puts("Loaded second stage bootstrap.\n");
-  vga_puts("Loading kernel from LBA ");
-  vga_itoa(sector_offset);
-  vga_puts("\n");
+  printf("Loaded second stage bootstrap.\n");
+  printf("Loading kernel from LBA %d\n", sector_offset);
   int lba = sector_offset;
   int knsectors = -1;
   do {
     read_sector(lba++, (unsigned char *) &bh);
     knsectors = bh.ksize;
-    vga_puts("Read chunk, size = ");
-    vga_itoa(bh.nsectors);
-    vga_puts(" linear ");
-    vga_itoa(bh.addr.l);
-    vga_puts(".\n");
+    printf("Read chunk, size = %d linear %d.\n", bh.nsectors, bh.addr.l);
     if(!bh.nsectors) break;
-    vga_puts("Copying...\n");
+    printf("Copying...\n");
     int i;
     for(i = 0; i < bh.nsectors; i++) {
       printf("    LBA %d (%d%%)\n", lba, ((lba - sector_offset) * 100) / knsectors);
@@ -93,10 +88,8 @@ void boot2_main() {
       lba++;
       bh.addr.l += 512;
       vga_rect(BAR_X, BAR_Y, ((lba - sector_offset) * BAR_WIDTH) / knsectors, BAR_HEIGHT, 0x00ffcc);
-      int j;
-      for(j = 0; j < 10000000; j++) ;
     }
   } while(bh.nsectors);
-  vga_puts("Booting...\n");
+  printf("Booting (%x)\n", bh.addr.l);
   bh.addr.fn();
 }

@@ -17,12 +17,6 @@ void init_vgatext(void);
 void vga_putchar(char c);
 
 /**
- * Writes a null-terminated string.
- * @param[in] s The string to print.
- */
-void vga_puts(char *s);
-
-/**
  * Redraws the display from the terminal data.
  */
 void vga_redraw();
