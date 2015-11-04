@@ -21,5 +21,6 @@ void kernel_main() {
   free(a);
   a = malloc(10);
   printf("A = %x\n", a);
-  asm volatile ("sti; int $0x3");
+  b = malloc_a(10, 4096);
+  printf("B = %x\n", b);
 }

@@ -109,7 +109,7 @@ pmode:
 	mov ebp,[sbp]
 	ret
 
-section .rmdata
+section .rmdata nobits
 global vbeinfo
 vbeinfo:
 resb 512

@@ -15,6 +15,7 @@ struct malloc_header {
 
 void init_malloc();
 void *malloc(unsigned int size);
+void *malloc_a(unsigned int size, int align);
 void free(void *mem);
 
 #endif

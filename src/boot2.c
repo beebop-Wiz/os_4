@@ -66,7 +66,7 @@ void boot2_main() {
   init_vga();
   init_vgatext();
   setup_idt();
-  vga_rect(0, 0, 800, 600, 0x002b36);
+  vga_clearcolor(0x002b36);
   vga_rect(PAD_X, PAD_Y, PAD_WIDTH, PAD_HEIGHT, 0x586e75);
   vga_setwin(80, 24, 80, 108);
   vga_set_color(0x93a1a1, 0x002b36);
