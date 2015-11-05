@@ -78,7 +78,7 @@ void *malloc_a(unsigned int size, int align) {
   else
     ptr->next->length = size;
   ptr->next->owner = (void (*)()) __builtin_return_address(0);
-  printf("New block allocated, size %d.\n", ptr->next->length);
+  printf("New block allocated, size %d loc %x.\n", ptr->next->length, ptr->next);
   return align_address(PTR_ADD(ptr->next, sizeof(struct malloc_header), void *), align);
 }
 

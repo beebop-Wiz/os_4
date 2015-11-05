@@ -4,6 +4,7 @@
 #include "idt.h"
 #include "vbe.h"
 #include "malloc.h"
+#include "paging.h"
 
 void kernel_main() {
   vbe_load_data();
@@ -23,4 +24,9 @@ void kernel_main() {
   printf("A = %x\n", a);
   b = malloc_a(10, 4096);
   printf("B = %x\n", b);
+  init_paging();
+  get_page_block(0);
+  get_page_block(14);
+  get_page_block(2);
+  get_page_block(17);
 }

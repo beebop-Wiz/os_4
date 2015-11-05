@@ -284,6 +284,30 @@ malloc.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/malloc.c.s
 .PHONY : malloc.c.s
 
+paging.o: paging.c.o
+.PHONY : paging.o
+
+# target to build an object file
+paging.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/paging.c.o
+.PHONY : paging.c.o
+
+paging.i: paging.c.i
+.PHONY : paging.i
+
+# target to preprocess a source file
+paging.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/paging.c.i
+.PHONY : paging.c.i
+
+paging.s: paging.c.s
+.PHONY : paging.s
+
+# target to generate assembly for a file
+paging.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/paging.c.s
+.PHONY : paging.c.s
+
 port.o: port.c.o
 .PHONY : port.o
 
@@ -482,6 +506,9 @@ help:
 	@echo "... malloc.o"
 	@echo "... malloc.i"
 	@echo "... malloc.s"
+	@echo "... paging.o"
+	@echo "... paging.i"
+	@echo "... paging.s"
 	@echo "... port.o"
 	@echo "... port.i"
 	@echo "... port.s"

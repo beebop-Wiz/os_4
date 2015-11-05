@@ -146,4 +146,6 @@ void vga_set_palette(int idx, unsigned char r, unsigned char g, unsigned char b)
  * Resets the screen to color 0.
  */
 void vga_clear();
+
+int vga_get_color(int x, int y);
 #endif
