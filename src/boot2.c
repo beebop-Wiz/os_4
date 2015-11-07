@@ -78,7 +78,7 @@ void boot2_main() {
   do {
     read_sector(lba++, (unsigned char *) &bh);
     knsectors = bh.ksize;
-    printf("Read chunk, size = %d linear %d.\n", bh.nsectors, bh.addr.l);
+    printf("Read chunk, size = %d linear %x.\n", bh.nsectors, bh.addr.l);
     if(!bh.nsectors) break;
     printf("Copying...\n");
     int i;

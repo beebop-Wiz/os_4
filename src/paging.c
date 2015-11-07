@@ -32,10 +32,22 @@ void init_paging() {
       phy.bitmap[i][j] = 0;
 }
 
+void mark_block(int gran, int off) {
+  phy.bitmap[gran][off / 32] |= 1 << (off % 32);
+  if(gran) {
+    mark_block(gran - 1, off * 2);
+    mark_block(gran - 1, off * 2 + 1);
+  }
+  for(gran++; gran < 18; gran++) {
+    off /= 2;
+    phy.bitmap[gran][off / 32] |= 1 << (off % 32);
+  }
+}
+
 unsigned int get_page_block(int gran) {
   int l = (1 << gran) * 4096;
   int bs = (131072 >> gran);
-  printf("Finding block, granularity %d (block size %d, iter %d)\n", gran, l, bs);
+  printf("Finding block, granularity %d (block size %x, iter %x)\n", gran, l, bs);
   int i, j;
   for(i = 0; i < bs; i++) {
     if(phy.bitmap[gran][i] == 0xFFFFFFFF) {
@@ -47,6 +59,7 @@ unsigned int get_page_block(int gran) {
   }
  found:
   printf("Found block at %x:%d\n", i, j);
+  mark_block(gran, i * 32 + j);
   return 0;
 }
 

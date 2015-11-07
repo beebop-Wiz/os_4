@@ -26,7 +26,8 @@ void kernel_main() {
   printf("B = %x\n", b);
   init_paging();
   get_page_block(0);
-  get_page_block(14);
+  get_page_block(1);
+  get_page_block(1);
   get_page_block(2);
   get_page_block(17);
 }

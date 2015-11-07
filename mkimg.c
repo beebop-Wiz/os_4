@@ -58,6 +58,11 @@ struct bheader {
   u_int8_t pad[502];
 } __attribute__ ((packed));
 
+int r512(int n) {
+  int d = ((int) (n) / 512) * 512;
+  return d + 512;
+}
+
 int main(void) {
   struct stat fs;
   stat(BOOT2_BINARY, &fs);
@@ -101,12 +106,11 @@ int main(void) {
     lseek(boot2fd, osh.header_pos + i * osh.ptsize, SEEK_SET);
     read(boot2fd, &ph, osh.ptsize);
     printf("\tProgram header %d: type %d filesz %x (%d sectors) vaddr "
-	   "%x\n", i, ph.type, ph.p_filesz, (int)
-	   ceil((ph.p_filesz + sizeof(bh)) / 512.0), ph.p_vaddr);
-    bh.nsectors = (int) ceil((ph.p_filesz + sizeof(bh)) / 512.0) - 1;
+	   "%x\n", i, ph.type, ph.p_filesz, r512(ph.p_filesz + sizeof(bh)) / 512, ph.p_vaddr);
+    bh.nsectors = r512(ph.p_filesz) / 512;
     bh.addr.o.memaddr_lo = ph.p_vaddr & 0xFFFF;
     bh.addr.o.memaddr_hi = (ph.p_vaddr & 0xF0000) >> 4;
-    printf("\t\tnsectors %x lo %x hi %x\n", bh.nsectors,
+    printf("\t\tnsectors %d lo %x hi %x\n", bh.nsectors,
 	   bh.addr.o.memaddr_lo, bh.addr.o.memaddr_hi);
     write(devfd, &bh, sizeof(bh));
     buf2 = malloc(ph.p_filesz);
@@ -140,10 +144,10 @@ int main(void) {
     read(osfd, &ph, osh.ptsize);
     printf("\tProgram header %d: type %d filesz %x (%d sectors) vaddr "
 	   "%x\n", i, ph.type, ph.p_filesz, (int)
-	   ceil((ph.p_filesz + sizeof(bh)) / 512.0), ph.p_vaddr);
-    bh.nsectors = (int) ceil((ph.p_filesz + sizeof(bh)) / 512.0) - 1;
+	   r512(ph.p_filesz + sizeof(bh)) / 512, ph.p_vaddr);
+    bh.nsectors = r512(ph.p_filesz) / 512;
     bh.addr.l = ph.p_vaddr;
-    printf("\t\tnsectors %x lin %x\n", bh.nsectors, bh.addr.l);
+    printf("\t\tnsectors %d lin %x\n", bh.nsectors, bh.addr.l);
     write(devfd, &bh, sizeof(bh));
     buf2 = malloc(ph.p_filesz);
     lseek(osfd, ph.p_offset, SEEK_SET);
