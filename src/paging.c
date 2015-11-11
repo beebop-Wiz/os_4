@@ -60,17 +60,40 @@ unsigned int get_page_block(int gran) {
  found:
   printf("Found block at %x:%d\n", i, j);
   mark_block(gran, i * 32 + j);
-  return 0;
+  return (i * 32 + j) * (1 << gran);
 }
 
-void nonid_page(page_table_t pt) {
-  while(pt->next) {
-    if(!pt->table) pt->table = malloc_a(4096, 4096);
-    int i;
-    for(i = 0; i < 1024; i++) {
-      if(!(pt->table[i] & 0x01)) {
-	// TODO
-      }
+void register_page_table(page_table_t pt) {
+  pagedir[pt->idx] = (unsigned int) pt->table | 0x7;
+}
+
+void nonid_page(page_table_t pt, unsigned int offset) {
+  while(pt) {
+    if(!pt->table) {
+      pt->table = malloc_a(4 * 4096, 4096);
+      pt->idx = offset / 1024;
+      register_page_table(pt);
     }
+    if(pt->idx == offset / 1024) {
+      pt->table[offset % 1024] = (get_page_block(0) * 1024) | 0x7;
+      break;
+    }
+    pt = pt->next;
+  }
+}
+
+void id_page(page_table_t pt, unsigned int offset) {
+  while(pt) {
+    if(!pt->table) {
+      pt->table = malloc_a(4 * 4096, 4096);
+      pt->idx = offset / 1024;
+      register_page_table(pt);
+    }
+    if(pt->idx == offset / 1024) {
+      pt->table[offset % 1024] = (offset * 1024) | 0x7;
+      mark_block(0, offset);
+      break;
+    }
+    pt = pt->next;
   }
 }

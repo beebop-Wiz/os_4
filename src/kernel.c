@@ -25,9 +25,10 @@ void kernel_main() {
   b = malloc_a(10, 4096);
   printf("B = %x\n", b);
   init_paging();
-  get_page_block(0);
-  get_page_block(1);
-  get_page_block(1);
-  get_page_block(2);
-  get_page_block(17);
+  page_table_t kernel_pages = malloc(sizeof(struct page_table));
+  int i;
+  for(i = 0; i < 0x2000; i++) {
+    id_page(kernel_pages, i);
+  }
+  nonid_page(kernel_pages, 0x2000);
 }

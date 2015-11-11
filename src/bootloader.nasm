@@ -14,11 +14,12 @@ start:
 	int 0x10
 
 ; check for int 13h extensions
-	mov ah, 0x41
-	mov bx, 0x55aa
-	mov dl, 0x80
-	int 0x13
-	jc err
+; no point - it won't work either way
+;	mov ah, 0x41
+;	mov bx, 0x55aa
+;	mov dl, 0x80
+;	int 0x13
+;	jc err
 ; read one sector (OS information). first word is # of sectors, second
 ; word is memory address high, third word is memory address low
 	mov di,1
@@ -34,11 +35,13 @@ read_chunk:
 	jc err
 
 	mov ax,0x0100
-	mov fs,ax
+	push ds
+	mov ds,ax
 
-	mov cx,[fs:0]
-	mov ax,[fs:2]
-	mov bx,[fs:4]
+	mov cx,[0]
+	mov ax,[2]
+	mov bx,[4]
+	pop ds
 	test cx,cx
 	jz done
 
@@ -60,26 +63,18 @@ done:
 	mov ah,0
 	int 0x10
 	cli
-	xor eax, eax
-	mov ax, ds
-	shl eax, 4
-	add eax, gdt
-	mov [gdtr + 2], eax
-	mov eax, gdt_end
-	sub eax, gdt
-	mov [gdtr], ax
 	lgdt [gdtr]
 	mov eax, cr0
 	or al, 1
 	mov cr0, eax
-	mov eax, 0x10
+	mov ax, 0x10
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
-	mov ebx,pmode
-	add ebx,0x7c00
+	mov bx, pmode
+	add bx,0x7c00
 	push word 0x8
 	push bx
 	retf
@@ -92,8 +87,6 @@ pmode:
 	add eax, ebx
 	jmp eax
 halt:
-	sti
-	int 0xf
 	cli
 	hlt
 	jmp halt
@@ -105,7 +98,6 @@ err:
 	hlt
 	jmp err
 
-align 4
 address:
 	a_size   db 16
 	a_res    db 0
@@ -117,12 +109,10 @@ address:
 	a_lba_3  dw 0
 	a_lba_4  dw 0
 
-align 4
 gdtr:
-	lim dw 0
-	base db 0
+	lim dw gdt_end - gdt - 1
+	base dd 0x7c00 + gdt
 
-align 4
 gdt:
 ; null descriptor
 dw 0

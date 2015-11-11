@@ -39,11 +39,13 @@ void bsod(regs_t r) {
   printf("\tEBX: %x EDX: %x ECX: %x EAX: %x\n", r.ebx, r.edx, r.ecx, r.eax);
   printf("Err: %x flags %x\n", r.err, r.eflags);
   printf("\n\n\nWill now halt.\n");
+#ifndef __LCLINT__
   for(;;) asm volatile ("hlt");
+#endif
 }
 
 void c_intr(regs_t r) {
-  printf("Recieved interrupt %d\n", r.int_no);
+  printf("Recieved interrupt %u\n", r.int_no);
   if(r.int_no < 19) {
     bsod(r);
   }
@@ -62,9 +64,9 @@ idt_gate_t idt[256];
 idtr_t idt_r;
 
 void setup_idt() {
-  outb(0x21, 0xff);
-  outb(0xA1, 0xff);
   int i;
+  outb(0x21, (unsigned char) 0xff);
+  outb(0xA1, (unsigned char) 0xff);
   for(i = 0; i < 256; i++) {
     idt[i].type = 0;
   }
