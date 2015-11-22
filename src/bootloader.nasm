@@ -1,33 +1,10 @@
 	[bits 16]
 	[org 0]
-%macro debugb 1
-	push ax
-	mov al,%1
-	mov ah,0x0e
-	int 0x10
-	pop ax
-%endmacro
-
-%macro debugw 1 ; prints little-endian
-	push ax
-	mov ax,%1
-	mov ah,0x0e
-	int 0x10
-	mov ax,%1
-	mov al,ah
-	mov ah,0x0e
-	int 0x10
-	pop ax
-%endmacro
-	
 	jmp 0x7c0:start
-
 start:
 ; set up segments
 	mov ax,cs
-	mov ds,ax
-	mov es,ax
-	
+	mov ds,ax	
 ; enable A20
 	mov ax, 0x2401
 	int 0x15
@@ -37,113 +14,72 @@ start:
 	int 0x10
 
 ; check for int 13h extensions
-	mov ah, 0x41
-	mov bx, 0x55aa
-	mov dl, 0x80
-	int 0x13
-	jc err
-	mov al,ah
-	mov ah,0x0e
-	int 0x10
-	add cx,0x20
-	mov al,cl
-	mov ah,0x0e
-	int 0x10
-	jmp ssm
-err:
-	mov al,'E'
-	mov ah,0x0e
-	int 0x10
-	hlt
-	jmp err
-ssm:
+; no point - it won't work either way
+;	mov ah, 0x41
+;	mov bx, 0x55aa
+;	mov dl, 0x80
+;	int 0x13
+;	jc err
 ; read one sector (OS information). first word is # of sectors, second
 ; word is memory address high, third word is memory address low
 	mov di,1
 read_chunk:
-	mov ax,cs
-	mov ds,ax
-	mov bx,0x0000
-	mov byte [a_size],16
-	mov byte [a_res],0
 	mov word [a_nsect],1
 	mov word [a_buf_lo],0x0000
 	mov word [a_buf_hi],0x0100
 	mov [a_lba_1],di
 	inc di
-	mov word [a_lba_2],0
-	mov word [a_lba_3],0
-	mov word [a_lba_4],0
 	mov si,address
-	mov dl,0x80
 	mov ah, 0x42
 	int 0x13
 	jc err
 
 	mov ax,0x0100
-	mov fs,ax
+	push ds
+	mov ds,ax
 
-	mov cx,[fs:0]
-	mov ax,[fs:2]
-	mov bx,[fs:4]
+	mov cx,[0]
+	mov ax,[2]
+	mov bx,[4]
+	pop ds
 	test cx,cx
 	jz done
 
-	mov byte [a_size],16
-	mov byte [a_res],0
 	mov [a_nsect],cx
 	mov [a_buf_lo],bx
 	mov [a_buf_hi],ax
 	mov [a_lba_1],di
-	mov word [a_lba_2],0
-	mov word [a_lba_3],0
-	mov word [a_lba_4],0
 	add di, cx
-	mov si,address
-	mov dl,0x80
 	
 	mov ah, 0x42
 	int 0x13
-
 	jc err
-
-	mov al,'C'
-	mov ah,0x0e
-	int 0x10
 	jmp read_chunk
 done:
 	push ax
 	push bx
-	mov ax, 0x0e00
-	mov al, 'F'
+	; set screen mode 0x13
+	mov al,0x13
+	mov ah,0
 	int 0x10
 	cli
-	xor eax, eax
-	mov ax, ds
-	shl eax, 4
-	add eax, gdt
-	mov [gdtr + 2], eax
-	mov eax, gdt_end
-	sub eax, gdt
-	mov [gdtr], ax
 	lgdt [gdtr]
 	mov eax, cr0
 	or al, 1
 	mov cr0, eax
-	mov eax, 0x10
+	mov ax, 0x10
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
-	mov ebx,pmode
-	add ebx,0x7c00
+	mov bx, pmode
+	add bx,0x7c00
 	push word 0x8
 	push bx
 	retf
 	[bits 32]
 pmode:
-	mov word [0xB8000],'FF'
 	xor ebx, ebx
 	pop bx
 	pop ax
@@ -151,15 +87,19 @@ pmode:
 	add eax, ebx
 	jmp eax
 halt:
-	sti
-	int 0xf
 	cli
 	hlt
 	jmp halt
+	[bits 16]
+err:
+	mov al,'E'
+	mov ah,0x0e
+	int 0x10
+	hlt
+	jmp err
 
-align 4
 address:
-	a_size   db 0
+	a_size   db 16
 	a_res    db 0
 	a_nsect  dw 0
 	a_buf_lo dw 0
@@ -169,12 +109,10 @@ address:
 	a_lba_3  dw 0
 	a_lba_4  dw 0
 
-align 4
 gdtr:
-	lim dw 0
-	base db 0
+	lim dw gdt_end - gdt - 1
+	base dd 0x7c00 + gdt
 
-align 4
 gdt:
 ; null descriptor
 dw 0
@@ -197,7 +135,19 @@ db 0
 db 0x92
 db 0xcf
 db 0
+; 0x18: 16-bit pmode code
+dw 0xffff
+dw 0
+db 0
+db 0x9a
+db 0x8f
+db 0
+; 0x20: 16-bit pmode data
+dw 0xffff
+dw 0
+db 0
+db 0x92
+db 0x8f
+db 0
 gdt_end:
-times 510-($-$$) db 0
-db 0x55
-db 0xAA
+dw 0

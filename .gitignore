@@ -4,6 +4,7 @@ disk.img
 
 # gcc-cross
 gcc-cross/
+qemu-rr/
 
 # object files
 *.o
@@ -17,3 +18,4 @@ CMakeCache.txt
 trace-*
 mkimg
 os_4.img
+

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project(FireOS)
 add_subdirectory(src)
+add_subdirectory(doc)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(mkimg mkimg.c)
 target_link_libraries(mkimg m)
