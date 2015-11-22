@@ -14,6 +14,7 @@ struct malloc_header {
 };
 
 void init_malloc();
+void page_all_allocations();
 void *malloc(unsigned int size);
 void *malloc_a(unsigned int size, int align);
 void free(void *mem);

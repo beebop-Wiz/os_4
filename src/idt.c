@@ -39,9 +39,7 @@ void bsod(regs_t r) {
   printf("\tEBX: %x EDX: %x ECX: %x EAX: %x\n", r.ebx, r.edx, r.ecx, r.eax);
   printf("Err: %x flags %x\n", r.err, r.eflags);
   printf("\n\n\nWill now halt.\n");
-#ifndef __LCLINT__
   for(;;) asm volatile ("hlt");
-#endif
 }
 
 void c_intr(regs_t r) {

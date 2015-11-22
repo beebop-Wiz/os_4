@@ -6,6 +6,8 @@
 #include "malloc.h"
 #include "paging.h"
 
+page_table_t kernel_pages;
+
 void kernel_main() {
   vbe_load_data();
   init_vga();
@@ -25,10 +27,17 @@ void kernel_main() {
   b = malloc_a(10, 4096);
   printf("B = %x\n", b);
   init_paging();
-  page_table_t kernel_pages = malloc(sizeof(struct page_table));
+  kernel_pages = malloc(sizeof(struct page_table));
   int i;
   for(i = 0; i < 0x2000; i++) {
     id_page(kernel_pages, i);
   }
+  for(i = 0xFD000; i < 0xFFFFF; i++) {
+    id_page(kernel_pages, i);
+  }
+  page_all_allocations();
   nonid_page(kernel_pages, 0x2000);
+  // will probably crash here.
+  load_page_directory();
+  printf("PAGING WORKS!\n\n");
 }

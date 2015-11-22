@@ -17,4 +17,6 @@ void init_paging();
 unsigned int get_page_block(int gran);
 void nonid_page(page_table_t pt, unsigned int offset);
 void id_page(page_table_t pt, unsigned int offset);
+void load_page_directory();
+
 #endif

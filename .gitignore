@@ -4,6 +4,7 @@ disk.img
 
 # gcc-cross
 gcc-cross/
+qemu-rr/
 
 # object files
 *.o

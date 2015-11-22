@@ -208,17 +208,21 @@ void vga_redraw(void) {
 void vga_scroll() {
   unsigned int x, y, tx, ty;
   for(x = 0; x < ww; x++) {
-    for(y = 0; y < wh; y++) {
-      for(tx = 0; tx < 8; tx++) {
-	for(ty = 0; ty < 8; ty++) {
-	  if(term[x][y].c != term[x][y+1].c)
+    for(y = 0; y < (wh - 1); y++) {
+      if(term[x][y].c != term[x][y+1].c)
+	for(tx = 0; tx < 8; tx++) {
+	  for(ty = 0; ty < 8; ty++) {
 	    vga_write_pix(
 			  x * 8 + tx + wx,
-			  (y + 1) * 8 + ty + wy,
+			  y * 8 + ty + wy,
+			  0xFF0000);
+	    vga_write_pix(
+			  x * 8 + tx + wx,
+			  y * 8 + ty + wy,
 			  (font8x8_basic[(int) term[x][y + 1].c][ty] & (1 << tx)) ? term[x][y + 1].fgcolor : term[x][y + 1].bgcolor);
-
+	    
+	  }
 	}
-      }
       term[x][y].c = term[x][y+1].c;
       term[x][y].fgcolor = term[x][y+1].fgcolor;
       term[x][y].bgcolor = term[x][y+1].bgcolor;

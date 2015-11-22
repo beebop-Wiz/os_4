@@ -1,12 +1,20 @@
 #include "paging.h"
 #include "vgatext.h"
 #include "malloc.h"
+#include "debug.h"
+
+#ifdef DEBUG_PAGING
+#define printd(fmt, ...) printf(fmt, ##__VA_ARGS__)
+#else
+#define printd(fmt, ...) dummy_print(fmt, ##__VA_ARGS__)
+#endif
 
 unsigned int *pagedir;
 struct mem_tree phy;
 
 
 void init_paging() {
+  pagedir = malloc_a(0x4000, 4096);
   phy.bitmap = malloc(18 * sizeof(unsigned int *));
   phy.bitmap[0] = malloc(131072 * 4); // 4k
   phy.bitmap[1] = malloc(65536 * 4);  // 8k
@@ -32,7 +40,16 @@ void init_paging() {
       phy.bitmap[i][j] = 0;
 }
 
+void load_page_directory() {
+  asm("mov %0, %%cr3" : : "r" (pagedir));
+  int cr0;
+  asm("mov %%cr0, %0" : "=r" (cr0));
+  cr0 |= 0x80000000;
+  asm("mov %0, %%cr0" : : "r" (cr0));
+}
+
 void mark_block(int gran, int off) {
+  //  printd("Marked block %d:%x (%x/%d)\n", gran, off, off / 32, off % 32);
   phy.bitmap[gran][off / 32] |= 1 << (off % 32);
   if(gran) {
     mark_block(gran - 1, off * 2);
@@ -47,7 +64,7 @@ void mark_block(int gran, int off) {
 unsigned int get_page_block(int gran) {
   int l = (1 << gran) * 4096;
   int bs = (131072 >> gran);
-  printf("Finding block, granularity %d (block size %x, iter %x)\n", gran, l, bs);
+  printd("Finding block, granularity %d (block size %x, iter %x)\n", gran, l, bs);
   int i, j;
   for(i = 0; i < bs; i++) {
     if(phy.bitmap[gran][i] == 0xFFFFFFFF) {
@@ -58,7 +75,7 @@ unsigned int get_page_block(int gran) {
     }
   }
  found:
-  printf("Found block at %x:%d\n", i, j);
+  printd("Found block at %x:%d\n", i, j);
   mark_block(gran, i * 32 + j);
   return (i * 32 + j) * (1 << gran);
 }
@@ -75,14 +92,23 @@ void nonid_page(page_table_t pt, unsigned int offset) {
       register_page_table(pt);
     }
     if(pt->idx == offset / 1024) {
-      pt->table[offset % 1024] = (get_page_block(0) * 1024) | 0x7;
+      pt->table[offset % 1024] = (get_page_block(0) * 4096) | 0x7;
       break;
+    }
+    if(!pt->next) {
+      pt->next = malloc(sizeof(struct page_table));
+      pt->next->table = malloc_a(4 * 4096, 4096);
+      pt->next->idx = offset / 1024;
+      register_page_table(pt->next);
+      pt->next->table[offset % 1024] = (get_page_block(0) * 4096) | 0x7;
+      return;
     }
     pt = pt->next;
   }
 }
 
 void id_page(page_table_t pt, unsigned int offset) {
+  printd("Identity paging page %x (vaddr %x PDI %x)\n", offset, offset * 4096, offset / 1024);
   while(pt) {
     if(!pt->table) {
       pt->table = malloc_a(4 * 4096, 4096);
@@ -90,9 +116,18 @@ void id_page(page_table_t pt, unsigned int offset) {
       register_page_table(pt);
     }
     if(pt->idx == offset / 1024) {
-      pt->table[offset % 1024] = (offset * 1024) | 0x7;
+      pt->table[offset % 1024] = (offset * 4096) | 0x7;
       mark_block(0, offset);
-      break;
+      return;
+    }
+    if(!pt->next) {
+      pt->next = malloc(sizeof(struct page_table));
+      pt->next->table = malloc_a(4 * 4096, 4096);
+      pt->next->idx = offset / 1024;
+      register_page_table(pt->next);
+      pt->next->table[offset % 1024] = (offset * 4096) | 0x7;
+      mark_block(0, offset);
+      return;
     }
     pt = pt->next;
   }
