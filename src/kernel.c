@@ -9,6 +9,7 @@
 #include "user.h"
 #include "timer.h"
 #include "mt.h"
+#include "ext2.h"
 
 page_table_t kernel_pages = 0;
 
@@ -58,9 +59,24 @@ void kernel_main(unsigned int **bdata) {
   timer_init(1);
   printf("Booted os_4 %s\n", VERSION);
   init_mt();
-  new_process((unsigned int) test_mt);
-  new_process((unsigned int) test_mt_2);
-  printf("Enabling MT\n");
-  enable_mt();
-  //jump_usermode();
+  //  new_process((unsigned int) test_mt);
+  //  new_process((unsigned int) test_mt_2);
+  //  printf("Enabling MT\n");
+  //  enable_mt();
+  struct ext2_superblock s;
+  struct ext2_bg_desc desc;
+  struct ext2_inode rd;
+  read_superblock(&s);
+  printf("Read EXT2 superblock\n");
+  printf("\tversion %d.%d magic %x n_blocks %d\n\tblock size %d (%d sectors)\n", s.vers_major, s.vers_minor, s.magic, s.n_blocks, s.block_size, s.block_size / 2);
+  printf("Attempting to read BGD 0\n");
+  read_block_group(&s, &desc, 0);
+  printf("\titab idx %d\n", desc.inode_table);
+  printf("Attempting to read inode 2\n");
+  read_inode(&s, &rd, 2);
+  printf("\ttype %x atime %d n_sectors %d\n", rd.type, rd.atime, rd.n_sectors);
+  for(;;) {
+    asm("hlt");
+    asm("cli");
+  }
 }

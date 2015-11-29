@@ -140,6 +140,20 @@ image/fast:
 .PHONY : image/fast
 
 # Convenience name for target.
+src/CMakeFiles/init.exe.dir/rule:
+	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/init.exe.dir/rule
+.PHONY : src/CMakeFiles/init.exe.dir/rule
+
+# Convenience name for target.
+init.exe: src/CMakeFiles/init.exe.dir/rule
+.PHONY : init.exe
+
+# fast build rule for target.
+init.exe/fast:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/init.exe.dir/build.make src/CMakeFiles/init.exe.dir/build
+.PHONY : init.exe/fast
+
+# Convenience name for target.
 src/CMakeFiles/os_4.bin.dir/rule:
 	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/os_4.bin.dir/rule
 .PHONY : src/CMakeFiles/os_4.bin.dir/rule
@@ -223,6 +237,30 @@ debug.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/debug.c.s
 .PHONY : debug.c.s
 
+ext2.o: ext2.c.o
+.PHONY : ext2.o
+
+# target to build an object file
+ext2.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/ext2.c.o
+.PHONY : ext2.c.o
+
+ext2.i: ext2.c.i
+.PHONY : ext2.i
+
+# target to preprocess a source file
+ext2.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/ext2.c.i
+.PHONY : ext2.c.i
+
+ext2.s: ext2.c.s
+.PHONY : ext2.s
+
+# target to generate assembly for a file
+ext2.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/ext2.c.s
+.PHONY : ext2.c.s
+
 gdt.o: gdt.c.o
 .PHONY : gdt.o
 
@@ -282,6 +320,30 @@ idt.nasm.o:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/idt.nasm.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.nasm.o
 .PHONY : idt.nasm.o
+
+init/init.o: init/init.c.o
+.PHONY : init/init.o
+
+# target to build an object file
+init/init.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/init.exe.dir/build.make src/CMakeFiles/init.exe.dir/init/init.c.o
+.PHONY : init/init.c.o
+
+init/init.i: init/init.c.i
+.PHONY : init/init.i
+
+# target to preprocess a source file
+init/init.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/init.exe.dir/build.make src/CMakeFiles/init.exe.dir/init/init.c.i
+.PHONY : init/init.c.i
+
+init/init.s: init/init.c.s
+.PHONY : init/init.s
+
+# target to generate assembly for a file
+init/init.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/init.exe.dir/build.make src/CMakeFiles/init.exe.dir/init/init.c.s
+.PHONY : init/init.c.s
 
 kernel.o: kernel.c.o
 .PHONY : kernel.o
@@ -667,6 +729,7 @@ help:
 	@echo "... os_4.bin"
 	@echo "... boot2.bin"
 	@echo "... test"
+	@echo "... init.exe"
 	@echo "... boot.o"
 	@echo "... boot2.o"
 	@echo "... boot2.i"
@@ -674,6 +737,9 @@ help:
 	@echo "... debug.o"
 	@echo "... debug.i"
 	@echo "... debug.s"
+	@echo "... ext2.o"
+	@echo "... ext2.i"
+	@echo "... ext2.s"
 	@echo "... gdt.o"
 	@echo "... gdt.i"
 	@echo "... gdt.s"
@@ -681,6 +747,9 @@ help:
 	@echo "... idt.i"
 	@echo "... idt.s"
 	@echo "... idt.o"
+	@echo "... init/init.o"
+	@echo "... init/init.i"
+	@echo "... init/init.s"
 	@echo "... kernel.o"
 	@echo "... kernel.i"
 	@echo "... kernel.s"

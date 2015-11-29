@@ -92,4 +92,8 @@ void boot2_main() {
   } while(bh.nsectors);
   printf("Booting (%x)\n", bh.addr.l);
   bh.addr.fn((unsigned int *) &sector_offset);
+  asm("cli");
+  for(;;) {
+    asm("hlt");
+  }
 }
