@@ -3,6 +3,12 @@
 #include "util.h"
 #include "idt.h"
 
+#ifdef DEBUG_MT
+#define printd(fmt, ...) printf(fmt, ##__VA_ARGS__)
+#else
+#define printd(fmt, ...)
+#endif
+
 struct process *ptab[65536];
 volatile int cur_ctx;
 int mt_enabled = 0;
@@ -28,6 +34,7 @@ int new_process(unsigned int entry) {
 }
 
 void switch_ctx(regs_t r) {
+  printd("CONTEXT SWITCH\n");
   memcpy(&ptab[cur_ctx]->r, &r, sizeof(regs_t));
   int i;
   for(i = 0; i < 65536; i++) {
