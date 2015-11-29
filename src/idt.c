@@ -35,30 +35,30 @@ void bsod(regs_t r) {
   vga_clearcolor(BLUE);
   vga_set_color(WHITE, BLUE);
   vga_clear_text();
-  printf("Kernel panic: err 0x%x (%s)\n", r.int_no, exc[r.int_no]);
-  printf("\tCS:EIP %x:%x\n", r.cs, r.eip);
-  printf("\tEDI: %x ESI: %x EBP: %x ESP: %x\n", r.edi, r.esi, r.ebp, r.esp);
-  printf("\tEBX: %x EDX: %x ECX: %x EAX: %x\n", r.ebx, r.edx, r.ecx, r.eax);
-  printf("Err: %x flags %x\n", r.err, r.eflags);
+  printf("Kernel panic: err 0x%x (%s)\n", r->int_no, exc[r->int_no]);
+  printf("\tCS:EIP %x:%x\n", r->cs, r->eip);
+  printf("\tEDI: %x ESI: %x EBP: %x ESP: %x\n", r->edi, r->esi, r->ebp, r->esp);
+  printf("\tEBX: %x EDX: %x ECX: %x EAX: %x\n", r->ebx, r->edx, r->ecx, r->eax);
+  printf("Err: %x flags %x\n", r->err, r->eflags);
   printf("\nStacktrace:\n");
-  printf("%x\n", r.eip);
-  while(r.ebp) {
-    printf("%x\n", *((unsigned int *) r.ebp + 1));
-    r.ebp = *((unsigned int *) r.ebp);
+  printf("%x\n", r->eip);
+  while(r->ebp) {
+    printf("%x\n", *((unsigned int *) r->ebp + 1));
+    r->ebp = *((unsigned int *) r->ebp);
   }
   printf("\n\n\nWill now halt.\n");
   for(;;) asm volatile ("hlt");
 }
 
 void c_intr(regs_t r) {
-  r.int_no &= 0xff;
-  //  printf("Recieved interrupt 0x%x\n", r.int_no);
-  if(r.int_no < 19) {
+  r->int_no &= 0xff;
+  //  printf("Recieved interrupt 0x%x\n", r->int_no);
+  if(r->int_no < 19) {
     bsod(r);
 #ifdef KERNEL_SOURCE
-  } else if(r.int_no > 31 && r.int_no < 48) {
+  } else if(r->int_no > 31 && r->int_no < 48) {
     handle_irq(r);
-  } else if(r.int_no == 0x81) {
+  } else if(r->int_no == 0x81) {
     do_syscall(r);
 #endif
   }

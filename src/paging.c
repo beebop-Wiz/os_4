@@ -97,11 +97,10 @@ void drop_page_table(page_table_t pt) {
 }
 
 void swap_page_table(page_table_t old, page_table_t new) {
-  if(old) {
-    while(old) {
-      drop_page_table(old);
-      old = old->next;
-    }
+  if(!(old->idx) || !(new->idx)) return;
+  while(old) {
+    drop_page_table(old);
+    old = old->next;
   }
   while(new) {
     register_page_table(new);

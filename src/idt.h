@@ -39,7 +39,7 @@ struct registers {
   unsigned int eip, cs, eflags, useresp, ss;
 } __attribute__ ((packed));
 
-typedef struct registers regs_t;
+typedef struct registers * regs_t;
 
 /**
  * Loads the provided IDTR with the ASM `lidt` instruction.

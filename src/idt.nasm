@@ -77,7 +77,9 @@ asm_intr:
 	mov es,ax
 	mov fs,ax
 	mov gs,ax
+	push esp
 	call c_intr
+	pop eax
 	pop ax
 	mov ds,ax
 	pop ax

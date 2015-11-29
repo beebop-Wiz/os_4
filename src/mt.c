@@ -21,6 +21,8 @@ void init_mt() {
 
 void enable_mt() {
   mt_enabled = 1;
+  // fake a IRQ to kick-start it
+  asm volatile ("int $0x20");
 }
 
 int new_process(unsigned int entry) {
@@ -28,20 +30,24 @@ int new_process(unsigned int entry) {
   for(i = 0; ptab[i]; i++);
   ptab[i] = malloc(sizeof(struct process));
   memset(ptab[i], 0, sizeof(struct process));
-  ptab[i]->r.eip = entry;
-  ptab[i]->r.cs  = 0x2b;
+  ptab[i]->r = malloc(sizeof(regs_t));
+  ptab[i]->r->eip = entry;
+  ptab[i]->r->cs  = 0x2b;
+  ptab[i]->r->ds = ptab[i]->r->es = ptab[i]->r->fs = ptab[i]->r->gs = ptab[i]->r->ss = 0x33;
   return i;
 }
 
 void switch_ctx(regs_t r) {
   printd("CONTEXT SWITCH\n");
-  memcpy(&ptab[cur_ctx]->r, &r, sizeof(regs_t));
+  if(mt_enabled > 1) 
+    memcpy(ptab[cur_ctx]->r, r, sizeof(regs_t));
   int i;
   for(i = 0; i < 65536; i++) {
     if(ptab[i] && i > cur_ctx) goto no_rollover;
   }
-  for(i = 0; ptab[i]; i++);
+  for(i = 0; !ptab[i]; i++);
  no_rollover:
   swap_page_table(&ptab[cur_ctx]->pt, &ptab[i]->pt);
-  memcpy(&r, &ptab[i]->r, sizeof(regs_t));
+  memcpy(r, ptab[i]->r, sizeof(struct registers));
+  mt_enabled = 2;		/* init bootstrap complete :) */
 }

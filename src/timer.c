@@ -49,11 +49,11 @@ void PIC_clear_line(unsigned char line) {
 }
 
 void handle_irq(regs_t r) {
-  if(r.int_no > 40)
+  if(r->int_no > 40)
     outb(0xa0, 0x20);
   outb(0x20, 0x20);
   extern int mt_enabled;
-  if(r.int_no == 0x20 && mt_enabled) {
+  if(r->int_no == 0x20 && mt_enabled) {
     switch_ctx(r);
   }
 }
