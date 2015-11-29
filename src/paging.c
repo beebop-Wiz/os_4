@@ -9,9 +9,15 @@
 #define printd(fmt, ...) dummy_print(fmt, ##__VA_ARGS__)
 #endif
 
+#ifdef DEBUG_PAGING_MEMORY
+#define printdm(fmt, ...) printf(fmt, ##__VA_ARGS__)
+#else
+#define printdm(fmt, ...) dummy_print(fmt, ##__VA_ARGS__)
+#endif
+
 unsigned int *pagedir;
 struct mem_tree phy;
-
+unsigned char paging_enabled = 0;
 
 void init_paging() {
   pagedir = malloc_a(0x4000, 4096);
@@ -46,6 +52,8 @@ void load_page_directory() {
   asm("mov %%cr0, %0" : "=r" (cr0));
   cr0 |= 0x80000000;
   asm("mov %0, %%cr0" : : "r" (cr0));
+  paging_enabled = 1;
+  printf("PAGING ENABLED\n");
 }
 
 void mark_block(int gran, int off) {
@@ -84,6 +92,23 @@ void register_page_table(page_table_t pt) {
   pagedir[pt->idx] = (unsigned int) pt->table | 0x7;
 }
 
+void drop_page_table(page_table_t pt) {
+  pagedir[pt->idx] = 0;
+}
+
+void swap_page_table(page_table_t old, page_table_t new) {
+  if(old) {
+    while(old) {
+      drop_page_table(old);
+      old = old->next;
+    }
+  }
+  while(new) {
+    register_page_table(new);
+    new = new->next;
+  }
+}
+
 void nonid_page(page_table_t pt, unsigned int offset) {
   while(pt) {
     if(!pt->table) {
@@ -108,9 +133,11 @@ void nonid_page(page_table_t pt, unsigned int offset) {
 }
 
 void id_page(page_table_t pt, unsigned int offset) {
-  printd("Identity paging page %x (vaddr %x PDI %x)\n", offset, offset * 4096, offset / 1024);
+  if(paging_enabled)
+    printdm("Identity paging page %x (vaddr %x PDI %x)\n", offset, offset * 4096, offset / 1024);
   while(pt) {
     if(!pt->table) {
+      printdm("PT cache miss for offset %x (tab)\n", offset);
       pt->table = malloc_a(4 * 4096, 4096);
       pt->idx = offset / 1024;
       register_page_table(pt);
@@ -121,6 +148,7 @@ void id_page(page_table_t pt, unsigned int offset) {
       return;
     }
     if(!pt->next) {
+      printdm("PT cache miss for offset %x (LL)\n", offset);
       pt->next = malloc(sizeof(struct page_table));
       pt->next->table = malloc_a(4 * 4096, 4096);
       pt->next->idx = offset / 1024;
@@ -132,3 +160,4 @@ void id_page(page_table_t pt, unsigned int offset) {
     pt = pt->next;
   }
 }
+

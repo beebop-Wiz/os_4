@@ -5,27 +5,28 @@
 #include "vbe.h"
 #include "malloc.h"
 #include "paging.h"
+#include "gdt.h"
+#include "user.h"
+#include "timer.h"
+#include "mt.h"
 
-page_table_t kernel_pages;
+page_table_t kernel_pages = 0;
 
-void kernel_main() {
+void test_mt() {
+  char *foo = "foo\n";
+  asm ("mov $0, %%eax\nmov %0, %%ebx\nint $0x81" : : "m" (foo) : "eax", "ebx");
+  // no way to return to kcode right now
+  for(;;);
+}
+
+void kernel_main(unsigned int **bdata) {
   vbe_load_data();
   init_vga();
   init_vgatext();
   printf("Hello, World!\n");
   init_malloc();
-  printf("Booted os_4 %s\n", VERSION);
   setup_idt();
-  printf("Testing malloc() and free()\n");
-  void *a = malloc(20);
-  printf("A = %x\n", a);
-  void *b = malloc(20);
-  printf("B = %x\n", b);
-  free(a);
-  a = malloc(10);
-  printf("A = %x\n", a);
-  b = malloc_a(10, 4096);
-  printf("B = %x\n", b);
+  PIC_init();
   init_paging();
   kernel_pages = malloc(sizeof(struct page_table));
   int i;
@@ -35,9 +36,16 @@ void kernel_main() {
   for(i = 0xFD000; i < 0xFFFFF; i++) {
     id_page(kernel_pages, i);
   }
-  page_all_allocations();
   nonid_page(kernel_pages, 0x2000);
-  // will probably crash here.
+  // now to set up the TSS for multitasking
+  load_bios_gdt(bdata[1]);
+  page_all_allocations();
   load_page_directory();
-  printf("PAGING WORKS!\n\n");
+  timer_init(1);
+  printf("Booted os_4 %s\n", VERSION);
+  init_mt();
+  new_process((unsigned int) test_mt);
+  printf("Enabling MT\n");
+  enable_mt();
+  //  jump_usermode();
 }

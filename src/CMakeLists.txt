@@ -26,10 +26,11 @@ add_custom_command(
   )
 add_custom_target(version DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/version.h)
 
-add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c)
+add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c gdt.c user.nasm ring3.c syscall.c timer.c mt.c util.c)
 add_dependencies(os_4.bin version)
 
 target_link_libraries(os_4.bin "-T linker.ld" -ffreestanding -nostdlib -O2 gcc)
+set_target_properties(os_4.bin PROPERTIES COMPILE_FLAGS "-DKERNEL_SOURCE")
 
 add_custom_target(image ALL ${CMAKE_CURRENT_SOURCE_DIR}/../mkimg DEPENDS os_4.bin)
 

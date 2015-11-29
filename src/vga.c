@@ -19,6 +19,8 @@ void init_vga(void) {
   return;
 }
 
+#ifdef KERNEL_SOURCE
+
 void vga_clear() {
   int x, y;
   for(y = 0; y < 600; y++) {
@@ -27,6 +29,8 @@ void vga_clear() {
     }
   }
 }
+
+#endif
 
 void vga_write_pix(int x, int y, int color) {
   // f*** 24 bit color. 32 bits would make this so much faster.
@@ -37,6 +41,8 @@ void vga_write_pix(int x, int y, int color) {
   *g = (unsigned char) ((color & 0x00FF00) >> 8);
   *b = (unsigned char) (color & 0x0000FF);
 }
+
+#ifdef KERNEL_SOURCE
 
 int vga_get_pix(int x, int y) {
   unsigned char *b = (vga + (VGA_WIDTH * y + x) * 3);
@@ -54,3 +60,5 @@ void vga_set_palette(int idx, unsigned char r, unsigned char g, unsigned char b)
   outb(0x3c9, g);
   outb(0x3c9, b);
 }
+
+#endif

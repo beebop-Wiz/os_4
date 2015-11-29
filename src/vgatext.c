@@ -229,11 +229,28 @@ void vga_scroll() {
       term[x][y].mod = 0;
     }
   }
+  y = wh - 1;
+  for(x = 0; x < ww; x++) {
+    for(tx = 0; tx < 8; tx++) {
+      for(ty = 0; ty < 8; ty++) {
+	vga_write_pix(
+		      x * 8 + tx + wx,
+		      y * 8 + ty + wy,
+		      0xFF0000);
+	vga_write_pix(
+		      x * 8 + tx + wx,
+		      y * 8 + ty + wy,
+		      term[x][y].bgcolor);
+	
+      }
+    }
+  }
 }
 
 void vga_putchar(char c) {
   switch(c) {
   case '\n':
+    for(; cx < ww; cx++) term[cx][cy].c = ' ';
     cx = 0;
     cy++;
     vga_redraw();

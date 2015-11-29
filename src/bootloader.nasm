@@ -82,6 +82,8 @@ done:
 pmode:
 	xor ebx, ebx
 	pop bx
+	mov ecx, gdt ; so the OS can use it
+	add ecx, 0x7c00
 	pop ax
 	shl eax, 4
 	add eax, ebx
@@ -110,7 +112,7 @@ address:
 	a_lba_4  dw 0
 
 gdtr:
-	lim dw gdt_end - gdt - 1
+	lim dw (gdt_end - gdt - 1) + 8
 	base dd 0x7c00 + gdt
 
 gdt:
@@ -148,6 +150,20 @@ dw 0
 db 0
 db 0x92
 db 0x8f
+db 0
+; 0x28: ucode
+dw 0xffff
+dw 0
+db 0
+db 0xfa
+db 0xcf
+db 0
+; 0x30: udata
+dw 0xffff
+dw 0
+db 0
+db 0xf2
+db 0xcf
 db 0
 gdt_end:
 dw 0

@@ -26,7 +26,7 @@ struct bheader {
       unsigned short memaddr_hi, memaddr_lo;
     } o;
     unsigned char *l;
-    void (*fn)();
+    void (*fn)(unsigned int *bdata);
   } addr;
   unsigned int ksize;
   unsigned char pad[502];
@@ -91,5 +91,5 @@ void boot2_main() {
     }
   } while(bh.nsectors);
   printf("Booting (%x)\n", bh.addr.l);
-  bh.addr.fn();
+  bh.addr.fn((unsigned int *) &sector_offset);
 }
