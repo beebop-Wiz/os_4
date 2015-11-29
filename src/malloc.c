@@ -27,7 +27,7 @@ extern unsigned char paging_enabled;
 void page_all_allocations() {
   struct malloc_header *ptr = MALLOC_ARENA;
   while(ptr) {
-    printf("Paging allocation for %x-%x\n", ptr, ptr + ptr->length);
+    printd("Paging allocation for %x-%x\n", ptr, ptr + ptr->length);
     id_page(kernel_pages, ((unsigned int) ptr) / 4096);
     unsigned int i;
     for(i = 0; i < (ptr->length / 4096); i++) {
@@ -52,9 +52,9 @@ void *align_address(void *addr, int align) {
 }
 
 void *page_allocation(void *addr, unsigned int size) {
-  printf("Allocating %x (%d)\n", addr, paging_enabled);
+  printd("Allocating %x (%d)\n", addr, paging_enabled);
   if(!paging_enabled) return addr;
-  printf("Paging new memory for allocation at %x (page %x, dir %x)\n", (unsigned int) addr, (unsigned int) addr / 4096 , ((unsigned int) addr / 4096) / 1024);
+  printd("Paging new memory for allocation at %x (page %x, dir %x)\n", (unsigned int) addr, (unsigned int) addr / 4096 , ((unsigned int) addr / 4096) / 1024);
   unsigned int i;
   id_page(kernel_pages, ((unsigned int) addr) / 4096);
   for(i = 0; i < (size / 4096) + 1; i++) {

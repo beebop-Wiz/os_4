@@ -2,7 +2,7 @@
 #define SYSCALL_H
 
 enum syscalls {
-  SYS_WRITE,
+  SYS_WRITE, SYS_EXIT
 };
 
 #include "idt.h"

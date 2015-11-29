@@ -15,5 +15,8 @@ struct process {
 void init_mt();
 void enable_mt();
 int new_process(unsigned int entry);
+page_table_t get_process_pt(int proc);
+void set_process_entry(int proc, unsigned int entry);
 void switch_ctx(regs_t r);
+void proc_exit();
 #endif

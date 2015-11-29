@@ -2,5 +2,5 @@ extern main
 global _start
 _start:
 	call main
-_end:
-	jmp _end
+	mov eax, 1
+	int 0x81

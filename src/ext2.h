@@ -82,8 +82,32 @@ struct ext2_inode {
   unsigned char oss2[12];
 } __attribute__ ((packed));
 
+struct ext2_dirent {
+  unsigned int inode;
+  unsigned short entsize;
+  unsigned char nlen;
+  unsigned char type;
+  char *name;
+} __attribute__ ((packed));
+
+struct ext2_dirstate {
+  unsigned int ent_idx;
+  struct ext2_inode *inode;
+  struct ext2_dirent *last;
+};
+
+typedef struct ext2_dirstate * ext2_dirstate_t;
+typedef struct ext2_dirent * ext2_dirent_t;
+
 void read_superblock(struct ext2_superblock *s);
 void read_block_group(struct ext2_superblock *s, struct ext2_bg_desc *desc, int idx);
 void read_inode(struct ext2_superblock *s, struct ext2_inode *inode, int idx);
+void get_block(struct ext2_inode *inode, int block_idx, unsigned char *block);
+
+ext2_dirstate_t opendir(struct ext2_inode *inode);
+ext2_dirent_t dirwalk(ext2_dirstate_t s);
+void closedir(ext2_dirstate_t s);
+
+void parse_inode_type(unsigned short type, char *out);
 
 #endif

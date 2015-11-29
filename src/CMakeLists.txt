@@ -36,7 +36,14 @@ add_custom_target(image ALL ${CMAKE_CURRENT_SOURCE_DIR}/../mkimg DEPENDS os_4.bi
 
 # Build init (init.exe)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../fs_mount)
 link_directories(../libc/lib/)
 add_executable(init.exe init/init.c)
+add_custom_command(
+  TARGET init.exe
+  POST_BUILD
+  COMMAND /bin/sync
+  COMMENT "Synchronizing file system..."
+  )
 add_dependencies(init.exe ../libc/lib/libc.a)
 target_link_libraries(init.exe c)

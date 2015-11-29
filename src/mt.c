@@ -4,6 +4,7 @@
 #include "idt.h"
 #include "user.h"
 #include "gdt.h"
+#include "vgatext.h"
 
 #ifdef DEBUG_MT
 #define printd(fmt, ...) printf(fmt, ##__VA_ARGS__)
@@ -49,6 +50,22 @@ int new_process(unsigned int entry) {
   return i;
 }
 
+page_table_t get_process_pt(int proc) {
+  return ptab[proc]->pt;
+}
+
+void set_process_entry(int proc, unsigned int entry) {
+  ptab[proc]->r->eip = entry;
+}
+
+void shutdown() {
+  printf("\n\nShutting down...\n");
+  printf("Will now halt.\n");
+  for(;;) {
+    asm ("cli\nhlt");
+  }
+}
+
 void switch_ctx(regs_t r) {
   printd("CONTEXT SWITCH\n");
   if(mt_enabled > 1) 
@@ -57,10 +74,26 @@ void switch_ctx(regs_t r) {
   for(i = 0; i < 65536; i++) {
     if(ptab[i] && i > cur_ctx) goto no_rollover;
   }
-  for(i = 0; !ptab[i]; i++);
+  for(i = 0; !ptab[i] && i < 65536; i++);
+  if(i > 65535) shutdown();
  no_rollover:
   swap_page_table(ptab[cur_ctx]->pt, ptab[i]->pt);
   memcpy(r, ptab[i]->r, sizeof(struct registers));
   cur_ctx = i;
   mt_enabled = 2;		/* init bootstrap complete :) */
+}
+
+void free_ptab(page_table_t pt) {
+  if(pt->next) free_ptab(pt->next);
+  free(pt->table);
+  free(pt);
+}
+
+void proc_exit(regs_t r) {
+  free_ptab(ptab[cur_ctx]->pt);
+  free(ptab[cur_ctx]->stack_bot);
+  free(ptab[cur_ctx]->r);
+  free(ptab[cur_ctx]);
+  ptab[cur_ctx] = 0;
+  switch_ctx(r);
 }
