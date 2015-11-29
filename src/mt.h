@@ -1,12 +1,15 @@
 #ifndef MT_H
 #define MT_H
 
+#define PROCESS_STACK_SIZE 0x10000
+
 #include "idt.h"
 #include "paging.h"
 
 struct process {
-  struct page_table pt;
+  page_table_t pt;
   regs_t r;
+  unsigned char *stack_bot;
 };
 
 void init_mt();

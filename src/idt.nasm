@@ -81,6 +81,7 @@ asm_intr:
 	call c_intr
 	pop eax
 	pop ax
+	movzx eax, ax
 	mov ds,ax
 	pop ax
 	mov es,ax

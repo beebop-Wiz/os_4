@@ -14,10 +14,24 @@ page_table_t kernel_pages = 0;
 
 void test_mt() {
   char *foo = "foo\n";
-  asm ("mov $0, %%eax\nmov %0, %%ebx\nint $0x81" : : "m" (foo) : "eax", "ebx");
+  int i;
+  for(;;) {
+    asm ("mov $0, %%eax\nmov %0, %%ebx\nint $0x81" : : "m" (foo) : "eax", "ebx");
+    for(i = 0; i < 100000000; i++) ;
   // no way to return to kcode right now
-  for(;;);
+  }
 }
+
+void test_mt_2() {
+  char *foo = "bar\n";
+  int i;
+  for(;;) {
+    asm ("mov $0, %%eax\nmov %0, %%ebx\nint $0x81" : : "m" (foo) : "eax", "ebx");
+    for(i = 0; i < 100000000; i++) ;
+  // no way to return to kcode right now
+  }
+}
+
 
 void kernel_main(unsigned int **bdata) {
   vbe_load_data();
@@ -45,7 +59,8 @@ void kernel_main(unsigned int **bdata) {
   printf("Booted os_4 %s\n", VERSION);
   init_mt();
   new_process((unsigned int) test_mt);
+  new_process((unsigned int) test_mt_2);
   printf("Enabling MT\n");
   enable_mt();
-  //  jump_usermode();
+  //jump_usermode();
 }
