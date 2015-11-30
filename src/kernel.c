@@ -135,9 +135,9 @@ void kernel_main(unsigned int **bdata) {
   printf("Read init ELF header\n");
   for(i = 0; i < init_header.ptidx; i++) {
     memcpy(&ph, init_buf + init_header.header_pos + i * init_header.ptsize, init_header.ptsize);
-    printf("\tProgram header %d: type %d filesz %x vaddr %x\n", i, ph.type, ph.p_filesz, ph.p_vaddr);
+    printf("\tProgram header %d: type %d memsz %x vaddr %x\n", i, ph.type, ph.p_memsz, ph.p_vaddr);
     unsigned int j;
-    for(j = 0; j < ph.p_filesz; j += 4096) {
+    for(j = 0; j < ph.p_memsz; j += 4096) {
       nonid_page(get_process_pt(init_pid), (ph.p_vaddr + j) / 4096);
     }
     memcpy((void *) ph.p_vaddr, init_buf + ph.p_offset, ph.p_filesz);

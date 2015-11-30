@@ -38,6 +38,7 @@ add_custom_target(image ALL ${CMAKE_CURRENT_SOURCE_DIR}/../mkimg DEPENDS os_4.bi
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../fs_mount)
 link_directories(../libc/lib/)
+include_directories(../libc/include/)
 add_executable(init.exe init/init.c)
 add_custom_command(
   TARGET init.exe

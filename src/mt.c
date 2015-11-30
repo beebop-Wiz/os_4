@@ -34,6 +34,7 @@ int new_process(unsigned int entry) {
   for(i = 0; ptab[i]; i++);
   ptab[i] = malloc(sizeof(struct process));
   memset(ptab[i], 0, sizeof(struct process));
+  memset(ptab[i]->fds, 0, FD_MAX * sizeof(int));
   ptab[i]->r = malloc(sizeof(struct registers));
   ptab[i]->r->eip = entry;
   ptab[i]->r->cs  = 0x2b;

@@ -133,6 +133,54 @@ src/crt0.nasm.o:
 	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/crt0.nasm.o
 .PHONY : src/crt0.nasm.o
 
+src/stdio.o: src/stdio.c.o
+.PHONY : src/stdio.o
+
+# target to build an object file
+src/stdio.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/stdio.c.o
+.PHONY : src/stdio.c.o
+
+src/stdio.i: src/stdio.c.i
+.PHONY : src/stdio.i
+
+# target to preprocess a source file
+src/stdio.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/stdio.c.i
+.PHONY : src/stdio.c.i
+
+src/stdio.s: src/stdio.c.s
+.PHONY : src/stdio.s
+
+# target to generate assembly for a file
+src/stdio.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/stdio.c.s
+.PHONY : src/stdio.c.s
+
+src/stdlib.o: src/stdlib.c.o
+.PHONY : src/stdlib.o
+
+# target to build an object file
+src/stdlib.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/stdlib.c.o
+.PHONY : src/stdlib.c.o
+
+src/stdlib.i: src/stdlib.c.i
+.PHONY : src/stdlib.i
+
+# target to preprocess a source file
+src/stdlib.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/stdlib.c.i
+.PHONY : src/stdlib.c.i
+
+src/stdlib.s: src/stdlib.c.s
+.PHONY : src/stdlib.s
+
+# target to generate assembly for a file
+src/stdlib.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/stdlib.c.s
+.PHONY : src/stdlib.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -144,6 +192,12 @@ help:
 	@echo "... c"
 	@echo "... test"
 	@echo "... src/crt0.o"
+	@echo "... src/stdio.o"
+	@echo "... src/stdio.i"
+	@echo "... src/stdio.s"
+	@echo "... src/stdlib.o"
+	@echo "... src/stdlib.i"
+	@echo "... src/stdlib.s"
 .PHONY : help
 
 

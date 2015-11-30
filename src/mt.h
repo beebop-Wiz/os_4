@@ -6,9 +6,16 @@
 #include "idt.h"
 #include "paging.h"
 
+#define FD_MAX 256
+#define FD_PRESENT 0x1
+#define FD_READ    0x2
+#define FD_WRITE   0x4
+#define FD_TERM    0x8
+
 struct process {
   page_table_t pt;
   regs_t r;
+  int fds[FD_MAX];
   unsigned char *stack_bot;
 };
 
