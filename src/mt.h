@@ -26,4 +26,5 @@ page_table_t get_process_pt(int proc);
 void set_process_entry(int proc, unsigned int entry);
 void switch_ctx(regs_t r);
 void proc_exit();
+unsigned short fork(regs_t r);
 #endif

@@ -6,7 +6,8 @@ enum syscalls {
   SYS_EXIT,			/* 1 */
   SYS_MALLOC,			/* 2 */
   SYS_FREE,			/* 3 */
-  SYS_GETFD			/* 4 */
+  SYS_GETFD,			/* 4 */
+  SYS_FORK,			/* 5 */
 };
 
 #include "idt.h"

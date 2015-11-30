@@ -109,7 +109,8 @@ void swap_page_table(page_table_t old, page_table_t new) {
   }
 }
 
-void nonid_page(page_table_t pt, unsigned int offset) {
+unsigned int nonid_page(page_table_t pt, unsigned int offset) {
+  unsigned int addr;
   while(pt) {
     if(!pt->table) {
       pt->table = malloc_a(4 * 4096, 4096);
@@ -117,19 +118,22 @@ void nonid_page(page_table_t pt, unsigned int offset) {
       register_page_table(pt);
     }
     if(pt->idx == offset / 1024) {
-      pt->table[offset % 1024] = (get_page_block(0) * 4096) | 0x7;
-      break;
+      addr = get_page_block(0);
+      pt->table[offset % 1024] = (addr * 4096) | 0x7;
+      return addr;
     }
     if(!pt->next) {
       pt->next = malloc(sizeof(struct page_table));
       pt->next->table = malloc_a(4 * 4096, 4096);
       pt->next->idx = offset / 1024;
       register_page_table(pt->next);
-      pt->next->table[offset % 1024] = (get_page_block(0) * 4096) | 0x7;
-      return;
+      addr = get_page_block(0);
+      pt->next->table[offset % 1024] = (addr * 4096) | 0x7;
+      return addr;
     }
     pt = pt->next;
   }
+  return 0;
 }
 
 void id_page(page_table_t pt, unsigned int offset) {
@@ -161,3 +165,31 @@ void id_page(page_table_t pt, unsigned int offset) {
   }
 }
 
+void mapped_page(page_table_t pt, unsigned int offset, unsigned int map) {
+  if(paging_enabled)
+    printdm("Mapped paging page %x (vaddr %x PDI %x)\n", offset, offset * 4096, offset / 1024);
+  while(pt) {
+    if(!pt->table) {
+      printdm("PT cache miss for offset %x (tab)\n", offset);
+      pt->table = malloc_a(4 * 4096, 4096);
+      pt->idx = offset / 1024;
+      register_page_table(pt);
+    }
+    if(pt->idx == offset / 1024) {
+      pt->table[offset % 1024] = (map * 4096) | 0x7;
+      mark_block(0, map);
+      return;
+    }
+    if(!pt->next) {
+      printdm("PT cache miss for offset %x (LL)\n", offset);
+      pt->next = malloc(sizeof(struct page_table));
+      pt->next->table = malloc_a(4 * 4096, 4096);
+      pt->next->idx = offset / 1024;
+      register_page_table(pt->next);
+      pt->next->table[offset % 1024] = (map * 4096) | 0x7;
+      mark_block(0, map);
+      return;
+    }
+    pt = pt->next;
+  }
+}

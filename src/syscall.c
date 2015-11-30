@@ -37,6 +37,9 @@ void do_syscall(regs_t r) {
     }
     r->ecx = -1;
     break;
+  case SYS_FORK:
+    r->ecx = fork(r);
+    break;
   default: return;
   }
 }

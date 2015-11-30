@@ -55,6 +55,22 @@ page_table_t get_process_pt(int proc) {
   return ptab[proc]->pt;
 }
 
+unsigned short fork(regs_t r) {
+  int pid = new_process(r->eip);
+  memcpy(ptab[pid]->r, r, sizeof(struct registers));
+  page_table_t old;
+  old = get_process_pt(cur_ctx);
+  unsigned int t_loc;
+  while(old) {
+    t_loc = nonid_page(ptab[pid]->pt, 0x2000);
+    memcpy((void *) 0x2000000, (void *) (old->idx * 4096), 4096);
+    mapped_page(ptab[pid]->pt, old->idx, t_loc);
+    mapped_page(ptab[pid]->pt, 0x2000, 0);
+    old = old->next;
+  }
+  return pid;
+}
+
 void set_process_entry(int proc, unsigned int entry) {
   ptab[proc]->r->eip = entry;
 }

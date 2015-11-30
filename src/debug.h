@@ -11,10 +11,10 @@
 
 */
 
-#undef DEBUG_MALLOC
+#define DEBUG_MALLOC
 #undef DEBUG_PAGING
 #undef DEBUG_PAGING_MEMORY
-#define DEBUG_MT
+#undef DEBUG_MT
 
 int dummy_print(char *f, ...);
 

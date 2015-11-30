@@ -181,6 +181,30 @@ src/stdlib.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/stdlib.c.s
 .PHONY : src/stdlib.c.s
 
+src/unistd.o: src/unistd.c.o
+.PHONY : src/unistd.o
+
+# target to build an object file
+src/unistd.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/unistd.c.o
+.PHONY : src/unistd.c.o
+
+src/unistd.i: src/unistd.c.i
+.PHONY : src/unistd.i
+
+# target to preprocess a source file
+src/unistd.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/unistd.c.i
+.PHONY : src/unistd.c.i
+
+src/unistd.s: src/unistd.c.s
+.PHONY : src/unistd.s
+
+# target to generate assembly for a file
+src/unistd.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/unistd.c.s
+.PHONY : src/unistd.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -198,6 +222,9 @@ help:
 	@echo "... src/stdlib.o"
 	@echo "... src/stdlib.i"
 	@echo "... src/stdlib.s"
+	@echo "... src/unistd.o"
+	@echo "... src/unistd.i"
+	@echo "... src/unistd.s"
 .PHONY : help
 
 

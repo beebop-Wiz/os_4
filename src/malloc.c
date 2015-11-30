@@ -57,7 +57,7 @@ void *page_allocation(void *addr, unsigned int size) {
   printd("Paging new memory for allocation at %x (page %x, dir %x)\n", (unsigned int) addr, (unsigned int) addr / 4096 , ((unsigned int) addr / 4096) / 1024);
   unsigned int i;
   id_page(kernel_pages, ((unsigned int) addr) / 4096);
-  for(i = 0; i < (size / 4096) + 1; i++) {
+  for(i = 0; i < (size / 4096) + 2; i++) {
     id_page(kernel_pages, (((unsigned int) addr) / 4096) + i);
   }
   return addr;
