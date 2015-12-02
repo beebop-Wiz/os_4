@@ -16,9 +16,10 @@ typedef struct page_table * page_table_t;
 void init_paging();
 unsigned int get_page_block(int gran);
 void swap_page_table(page_table_t old, page_table_t new);
-unsigned int nonid_page(page_table_t pt, unsigned int offset);
+void update_page_table(page_table_t pt);
+unsigned int nonid_page(page_table_t pt, unsigned int offset, char update);
 void id_page(page_table_t pt, unsigned int offset);
-void mapped_page(page_table_t pt, unsigned int virt, unsigned int phy);
+void mapped_page(page_table_t pt, unsigned int virt, unsigned int phy, char update);
 void load_page_directory();
 
 #endif

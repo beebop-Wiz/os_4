@@ -14,26 +14,6 @@
 
 page_table_t kernel_pages = 0;
 
-void test_mt() {
-  char *foo = "foo\n";
-  int i;
-  for(;;) {
-    asm ("mov $0, %%eax\nmov %0, %%ebx\nint $0x81" : : "m" (foo) : "eax", "ebx");
-    for(i = 0; i < 100000000; i++) ;
-  // no way to return to kcode right now
-  }
-}
-
-void test_mt_2() {
-  char *foo = "bar\n";
-  int i;
-  for(;;) {
-    asm ("mov $0, %%eax\nmov %0, %%ebx\nint $0x81" : : "m" (foo) : "eax", "ebx");
-    for(i = 0; i < 100000000; i++) ;
-  // no way to return to kcode right now
-  }
-}
-
 // for init loading
 struct elf_header {
   char magic[4];
@@ -85,7 +65,6 @@ void kernel_main(unsigned int **bdata) {
   for(i = 0xFD000; i < 0xFFFFF; i++) {
     id_page(kernel_pages, i);
   }
-  nonid_page(kernel_pages, 0x2000);
   // now to set up the TSS for multitasking
   load_bios_gdt(bdata[1]);
   page_all_allocations();
@@ -138,7 +117,8 @@ void kernel_main(unsigned int **bdata) {
     printf("\tProgram header %d: type %d memsz %x vaddr %x\n", i, ph.type, ph.p_memsz, ph.p_vaddr);
     unsigned int j;
     for(j = 0; j < ph.p_memsz; j += 4096) {
-      nonid_page(get_process_pt(init_pid), (ph.p_vaddr + j) / 4096);
+      nonid_page(get_process_pt(init_pid), (ph.p_vaddr + j) / 4096, 1);
+      printf("Paging in page %x (idx %x)\n", (j + ph.p_vaddr) / 4096, (j + ph.p_vaddr) / 4096 / 1024);
     }
     memcpy((void *) ph.p_vaddr, init_buf + ph.p_offset, ph.p_filesz);
   }

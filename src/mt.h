@@ -2,6 +2,8 @@
 #define MT_H
 
 #define PROCESS_STACK_SIZE 0x10000
+#define PROCESS_STACK_BOTTOM 0x0C000000
+#define PROCESS_STACK_TOP (PROCESS_STACK_BOTTOM + PROCESS_STACK_SIZE)
 
 #include "idt.h"
 #include "paging.h"
@@ -16,7 +18,6 @@ struct process {
   page_table_t pt;
   regs_t r;
   int fds[FD_MAX];
-  unsigned char *stack_bot;
 };
 
 void init_mt();

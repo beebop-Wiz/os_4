@@ -90,6 +90,7 @@ unsigned int get_page_block(int gran) {
 
 void register_page_table(page_table_t pt) {
   pagedir[pt->idx] = (unsigned int) pt->table | 0x7;
+  asm volatile("mov %%cr3, %%eax\nmov %%eax, %%cr3" : : : "eax");
 }
 
 void drop_page_table(page_table_t pt) {
@@ -97,11 +98,12 @@ void drop_page_table(page_table_t pt) {
 }
 
 void swap_page_table(page_table_t old, page_table_t new) {
-  while(old) {
+  old = old->next;
+  /*  while(old) {
     if(!old->idx) continue;
     drop_page_table(old);
     old = old->next;
-  }
+    } */
   while(new) {
     if(!new->idx) continue;
     register_page_table(new);
@@ -109,13 +111,18 @@ void swap_page_table(page_table_t old, page_table_t new) {
   }
 }
 
-unsigned int nonid_page(page_table_t pt, unsigned int offset) {
+void update_page_table(page_table_t pt) {
+  register_page_table(pt);
+}
+
+unsigned int nonid_page(page_table_t pt, unsigned int offset, char update) {
   unsigned int addr;
   while(pt) {
     if(!pt->table) {
       pt->table = malloc_a(4 * 4096, 4096);
       pt->idx = offset / 1024;
-      register_page_table(pt);
+      if(update)
+	register_page_table(pt);
     }
     if(pt->idx == offset / 1024) {
       addr = get_page_block(0);
@@ -126,7 +133,8 @@ unsigned int nonid_page(page_table_t pt, unsigned int offset) {
       pt->next = malloc(sizeof(struct page_table));
       pt->next->table = malloc_a(4 * 4096, 4096);
       pt->next->idx = offset / 1024;
-      register_page_table(pt->next);
+      if(update)
+	register_page_table(pt->next);
       addr = get_page_block(0);
       pt->next->table[offset % 1024] = (addr * 4096) | 0x7;
       return addr;
@@ -165,7 +173,7 @@ void id_page(page_table_t pt, unsigned int offset) {
   }
 }
 
-void mapped_page(page_table_t pt, unsigned int offset, unsigned int map) {
+void mapped_page(page_table_t pt, unsigned int offset, unsigned int map, char update) {
   if(paging_enabled)
     printdm("Mapped paging page %x (vaddr %x PDI %x)\n", offset, offset * 4096, offset / 1024);
   while(pt) {
@@ -173,7 +181,8 @@ void mapped_page(page_table_t pt, unsigned int offset, unsigned int map) {
       printdm("PT cache miss for offset %x (tab)\n", offset);
       pt->table = malloc_a(4 * 4096, 4096);
       pt->idx = offset / 1024;
-      register_page_table(pt);
+      if(update)
+	register_page_table(pt);
     }
     if(pt->idx == offset / 1024) {
       pt->table[offset % 1024] = (map * 4096) | 0x7;
@@ -185,7 +194,8 @@ void mapped_page(page_table_t pt, unsigned int offset, unsigned int map) {
       pt->next = malloc(sizeof(struct page_table));
       pt->next->table = malloc_a(4 * 4096, 4096);
       pt->next->idx = offset / 1024;
-      register_page_table(pt->next);
+      if(update)
+	register_page_table(pt->next);
       pt->next->table[offset % 1024] = (map * 4096) | 0x7;
       mark_block(0, map);
       return;
