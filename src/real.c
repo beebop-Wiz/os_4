@@ -7,5 +7,7 @@ void bios_intr(int errupt) {
   pmode_to_real();
   extern idtr_t idt_r;
   load_idt(&idt_r);
-  asm volatile("sti");
+#ifndef KERNEL_SOURCE
+  asm volatile("cli");
+#endif
 }
