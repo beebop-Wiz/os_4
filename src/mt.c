@@ -47,9 +47,9 @@ int new_process(unsigned int entry) {
   for(j = PROCESS_STACK_BOTTOM; j < PROCESS_STACK_TOP; j += 4096) {
     nonid_page(ptab[i]->pt, j / 4096, 0);
   }
-  for(j = KERNEL_STACK_BOTTOM; j < KERNEL_STACK_TOP; j += 4096) {
+  /*  for(j = KERNEL_STACK_BOTTOM; j < KERNEL_STACK_TOP; j += 4096) {
     nonid_page(ptab[i]->pt, j / 4096, 0);
-  }
+    } */
   return i;
 }
 
@@ -65,12 +65,14 @@ unsigned short fork(regs_t r) {
   unsigned int t_loc;
   while(old) {
     int i;
-    printf("Copying PT for idx %x\n", old->idx);
+    printd("Copying PT for idx %x\n", old->idx);
+    for(i = 0; i < 1024; i++) {
+      mapped_page(ptab[pid]->pt, old->idx * 1024 + i, get_mapping(old, old->idx * 1024 + i), 1);
+    }
     for(i = 0; i < 1024; i++) {
       if(!old->table[i]) continue;
       t_loc = nonid_page(ptab[pid]->pt, 0x2000, 1);
-      printf("Copying %x to %x\n", (old->idx * 4096 * 1024) + i * 4096, 0x2000000);
-      //      mapped_page(ptab[pid]->pt, old->idx * 1024 + i, old->table[i] & ~0xff);
+      printd("Copying %x to %x\n", (old->idx * 4096 * 1024) + i * 4096, 0x2000000);
       memcpy((void *) 0x2000000, (void *) (old->idx * 4096 * 1024) + i * 4096, 4096);
       mapped_page(ptab[pid]->pt, old->idx * 1024 + i, t_loc, 0);
       mapped_page(ptab[pid]->pt, 0x2000, 0, 0);
@@ -78,7 +80,8 @@ unsigned short fork(regs_t r) {
     }
     old = old->next;
   }
-  printf("New pid: %d Old pid %d\n", pid, cur_ctx);
+  printd("New pid: %d Old pid %d\n", pid, cur_ctx);
+  ptab[pid]->r->ecx = 0;
   return pid;
 }
 
@@ -87,7 +90,7 @@ void set_process_entry(int proc, unsigned int entry) {
 }
 
 void shutdown() {
-  printf("\n\nShutting down...\n");
+  printf("\nNo processes remain.\nShutting down...\n");
   printf("Will now halt.\n");
   for(;;) {
     asm ("cli\nhlt");
@@ -95,8 +98,8 @@ void shutdown() {
 }
 
 void switch_ctx(regs_t r) {
-  printf("CONTEXT SWITCH\n");
-  if(mt_enabled > 1) 
+  printd("CONTEXT SWITCH\n");
+  if(mt_enabled > 1 && ptab[cur_ctx]) 
     memcpy(ptab[cur_ctx]->r, r, sizeof(struct registers));
   int i;
   for(i = 0; i < 65536; i++) {
@@ -105,16 +108,15 @@ void switch_ctx(regs_t r) {
   for(i = 0; !ptab[i] && i < 65536; i++);
   if(i > 65535) shutdown();
  no_rollover:
-  swap_page_table(ptab[cur_ctx]->pt, ptab[i]->pt); // This line is the
-						   // problem. Doing
-						   // this will swap
-						   // out our
-						   // stack. This is
-						   // bad.
+  if(ptab[cur_ctx]) {
+    swap_page_table(ptab[cur_ctx]->pt, ptab[i]->pt);
+  } else {
+    swap_page_table((page_table_t) 0, ptab[i]->pt);
+  }
   memcpy(r, ptab[i]->r, sizeof(struct registers));
   cur_ctx = i;
   mt_enabled = 2;		/* init bootstrap complete :) */
-  printf("loaded ctx %d\n", i);
+  printd("loaded ctx %d\n", i);
 }
 
 void free_ptab(page_table_t pt) {

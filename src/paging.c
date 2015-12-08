@@ -98,12 +98,13 @@ void drop_page_table(page_table_t pt) {
 }
 
 void swap_page_table(page_table_t old, page_table_t new) {
-  old = old->next;
-  /*  while(old) {
-    if(!old->idx) continue;
-    drop_page_table(old);
-    old = old->next;
-    } */
+  if(!old) {
+    /*  while(old) {
+	if(!old->idx) continue;
+	drop_page_table(old);
+	old = old->next;
+	} */
+  }
   while(new) {
     if(!new->idx) continue;
     register_page_table(new);
@@ -142,6 +143,15 @@ unsigned int nonid_page(page_table_t pt, unsigned int offset, char update) {
     pt = pt->next;
   }
   return 0;
+}
+
+unsigned int get_mapping(page_table_t pt, unsigned int offset) {
+  while(pt) {
+    if(pt->idx == offset / 1024)
+      return pt->table[offset % 1024] / 4096;
+    pt = pt->next;
+  }
+  return -1;
 }
 
 void id_page(page_table_t pt, unsigned int offset) {

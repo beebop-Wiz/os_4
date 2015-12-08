@@ -1,3 +1,3 @@
 #ifndef VERSION
-#define VERSION "v0.2a/1 (git-1a59e2c)"
+#define VERSION "v0.3a/0 (git-0d7889c)"
 #endif

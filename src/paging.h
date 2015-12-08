@@ -20,6 +20,7 @@ void update_page_table(page_table_t pt);
 unsigned int nonid_page(page_table_t pt, unsigned int offset, char update);
 void id_page(page_table_t pt, unsigned int offset);
 void mapped_page(page_table_t pt, unsigned int virt, unsigned int phy, char update);
+unsigned int get_mapping(page_table_t pt, unsigned int offset);
 void load_page_directory();
 
 #endif

@@ -38,4 +38,11 @@ void install_tss(struct gdt_entry_bits *g) {
 
   tss_entry.ss = 0x10;
   tss_entry.esp0 = KERNEL_STACK_TOP;
+  for(i = KERNEL_STACK_BOTTOM; i < KERNEL_STACK_TOP; i += 4096) {
+    nonid_page(kernel_pages, i / 4096, 1);
+  }
+}
+
+void set_kernel_stack(unsigned int s) {
+  tss_entry.esp0 = s;
 }

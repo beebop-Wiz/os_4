@@ -44,8 +44,11 @@ void bsod(regs_t r) {
   printf("Current process: %d\n", cur_ctx);
 #endif
   printf("\tCS:EIP %x:%x\n", r->cs, r->eip);
-  printf("\tEDI: %x ESI: %x EBP: %x ESP: %x\n", r->edi, r->esi, r->ebp, r->esp);
+  printf("\tEDI: %x ESI: %x EBP: %x ESP: %x (%x)\n", r->edi, r->esi, r->ebp, r->esp, r->useresp);
   printf("\tEBX: %x EDX: %x ECX: %x EAX: %x\n", r->ebx, r->edx, r->ecx, r->eax);
+  unsigned int cr;
+  asm volatile("mov %%cr2, %0" : "=r" (cr));
+  printf("\tCR2: %x\n", cr);
   printf("Err: %x flags %x\n", r->err, r->eflags);
   printf("\nStacktrace:\n");
   printf("%x\n", r->eip);

@@ -2,7 +2,7 @@
 #define GDT_H
 
 #define KERNEL_STACK_BOTTOM 0xA0000000
-#define KERNEL_STACK_LIMIT  0x00010000
+#define KERNEL_STACK_LIMIT  0x00001000
 #define KERNEL_STACK_TOP (KERNEL_STACK_BOTTOM + KERNEL_STACK_LIMIT)
 
 struct gdt_entry_bits {
@@ -32,5 +32,6 @@ struct tss_entry_struct {
 
 void load_bios_gdt(unsigned int *loc);
 void install_tss(struct gdt_entry_bits *g);
+void set_kernel_stack(unsigned int s);
 
 #endif
