@@ -8,6 +8,7 @@ enum syscalls {
   SYS_FREE,			/* 3 */
   SYS_GETFD,			/* 4 */
   SYS_FORK,			/* 5 */
+  SYS_OPEN,			/* 6 */
 };
 
 #include "idt.h"

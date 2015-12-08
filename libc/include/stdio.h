@@ -23,9 +23,7 @@ typedef unsigned long fpos_t;
 #define _IOLBF 1
 #define _IONBF 2
 
-#define SEEK_CUR 0
-#define SEEK_END 1
-#define SEEK_SET 2
+#include <depend/stdio_seek.h>
 
 #define FILENAME_MAX 255
 #define FOPEN_MAX 255

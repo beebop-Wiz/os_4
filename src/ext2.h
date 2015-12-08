@@ -110,4 +110,6 @@ void closedir(ext2_dirstate_t s);
 
 void parse_inode_type(unsigned short type, char *out);
 
+int get_file_inode(struct ext2_superblock *s, const char *name);
+
 #endif

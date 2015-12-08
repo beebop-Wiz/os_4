@@ -95,6 +95,7 @@ void kernel_main(unsigned int **bdata) {
   ext2_dirent_t d;
   while((d = dirwalk(root))) {
     if(d->nlen) {
+      d->name[d->nlen] = 0;
       read_inode(&s, &sub, d->inode);
       parse_inode_type(sub.type, out);
       printf("%s %s %d\n", out, d->name, sub.size_low);

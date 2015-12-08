@@ -10,35 +10,44 @@
 // edx = arg 2
 // esi = arg 3
 
+#define SYS_NO (r->eax)
+#define SYS_A1 (r->ebx)
+#define SYS_A2 (r->edx)
+#define SYS_A3 (r->esi)
+#define SYS_RET(n) (r->ecx = (n))
+
 extern volatile int cur_ctx;
 extern struct process *ptab[65536];
 
 void do_syscall(regs_t r) {
   int i;
-  switch(r->eax) {
+  switch(SYS_NO) {
   case SYS_WRITE:
-    printf("%s", (char *) r->ebx);
+    printf("%s", (char *) SYS_A2);
     break;
   case SYS_EXIT:
     proc_exit(r);
     break;
   case SYS_MALLOC:
-    r->ecx = (unsigned int) malloc(r->ebx);
+    SYS_RET((unsigned int) malloc(SYS_A1));
     break;
   case SYS_FREE:
-    free((void *) r->ebx);
+    free((void *) SYS_A1);
     break;
   case SYS_GETFD:
     for(i = 0; i < FD_MAX; i++) {
       if(!(ptab[cur_ctx]->fds[i] & FD_PRESENT)) {
-	r->ecx = i;
+	SYS_RET(i);
 	return;
       }
     }
-    r->ecx = -1;
+    SYS_RET(-1);
     break;
   case SYS_FORK:
     r->ecx = fork(r);
+    break;
+  case SYS_OPEN:
+    
     break;
   default: return;
   }

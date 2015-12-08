@@ -133,6 +133,54 @@ src/crt0.nasm.o:
 	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/crt0.nasm.o
 .PHONY : src/crt0.nasm.o
 
+src/dirent.o: src/dirent.c.o
+.PHONY : src/dirent.o
+
+# target to build an object file
+src/dirent.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/dirent.c.o
+.PHONY : src/dirent.c.o
+
+src/dirent.i: src/dirent.c.i
+.PHONY : src/dirent.i
+
+# target to preprocess a source file
+src/dirent.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/dirent.c.i
+.PHONY : src/dirent.c.i
+
+src/dirent.s: src/dirent.c.s
+.PHONY : src/dirent.s
+
+# target to generate assembly for a file
+src/dirent.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/dirent.c.s
+.PHONY : src/dirent.c.s
+
+src/fcntl.o: src/fcntl.c.o
+.PHONY : src/fcntl.o
+
+# target to build an object file
+src/fcntl.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/fcntl.c.o
+.PHONY : src/fcntl.c.o
+
+src/fcntl.i: src/fcntl.c.i
+.PHONY : src/fcntl.i
+
+# target to preprocess a source file
+src/fcntl.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/fcntl.c.i
+.PHONY : src/fcntl.c.i
+
+src/fcntl.s: src/fcntl.c.s
+.PHONY : src/fcntl.s
+
+# target to generate assembly for a file
+src/fcntl.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/fcntl.c.s
+.PHONY : src/fcntl.c.s
+
 src/stdio.o: src/stdio.c.o
 .PHONY : src/stdio.o
 
@@ -181,6 +229,30 @@ src/stdlib.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/stdlib.c.s
 .PHONY : src/stdlib.c.s
 
+src/syscall.o: src/syscall.c.o
+.PHONY : src/syscall.o
+
+# target to build an object file
+src/syscall.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/syscall.c.o
+.PHONY : src/syscall.c.o
+
+src/syscall.i: src/syscall.c.i
+.PHONY : src/syscall.i
+
+# target to preprocess a source file
+src/syscall.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/syscall.c.i
+.PHONY : src/syscall.c.i
+
+src/syscall.s: src/syscall.c.s
+.PHONY : src/syscall.s
+
+# target to generate assembly for a file
+src/syscall.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/syscall.c.s
+.PHONY : src/syscall.c.s
+
 src/unistd.o: src/unistd.c.o
 .PHONY : src/unistd.o
 
@@ -216,12 +288,21 @@ help:
 	@echo "... c"
 	@echo "... test"
 	@echo "... src/crt0.o"
+	@echo "... src/dirent.o"
+	@echo "... src/dirent.i"
+	@echo "... src/dirent.s"
+	@echo "... src/fcntl.o"
+	@echo "... src/fcntl.i"
+	@echo "... src/fcntl.s"
 	@echo "... src/stdio.o"
 	@echo "... src/stdio.i"
 	@echo "... src/stdio.s"
 	@echo "... src/stdlib.o"
 	@echo "... src/stdlib.i"
 	@echo "... src/stdlib.s"
+	@echo "... src/syscall.o"
+	@echo "... src/syscall.i"
+	@echo "... src/syscall.s"
 	@echo "... src/unistd.o"
 	@echo "... src/unistd.i"
 	@echo "... src/unistd.s"

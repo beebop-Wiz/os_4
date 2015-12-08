@@ -153,3 +153,19 @@ void parse_inode_type(unsigned short type, char *out) {
   if(type & 0x800) out[10] = 'U';
   if(type & 0xC00) out[10] = 'S';
 }
+
+int get_file_inode(struct ext2_superblock *s, const char *name) {
+  struct ext2_bg_desc desc;
+  struct ext2_inode dir;
+  printf("Reading block group 0\n");
+  read_block_group(s, &desc, 0);
+  printf("Reading inode 2\n");
+  read_inode(s, &dir, 2);
+  ext2_dirstate_t ds = opendir(&dir);
+  ext2_dirent_t d;
+  while((d = dirwalk(ds)))
+    if(d->nlen && streq(d->name, name)) break;
+  int r = d->inode;
+  closedir(ds);
+  return r;
+}

@@ -2,13 +2,12 @@
 #include <stdio.h>
 #undef STDIO_C
 #include <stdlib.h>
+#include <sys/call.h>
 
 FILE *f_stderr, *f_stdin, *f_stdout;
 
 int sys_getfd() {
-  int r;
-  asm volatile("mov $4, %%eax\nint $0x81\nmov %%ecx, %0" : "=m" (r) : : "eax", "ecx");
-  return r;
+  return syscall(4, 0, 0, 0);
 }
 
 void init_stdio(void) {
@@ -24,7 +23,7 @@ void init_stdio(void) {
 int fflush(FILE *f) {
   f->buf[f->bufwp] = 0;
   char * b = f->buf + f->bufrp;
-  asm volatile("mov $0, %%eax\nmov %0, %%ebx\nint $0x81" : : "m" (b));
+  syscall(0, (int) b, 0, 0);
   f->bufrp = f->bufwp = 0;
   return 0;
 }
