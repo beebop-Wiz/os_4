@@ -11,6 +11,7 @@ section .text
 global _start
 _start:
 	mov [sector_offset], di
+	mov [gdt_address], ecx
 	mov esp, stack_top
 extern boot2_main
 	call boot2_main
@@ -22,4 +23,7 @@ extern boot2_main
 section .data
 global sector_offset
 sector_offset:
-	dw 0
+dd 0
+global gdt_address
+gdt_address:
+dd 0

@@ -55,7 +55,6 @@ goreal:
 	lidt [idt_real]
 	push ds
 	pusha
-	sti
 	mov ax,[rmregs+0]
 	mov bx,[rmregs+2]
 ;       mov cx,[rmregs+4]
@@ -75,20 +74,23 @@ int_10:
 	mov cx,[rmregs+16]
 	mov ds,cx
 	mov cx,[rmregs+4]
+	sti
 	int 0x10
+	cli
 	jmp ie
 int_13:
 	mov cx,[rmregs+16]
 	mov ds,cx
 	mov cx,[rmregs+4]
+	sti
 	int 0x13
+	cli
 	jmp ie
 ie:
 	mov [rmregs],ax
 	mov [rmregs+2],bx
 	mov [rmregs+4],cx
 	mov [rmregs+6],dx
-	cli
 	popa
 	pop ds
 	mov eax,[scr]

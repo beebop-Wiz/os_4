@@ -26,29 +26,25 @@ add_custom_command(
   )
 add_custom_target(version DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/version.h)
 
-add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c)
+add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c gdt.c user.nasm ring3.c syscall.c timer.c mt.c util.c ext2.c)
 add_dependencies(os_4.bin version)
 
 target_link_libraries(os_4.bin "-T linker.ld" -ffreestanding -nostdlib -O2 gcc)
+set_target_properties(os_4.bin PROPERTIES COMPILE_FLAGS "-DKERNEL_SOURCE")
 
 add_custom_target(image ALL ${CMAKE_CURRENT_SOURCE_DIR}/../mkimg DEPENDS os_4.bin)
 
-# Build the C library (libc.a)
+# Build init (init.exe)
 
-# add_library(c STATIC ../libc/src/crt0.s)
-
-# include_directories(libc/include)
-
-# # Build init (init.exe)
-
-# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/fs_mount)
-
-# add_executable(init.exe init/init.c)
-# add_dependencies(init.exe c)
-# add_custom_command(
-#   TARGET init.exe
-#   POST_BUILD
-#   COMMAND /bin/sync
-#   COMMENT "Synchronizing file system..."
-#   )
-# target_link_libraries(init.exe "-L../libc/lib" c)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../fs_mount)
+link_directories(../libc/lib/)
+include_directories(../libc/include/)
+add_executable(init.exe init/init.c)
+add_custom_command(
+  TARGET init.exe
+  POST_BUILD
+  COMMAND /bin/sync
+  COMMENT "Synchronizing file system..."
+  )
+add_dependencies(init.exe ../libc/lib/libc.a)
+target_link_libraries(init.exe c)

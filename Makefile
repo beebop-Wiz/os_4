@@ -164,6 +164,19 @@ image/fast:
 .PHONY : image/fast
 
 #=============================================================================
+# Target rules for targets named init.exe
+
+# Build rule for target.
+init.exe: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 init.exe
+.PHONY : init.exe
+
+# fast build rule for target.
+init.exe/fast:
+	$(MAKE) -f src/CMakeFiles/init.exe.dir/build.make src/CMakeFiles/init.exe.dir/build
+.PHONY : init.exe/fast
+
+#=============================================================================
 # Target rules for targets named os_4.bin
 
 # Build rule for target.
@@ -214,6 +227,19 @@ regen_tests: cmake_check_build_system
 regen_tests/fast:
 	$(MAKE) -f tests/CMakeFiles/regen_tests.dir/build.make tests/CMakeFiles/regen_tests.dir/build
 .PHONY : regen_tests/fast
+
+#=============================================================================
+# Target rules for targets named c
+
+# Build rule for target.
+c : cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 c
+.PHONY : c
+
+# fast build rule for target.
+c/fast:
+	$(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/build
+.PHONY : c/fast
 
 mkimg.o: mkimg.c.o
 .PHONY : mkimg.o
@@ -278,8 +304,10 @@ help:
 	@echo "... image"
 	@echo "... os_4.bin"
 	@echo "... boot2.bin"
+	@echo "... init.exe"
 	@echo "... doc"
 	@echo "... regen_tests"
+	@echo "... c"
 	@echo "... mkimg.o"
 	@echo "... mkimg.i"
 	@echo "... mkimg.s"

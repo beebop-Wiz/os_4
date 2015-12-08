@@ -7,3 +7,4 @@
 subdirs(src)
 subdirs(doc)
 subdirs(tests)
+subdirs(libc)

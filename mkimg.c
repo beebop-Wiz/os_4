@@ -72,7 +72,7 @@ int main(void) {
   printf("Compiling bootloader...\n");
   system("nasm -f bin -o " BOOTLOADER_OBJ " " BOOTLOADER_ASM);
   printf("Opening files...\n");
-  int devfd, loaderfd, osfd, boot2fd;
+  int devfd, loaderfd, osfd, boot2fd, initfd;
   char buf[512];
   int i;
   for(i = 0; i < 512; i++) buf[i] = 0;

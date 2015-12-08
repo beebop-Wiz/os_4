@@ -140,6 +140,20 @@ image/fast:
 .PHONY : image/fast
 
 # Convenience name for target.
+src/CMakeFiles/init.exe.dir/rule:
+	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/init.exe.dir/rule
+.PHONY : src/CMakeFiles/init.exe.dir/rule
+
+# Convenience name for target.
+init.exe: src/CMakeFiles/init.exe.dir/rule
+.PHONY : init.exe
+
+# fast build rule for target.
+init.exe/fast:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/init.exe.dir/build.make src/CMakeFiles/init.exe.dir/build
+.PHONY : init.exe/fast
+
+# Convenience name for target.
 src/CMakeFiles/os_4.bin.dir/rule:
 	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/os_4.bin.dir/rule
 .PHONY : src/CMakeFiles/os_4.bin.dir/rule
@@ -223,6 +237,54 @@ debug.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/debug.c.s
 .PHONY : debug.c.s
 
+ext2.o: ext2.c.o
+.PHONY : ext2.o
+
+# target to build an object file
+ext2.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/ext2.c.o
+.PHONY : ext2.c.o
+
+ext2.i: ext2.c.i
+.PHONY : ext2.i
+
+# target to preprocess a source file
+ext2.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/ext2.c.i
+.PHONY : ext2.c.i
+
+ext2.s: ext2.c.s
+.PHONY : ext2.s
+
+# target to generate assembly for a file
+ext2.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/ext2.c.s
+.PHONY : ext2.c.s
+
+gdt.o: gdt.c.o
+.PHONY : gdt.o
+
+# target to build an object file
+gdt.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/gdt.c.o
+.PHONY : gdt.c.o
+
+gdt.i: gdt.c.i
+.PHONY : gdt.i
+
+# target to preprocess a source file
+gdt.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/gdt.c.i
+.PHONY : gdt.c.i
+
+gdt.s: gdt.c.s
+.PHONY : gdt.s
+
+# target to generate assembly for a file
+gdt.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/gdt.c.s
+.PHONY : gdt.c.s
+
 idt.o: idt.c.o
 .PHONY : idt.o
 
@@ -258,6 +320,30 @@ idt.nasm.o:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/idt.nasm.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.nasm.o
 .PHONY : idt.nasm.o
+
+init/init.o: init/init.c.o
+.PHONY : init/init.o
+
+# target to build an object file
+init/init.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/init.exe.dir/build.make src/CMakeFiles/init.exe.dir/init/init.c.o
+.PHONY : init/init.c.o
+
+init/init.i: init/init.c.i
+.PHONY : init/init.i
+
+# target to preprocess a source file
+init/init.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/init.exe.dir/build.make src/CMakeFiles/init.exe.dir/init/init.c.i
+.PHONY : init/init.c.i
+
+init/init.s: init/init.c.s
+.PHONY : init/init.s
+
+# target to generate assembly for a file
+init/init.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/init.exe.dir/build.make src/CMakeFiles/init.exe.dir/init/init.c.s
+.PHONY : init/init.c.s
 
 kernel.o: kernel.c.o
 .PHONY : kernel.o
@@ -306,6 +392,30 @@ malloc.s: malloc.c.s
 malloc.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/malloc.c.s
 .PHONY : malloc.c.s
+
+mt.o: mt.c.o
+.PHONY : mt.o
+
+# target to build an object file
+mt.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/mt.c.o
+.PHONY : mt.c.o
+
+mt.i: mt.c.i
+.PHONY : mt.i
+
+# target to preprocess a source file
+mt.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/mt.c.i
+.PHONY : mt.c.i
+
+mt.s: mt.c.s
+.PHONY : mt.s
+
+# target to generate assembly for a file
+mt.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/mt.c.s
+.PHONY : mt.c.s
 
 paging.o: paging.c.o
 .PHONY : paging.o
@@ -393,6 +503,110 @@ real.nasm.o:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/real.nasm.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/real.nasm.o
 .PHONY : real.nasm.o
+
+ring3.o: ring3.c.o
+.PHONY : ring3.o
+
+# target to build an object file
+ring3.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/ring3.c.o
+.PHONY : ring3.c.o
+
+ring3.i: ring3.c.i
+.PHONY : ring3.i
+
+# target to preprocess a source file
+ring3.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/ring3.c.i
+.PHONY : ring3.c.i
+
+ring3.s: ring3.c.s
+.PHONY : ring3.s
+
+# target to generate assembly for a file
+ring3.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/ring3.c.s
+.PHONY : ring3.c.s
+
+syscall.o: syscall.c.o
+.PHONY : syscall.o
+
+# target to build an object file
+syscall.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/syscall.c.o
+.PHONY : syscall.c.o
+
+syscall.i: syscall.c.i
+.PHONY : syscall.i
+
+# target to preprocess a source file
+syscall.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/syscall.c.i
+.PHONY : syscall.c.i
+
+syscall.s: syscall.c.s
+.PHONY : syscall.s
+
+# target to generate assembly for a file
+syscall.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/syscall.c.s
+.PHONY : syscall.c.s
+
+timer.o: timer.c.o
+.PHONY : timer.o
+
+# target to build an object file
+timer.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/timer.c.o
+.PHONY : timer.c.o
+
+timer.i: timer.c.i
+.PHONY : timer.i
+
+# target to preprocess a source file
+timer.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/timer.c.i
+.PHONY : timer.c.i
+
+timer.s: timer.c.s
+.PHONY : timer.s
+
+# target to generate assembly for a file
+timer.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/timer.c.s
+.PHONY : timer.c.s
+
+user.o: user.nasm.o
+.PHONY : user.o
+
+# target to build an object file
+user.nasm.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/user.nasm.o
+.PHONY : user.nasm.o
+
+util.o: util.c.o
+.PHONY : util.o
+
+# target to build an object file
+util.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/util.c.o
+.PHONY : util.c.o
+
+util.i: util.c.i
+.PHONY : util.i
+
+# target to preprocess a source file
+util.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/util.c.i
+.PHONY : util.c.i
+
+util.s: util.c.s
+.PHONY : util.s
+
+# target to generate assembly for a file
+util.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/util.c.s
+.PHONY : util.c.s
 
 vbe.o: vbe.c.o
 .PHONY : vbe.o
@@ -515,6 +729,7 @@ help:
 	@echo "... os_4.bin"
 	@echo "... boot2.bin"
 	@echo "... test"
+	@echo "... init.exe"
 	@echo "... boot.o"
 	@echo "... boot2.o"
 	@echo "... boot2.i"
@@ -522,16 +737,28 @@ help:
 	@echo "... debug.o"
 	@echo "... debug.i"
 	@echo "... debug.s"
+	@echo "... ext2.o"
+	@echo "... ext2.i"
+	@echo "... ext2.s"
+	@echo "... gdt.o"
+	@echo "... gdt.i"
+	@echo "... gdt.s"
 	@echo "... idt.o"
 	@echo "... idt.i"
 	@echo "... idt.s"
 	@echo "... idt.o"
+	@echo "... init/init.o"
+	@echo "... init/init.i"
+	@echo "... init/init.s"
 	@echo "... kernel.o"
 	@echo "... kernel.i"
 	@echo "... kernel.s"
 	@echo "... malloc.o"
 	@echo "... malloc.i"
 	@echo "... malloc.s"
+	@echo "... mt.o"
+	@echo "... mt.i"
+	@echo "... mt.s"
 	@echo "... paging.o"
 	@echo "... paging.i"
 	@echo "... paging.s"
@@ -542,6 +769,19 @@ help:
 	@echo "... real.i"
 	@echo "... real.s"
 	@echo "... real.o"
+	@echo "... ring3.o"
+	@echo "... ring3.i"
+	@echo "... ring3.s"
+	@echo "... syscall.o"
+	@echo "... syscall.i"
+	@echo "... syscall.s"
+	@echo "... timer.o"
+	@echo "... timer.i"
+	@echo "... timer.s"
+	@echo "... user.o"
+	@echo "... util.o"
+	@echo "... util.i"
+	@echo "... util.s"
 	@echo "... vbe.o"
 	@echo "... vbe.i"
 	@echo "... vbe.s"

@@ -33,13 +33,13 @@ typedef struct idtr idtr_t;
 #define MAKE_ADDR(s, a) do { s.offset_lo = ((unsigned int) a) & 0xFFFF; s.offset_hi = (((unsigned int) a) >> 16) & 0xFFFF;} while(0);
 
 struct registers {
-  unsigned short ds;
+  unsigned short gs, fs, es, ds;
   unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax;
   unsigned int int_no, err;
   unsigned int eip, cs, eflags, useresp, ss;
 } __attribute__ ((packed));
 
-typedef struct registers regs_t;
+typedef struct registers * regs_t;
 
 /**
  * Loads the provided IDTR with the ASM `lidt` instruction.

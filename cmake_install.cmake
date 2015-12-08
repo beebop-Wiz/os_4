@@ -37,6 +37,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/beebop/src/os_4/src/cmake_install.cmake")
   include("/home/beebop/src/os_4/doc/cmake_install.cmake")
   include("/home/beebop/src/os_4/tests/cmake_install.cmake")
+  include("/home/beebop/src/os_4/libc/cmake_install.cmake")
 
 endif()
 

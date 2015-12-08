@@ -22,14 +22,15 @@ void init_malloc() {
 }
 
 extern page_table_t kernel_pages;
+extern unsigned char paging_enabled;
 
 void page_all_allocations() {
   struct malloc_header *ptr = MALLOC_ARENA;
-  while(ptr->next) {
-    printf("Paging allocation for %x\n", ptr);
+  while(ptr) {
+    printd("Paging allocation for %x-%x\n", ptr, ptr + ptr->length);
     id_page(kernel_pages, ((unsigned int) ptr) / 4096);
     unsigned int i;
-    for(i = 0; i < ptr->length / 4096; i++) {
+    for(i = 0; i < (ptr->length / 4096); i++) {
       id_page(kernel_pages, (((unsigned int) ptr) / 4096) + i);
     }
     ptr = ptr->next;
@@ -48,6 +49,23 @@ void *align_address(void *addr, int align) {
   unsigned int off = (unsigned int) addr;
   int pad = (align - (off % align)) % align;
   return (void *) (off + pad);
+}
+
+void *page_allocation(void *addr, unsigned int size) {
+  printd("Allocating %x (%d)\n", addr, paging_enabled);
+  if(!paging_enabled) return addr;
+  printd("Paging new memory for allocation at %x (page %x, dir %x)\n", (unsigned int) addr, (unsigned int) addr / 4096 , ((unsigned int) addr / 4096) / 1024);
+  unsigned int i;
+  id_page(kernel_pages, ((unsigned int) addr) / 4096);
+  for(i = 0; i < (size / 4096) + 2; i++) {
+    id_page(kernel_pages, (((unsigned int) addr) / 4096) + i);
+  }
+  return addr;
+}
+
+void page_header(struct malloc_header *h) {
+  if(!paging_enabled) return;
+  id_page(kernel_pages, ((unsigned int) h) / 4096);
 }
 
 unsigned int header_diff(struct malloc_header *a) {
@@ -71,7 +89,7 @@ void *malloc_a(unsigned int size, int align) {
       ptr->type = BLOCK_USED;
       ptr->length = size;
       ptr->owner = (void (*)()) __builtin_return_address(0);
-      return align_address(PTR_ADD(ptr, sizeof(struct malloc_header), void *), align);
+      return page_allocation(align_address(PTR_ADD(ptr, sizeof(struct malloc_header), void *), align), size);
     }
     ptr = ptr->next;
   }
@@ -88,12 +106,13 @@ void *malloc_a(unsigned int size, int align) {
     ptr->type = BLOCK_USED;
     ptr->length = size;
     ptr->owner = (void (*)()) __builtin_return_address(0);
-    return align_address(PTR_ADD(ptr, sizeof(struct malloc_header), void *), align);
+    return page_allocation(align_address(PTR_ADD(ptr, sizeof(struct malloc_header), void *), align), size);
   }
  nofree:
-  printd("Found no free blocks.\n");
+  printd("Found no free blocks. Putting a new one at %x (prev %x + %x)\n", PTR_ADD(ptr, sizeof(struct malloc_header) + ptr->length, struct malloc_header *), ptr, ptr->length);
   // ok, now we definitely have to allocate one
   ptr->next = PTR_ADD(ptr, sizeof(struct malloc_header) + ptr->length, struct malloc_header *);
+  page_header(ptr->next);
   ptr->next->magic = MALLOC_MAGIC;
   ptr->next->type = BLOCK_USED;
   if(align)
@@ -102,7 +121,7 @@ void *malloc_a(unsigned int size, int align) {
     ptr->next->length = size;
   ptr->next->owner = (void (*)()) __builtin_return_address(0);
   printd("New block allocated, size %d loc %x.\n", ptr->next->length, ptr->next);
-  return align_address(PTR_ADD(ptr->next, sizeof(struct malloc_header), void *), align);
+  return page_allocation(align_address(PTR_ADD(ptr->next, sizeof(struct malloc_header), void *), align), size);
 }
 
 void free(void *mem) {
