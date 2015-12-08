@@ -124,6 +124,7 @@ void kernel_main(unsigned int **bdata) {
     memcpy((void *) ph.p_vaddr, init_buf + ph.p_offset, ph.p_filesz);
   }
   set_process_entry(init_pid, init_header.entry);
+  printf("Starting MT.\n");
   enable_mt();
   for(;;) {
     asm("hlt");

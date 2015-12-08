@@ -23,7 +23,7 @@ void do_syscall(regs_t r) {
   int i;
   switch(SYS_NO) {
   case SYS_WRITE:
-    printf("%s", (char *) SYS_A2);
+    printf("%s", (char *) SYS_A1);
     break;
   case SYS_EXIT:
     proc_exit(r);
