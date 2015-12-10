@@ -97,10 +97,22 @@ void shutdown() {
   }
 }
 
+unsigned int calc_regs_cksum(regs_t r) {
+  unsigned int v = 0;
+  unsigned int i;
+  for(i = 0; i < sizeof(struct registers); i++) {
+    v += ((char *) r)[i] << (i % 24);
+  }
+  return v;
+}
+
 void switch_ctx(regs_t r) {
   printd("CONTEXT SWITCH\n");
-  if(mt_enabled > 1 && ptab[cur_ctx]) 
+  if(mt_enabled > 1 && ptab[cur_ctx]) {
+    printd("Old cksum (%d) %x => %x\n", cur_ctx, ptab[cur_ctx]->regs_cksum, calc_regs_cksum(r));
+    ptab[cur_ctx]->regs_cksum = calc_regs_cksum(r);
     memcpy(ptab[cur_ctx]->r, r, sizeof(struct registers));
+  }
   int i;
   for(i = 0; i < 65536; i++) {
     if(ptab[i] && i > cur_ctx) goto no_rollover;
@@ -116,6 +128,8 @@ void switch_ctx(regs_t r) {
   memcpy(r, ptab[i]->r, sizeof(struct registers));
   cur_ctx = i;
   mt_enabled = 2;		/* init bootstrap complete :) */
+  printd("New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
+  ptab[i]->regs_cksum = calc_regs_cksum(r);
   printd("loaded ctx %d\n", i);
 }
 

@@ -45,6 +45,7 @@ void do_syscall(regs_t r) {
     break;
   case SYS_FORK:
     r->ecx = fork(r);
+    switch_ctx(r);
     break;
   case SYS_OPEN:
     

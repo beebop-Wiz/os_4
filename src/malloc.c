@@ -45,9 +45,12 @@ void *malloc(unsigned int size) {
 }
 
 void *align_address(void *addr, int align) {
+  struct malloc_header *ptr = (struct malloc_header *) addr - 1;
+  ptr->mem = addr;
   if(!align) return addr;
   unsigned int off = (unsigned int) addr;
   int pad = (align - (off % align)) % align;
+  ptr->mem = (void *) (off + pad);
   return (void *) (off + pad);
 }
 
@@ -127,7 +130,11 @@ void *malloc_a(unsigned int size, int align) {
 void free(void *mem) {
   struct malloc_header *ptr = (struct malloc_header *) mem - 1;
   if(ptr->magic != MALLOC_MAGIC) {
-    printf("Something very bad has happened when freeing %x\n", mem);
+    // check if it's an aligned block
+    ptr = MALLOC_ARENA;
+    while(ptr && ptr->mem != mem) ptr = ptr->next;
+    if(!ptr)
+      printf("Something very bad has happened when freeing %x\n", mem);
   }
   ptr->type = BLOCK_FREE;
   ptr->owner = 0;

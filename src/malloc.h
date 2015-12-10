@@ -9,6 +9,7 @@ struct malloc_header {
   unsigned int magic;
   unsigned short type;
   unsigned int length;
+  void *mem;
   void (*owner)();
   struct malloc_header *next;
 };
