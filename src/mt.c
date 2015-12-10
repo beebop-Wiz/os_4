@@ -126,9 +126,11 @@ void free_ptab(page_table_t pt) {
 }
 
 void proc_exit(regs_t r) {
+  printf("Process %d exiting...\n", cur_ctx);
   free_ptab(ptab[cur_ctx]->pt);
   free(ptab[cur_ctx]->r);
   free(ptab[cur_ctx]);
   ptab[cur_ctx] = 0;
+  printf("done\n");
   switch_ctx(r);
 }

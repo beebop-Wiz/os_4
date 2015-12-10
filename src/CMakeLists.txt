@@ -36,7 +36,7 @@ add_custom_target(image ALL ${CMAKE_CURRENT_SOURCE_DIR}/../mkimg DEPENDS os_4.bi
 
 # Build init (init.exe)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../fs_mount)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../fs_mount/boot/)
 link_directories(../libc/lib/)
 include_directories(../libc/include/)
 add_executable(init.exe init/init.c)

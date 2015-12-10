@@ -126,6 +126,9 @@ void *malloc_a(unsigned int size, int align) {
 
 void free(void *mem) {
   struct malloc_header *ptr = (struct malloc_header *) mem - 1;
+  if(ptr->magic != MALLOC_MAGIC) {
+    printf("Something very bad has happened when freeing %x\n", mem);
+  }
   ptr->type = BLOCK_FREE;
   ptr->owner = 0;
   printd("Freed %d bytes\n", ptr->length);

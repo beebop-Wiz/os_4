@@ -1,7 +1,7 @@
 #ifndef MALLOC_H
 #define MALLOC_H
 
-#define MALLOC_MAGIC 0xa10ca7ed
+#define MALLOC_MAGIC 0xabcdefff
 #define BLOCK_FREE 0xf4ee
 #define BLOCK_USED 0x25ed
 

@@ -50,20 +50,20 @@ void read_block_group(struct ext2_superblock *s, struct ext2_bg_desc *desc, int 
   int s_idx = b_idx * 2 + 4;
   unsigned char sector[512];
   read_sector(s_idx, sector);
-  memcpy((void *) desc, sector + t_idx, 32);
+  memcpy((void *) desc, sector + (t_idx * 32), 32);
 }
 
 void read_inode(struct ext2_superblock *s, struct ext2_inode *inode, int inode_idx) {
-  int bg_idx = (inode_idx - 1) / s->ig_size;
-  int it_idx = (inode_idx - 1) % s->ig_size;
+  int block_group = (inode_idx - 1) / s->ig_size;
+  int local_index = (inode_idx - 1) % s->ig_size;
   struct ext2_bg_desc desc;
-  read_block_group(s, &desc, bg_idx);
-  int inodes_per_block = s->block_size / s->inode_size;
-  int it_sector = desc.inode_table * 2 + it_idx / inodes_per_block * 2;
-  int sector_idx = (inode_idx - 1) % (inodes_per_block / 2);
+  read_block_group(s, &desc, block_group);
+  int block_offset = local_index * sizeof(struct ext2_inode);
+  int sector_offset = block_offset % 512;
+  int it_sector = desc.inode_table * 2 + (block_offset / 512);
   unsigned char sector[512];
   read_sector(it_sector, sector);
-  memcpy((void *) inode, sector + sector_idx * s->inode_size, sizeof(struct ext2_inode));
+  memcpy((void *) inode, sector + sector_offset, sizeof(struct ext2_inode));
 }
 
 void get_block(struct ext2_inode *inode, int block_idx, unsigned char *block) {
@@ -154,13 +154,9 @@ void parse_inode_type(unsigned short type, char *out) {
   if(type & 0xC00) out[10] = 'S';
 }
 
-int get_file_inode(struct ext2_superblock *s, const char *name) {
-  struct ext2_bg_desc desc;
+int get_file_inode(struct ext2_superblock *s, int dir_inode, const char *name) {
   struct ext2_inode dir;
-  printf("Reading block group 0\n");
-  read_block_group(s, &desc, 0);
-  printf("Reading inode 2\n");
-  read_inode(s, &dir, 2);
+  read_inode(s, &dir, dir_inode);
   ext2_dirstate_t ds = opendir(&dir);
   ext2_dirent_t d;
   while((d = dirwalk(ds)))
@@ -168,4 +164,50 @@ int get_file_inode(struct ext2_superblock *s, const char *name) {
   int r = d->inode;
   closedir(ds);
   return r;
+}
+
+char *path_tokenize(char *path, char **loc) {
+  if(!*path) return 0;
+  char *r;
+  // skip initial slashes
+  while(*path == '/') path++;
+  r = (char *) path; // save current position
+  while(*path != '/' && *path) path++;
+  *path = 0; 
+  *loc = path + 1;
+  return r;
+}
+
+void list_directory(struct ext2_superblock *s, struct ext2_inode *i) {
+  ext2_dirstate_t root = opendir(i);
+  ext2_dirent_t d;
+  struct ext2_inode sub;
+  char out[11];
+  while((d = dirwalk(root))) {
+    if(d->nlen) {
+      d->name[d->nlen] = 0;
+      read_inode(s, &sub, d->inode);
+      parse_inode_type(sub.type, out);
+      printf("%s %s %d %d\n", out, d->name, sub.size_low, d->inode);
+    }
+  }
+  closedir(root);
+}
+
+int get_path_inode(struct ext2_superblock *s, const char *p) {
+  char *token;
+  char *path = malloc(strlen(p) + 2);
+  char *p_orig = path;
+  memcpy(path, p, strlen(p) + 2);
+  path[strlen(p) + 1] = 0;
+  int dir_inode = 2;
+  struct ext2_inode dir;
+  while((token = path_tokenize(path, &path))) {
+    if(!strlen(token)) break;
+    read_inode(s, &dir, dir_inode);
+    list_directory(s, &dir);
+    dir_inode = get_file_inode(s, dir_inode, token);
+  }
+  free(p_orig);
+  return dir_inode;
 }

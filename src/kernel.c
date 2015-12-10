@@ -79,6 +79,7 @@ void kernel_main(unsigned int **bdata) {
   struct ext2_superblock s;
   struct ext2_bg_desc desc;
   struct ext2_inode rd, sub;
+  int init_inode;
   read_superblock(&s);
   printf("Read EXT2 superblock\n");
   printf("\tversion %d.%d magic %x n_blocks %d\n\tblock size %d (%d sectors)\n", s.vers_major, s.vers_minor, s.magic, s.n_blocks, s.block_size, s.block_size / 2);
@@ -90,7 +91,10 @@ void kernel_main(unsigned int **bdata) {
   char out[11];
   parse_inode_type(rd.type, out);
   printf("\ttype %s atime %d n_sectors %d\n", out, rd.atime, rd.n_sectors);
-  printf("\n\nListing:\n");
+  printf("Looking for init... \n");
+  read_inode(&s, &sub, init_inode = get_path_inode(&s, "boot/init.exe"));
+  printf("\tinit at %d\n", init_inode);
+  /*  printf("\n\nListing:\n");
   ext2_dirstate_t root = opendir(&rd);
   ext2_dirent_t d;
   while((d = dirwalk(root))) {
@@ -102,7 +106,7 @@ void kernel_main(unsigned int **bdata) {
       if(streq(d->name, "init.exe")) break;
     }
   }
-  closedir(root);
+  closedir(root); */
   int init_pid = new_process(0);
   printf("\nInit size: %d\n", sub.size_low);
   unsigned char *init_buf = malloc(sub.n_sectors * 512);
