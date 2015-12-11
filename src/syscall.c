@@ -37,6 +37,7 @@ void do_syscall(regs_t r) {
   case SYS_GETFD:
     for(i = 0; i < FD_MAX; i++) {
       if(!(ptab[cur_ctx]->fds[i] & FD_PRESENT)) {
+	ptab[cur_ctx]->fds[i] |= FD_PRESENT;
 	SYS_RET(i);
 	return;
       }
@@ -47,8 +48,10 @@ void do_syscall(regs_t r) {
     r->ecx = fork(r);
     switch_ctx(r);
     break;
-  case SYS_OPEN:
-    
+  case SYS_BINDFD:
+    ptab[cur_ctx]->fds[SYS_A2] |= FD_BOUND;
+    ptab[cur_ctx]->bound[SYS_A2].inode = 0;
+    ptab[cur_ctx]->bound[SYS_A2].off = 0;
     break;
   default: return;
   }

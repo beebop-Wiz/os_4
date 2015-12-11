@@ -80,6 +80,11 @@ unsigned short fork(regs_t r) {
     }
     old = old->next;
   }
+  int i;
+  for(i = 0; i < FD_MAX; i++) {
+    ptab[pid]->fds[i] = ptab[cur_ctx]->fds[i];
+    memcpy(&ptab[pid]->bound[i], &ptab[cur_ctx]->bound[i], sizeof(struct fdinfo));
+  }
   printd("New pid: %d Old pid %d\n", pid, cur_ctx);
   ptab[pid]->r->ecx = 0;
   return pid;
