@@ -1,5 +1,6 @@
 #include "real.h"
 #include "idt.h"
+#include "vgatext.h"
 
 void bios_intr(int errupt) {
   asm volatile("cli");

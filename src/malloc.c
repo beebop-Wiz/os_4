@@ -81,6 +81,7 @@ void *malloc_a(unsigned int size, int align) {
   printd("Beginning allocation of %d bytes (up to %d).\n", size, size + align);
   // traverse the array looking for free blocks
   while(ptr->next) {
+    printd("Checking block at %x\n", ptr);
     if(ptr->type == BLOCK_FREE && ptr->length < size + sizeof(struct malloc_header)) {
       // found a free block
       printd("Found a free, allocated block at offset %x\n",
@@ -123,6 +124,7 @@ void *malloc_a(unsigned int size, int align) {
   else
     ptr->next->length = size;
   ptr->next->owner = (void (*)()) __builtin_return_address(0);
+  ptr->next->next = 0;
   printd("New block allocated, size %d loc %x.\n", ptr->next->length, ptr->next);
   return page_allocation(align_address(PTR_ADD(ptr->next, sizeof(struct malloc_header), void *), align), size);
 }

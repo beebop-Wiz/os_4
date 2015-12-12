@@ -3,6 +3,7 @@
 #include "vgatext.h"
 #include "mt.h"
 #include "malloc.h"
+#include "ext2.h"
 
 // eax = syscall no
 // ebx = arg 1
@@ -18,6 +19,7 @@
 
 extern volatile int cur_ctx;
 extern struct process *ptab[65536];
+//extern struct ext2_superblock superblock;
 
 void do_syscall(regs_t r) {
   int i;
@@ -50,7 +52,11 @@ void do_syscall(regs_t r) {
     break;
   case SYS_BINDFD:
     ptab[cur_ctx]->fds[SYS_A2] |= FD_BOUND;
-    ptab[cur_ctx]->bound[SYS_A2].inode = 0;
+    struct ext2_superblock *superblock = malloc(sizeof(struct ext2_superblock));
+    read_superblock(superblock);
+    printf("Read superblock\n");
+    ptab[cur_ctx]->bound[SYS_A2].inode = get_path_inode(superblock, (char *) SYS_A1);
+    printf("Read inode (%d)\n", ptab[cur_ctx]->bound[SYS_A2].inode);
     ptab[cur_ctx]->bound[SYS_A2].off = 0;
     break;
   default: return;

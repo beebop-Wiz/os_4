@@ -76,23 +76,29 @@ void kernel_main(unsigned int **bdata) {
   //  new_process((unsigned int) test_mt_2);
   //  printf("Enabling MT\n");
   //  enable_mt();
-  struct ext2_superblock s;
   struct ext2_bg_desc desc;
   struct ext2_inode rd, sub;
+  struct ext2_superblock superblock;
   int init_inode;
-  read_superblock(&s);
+  read_superblock(&superblock);
   printf("Read EXT2 superblock\n");
-  printf("\tversion %d.%d magic %x n_blocks %d\n\tblock size %d (%d sectors)\n", s.vers_major, s.vers_minor, s.magic, s.n_blocks, s.block_size, s.block_size / 2);
+  printf("\tversion %d.%d magic %x n_blocks %d\n\tblock size %d (%d sectors)\n",
+	 superblock.vers_major,
+	 superblock.vers_minor,
+	 superblock.magic,
+	 superblock.n_blocks,
+	 superblock.block_size,
+	 superblock.block_size / 2);
   printf("Attempting to read BGD 0\n");
-  read_block_group(&s, &desc, 0);
+  read_block_group(&superblock, &desc, 0);
   printf("\titab idx %d\n", desc.inode_table);
   printf("Attempting to read inode 2\n");
-  read_inode(&s, &rd, 2);
+  read_inode(&superblock, &rd, 2);
   char out[11];
   parse_inode_type(rd.type, out);
   printf("\ttype %s atime %d n_sectors %d\n", out, rd.atime, rd.n_sectors);
   printf("Looking for init... \n");
-  read_inode(&s, &sub, init_inode = get_path_inode(&s, "boot/init.exe"));
+  read_inode(&superblock, &sub, init_inode = get_path_inode(&superblock, "boot/init.exe"));
   printf("\tinit at %d\n", init_inode);
   /*  printf("\n\nListing:\n");
   ext2_dirstate_t root = opendir(&rd);
