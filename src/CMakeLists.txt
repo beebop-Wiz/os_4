@@ -26,7 +26,7 @@ add_custom_command(
   )
 add_custom_target(version DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/version.h)
 
-add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c gdt.c user.nasm ring3.c syscall.c timer.c mt.c util.c ext2.c)
+add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c gdt.c user.nasm ring3.c syscall.c timer.c mt.c util.c ext2.c keyboard.c pic.c)
 add_dependencies(os_4.bin version)
 
 target_link_libraries(os_4.bin "-T linker.ld" -ffreestanding -nostdlib -O2 gcc)
@@ -42,7 +42,13 @@ include_directories(../libc/include/)
 add_executable(init.exe init/init.c)
 add_executable(test.exe init/test.c)
 add_custom_command(
-  TARGET init.exe test.exe
+  TARGET init.exe
+  POST_BUILD
+  COMMAND /bin/sync
+  COMMENT "Synchronizing file system..."
+  )
+add_custom_command(
+  TARGET test.exe
   POST_BUILD
   COMMAND /bin/sync
   COMMENT "Synchronizing file system..."

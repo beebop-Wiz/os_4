@@ -112,6 +112,7 @@ unsigned int calc_regs_cksum(regs_t r) {
 }
 
 void switch_ctx(regs_t r) {
+  if(!mt_enabled) return;
   printd("CONTEXT SWITCH\n");
   if(mt_enabled > 1 && ptab[cur_ctx]) {
     printd("Old cksum (%d) %x => %x\n", cur_ctx, ptab[cur_ctx]->regs_cksum, calc_regs_cksum(r));
@@ -135,7 +136,7 @@ void switch_ctx(regs_t r) {
   mt_enabled = 2;		/* init bootstrap complete :) */
   printd("New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
   ptab[i]->regs_cksum = calc_regs_cksum(r);
-  printd("loaded ctx %d\n", i);
+  printd("loaded ctx %d (%x)\n", i, r->eip);
 }
 
 void free_ptab(page_table_t pt) {

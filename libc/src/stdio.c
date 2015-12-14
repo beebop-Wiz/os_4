@@ -169,10 +169,17 @@ int fgetc(FILE *f) {
      (f->bufrp < (BUFSIZ - 1))) { // data available
     r = f->buf[f->bufrp++];
     if(f->bufrp >= BUFSIZ) f->bufrp = 0;
+  } else if(f->err) {
+    r = -1;
   } else { // data not available, refill buffer
     f->bufrp = 0;
-    f->bufwp = syscall(7, f->fd, (int) f->buf, 0);
+    do {
+      f->bufwp = syscall(7, f->fd, (int) f->buf, 0); // busy-wait until data available
+      int i;
+      for(i = 0; i < 1000000; i++);
+    } while(!f->bufwp);
     r = f->buf[f->bufrp++];
   }
+  if(r == (char) -1) f->err = 1;
   return r;
 }

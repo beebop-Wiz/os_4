@@ -12,9 +12,17 @@ int main(void) {
     putchar(c);
   }
   printf("\n");
-  if(fork()) {
-    printf("Started child process\n");
-  } else 
-    execv("boot/test.exe", 0);
+  char cmd_buf[128];
+  int cmd_ptr;
+  pid_t child;
+  while(1) {
+    printf("%% ");
+    fflush(stdout);
+    cmd_ptr = 0;
+    while((cmd_buf[cmd_ptr++] = getchar()) != '\n') ;
+    cmd_buf[cmd_ptr - 1] = 0;
+    if(!(child = fork()))
+      execv(cmd_buf, 0);
+  }
   return 0;
 }

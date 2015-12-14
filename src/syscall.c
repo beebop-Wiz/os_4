@@ -7,6 +7,7 @@
 #include "elf.h"
 #include "util.h"
 #include "debug.h"
+#include "keyboard.h"
 
 #ifdef DEBUG_SYSCALL
 #define printd(fmt, ...) printf(fmt, ##__VA_ARGS__)
@@ -33,19 +34,20 @@ void do_syscall(regs_t r) {
   printd("SYSCALL: %d %x %x %x\n", SYS_NO, SYS_A1, SYS_A2, SYS_A3);
   unsigned int i;
   switch(SYS_NO) {
-  case SYS_WRITE:
+  case SYS_WRITE: // 0
     printf("%s", (char *) SYS_A1);
+    vga_redraw();
     break;
-  case SYS_EXIT:
+  case SYS_EXIT: // 1
     proc_exit(r);
     break;
-  case SYS_MALLOC:
+  case SYS_MALLOC: // 2
     SYS_RET((unsigned int) malloc(SYS_A1));
     break;
-  case SYS_FREE:
+  case SYS_FREE: // 3
     free((void *) SYS_A1);
     break;
-  case SYS_GETFD:
+  case SYS_GETFD: // 4
     for(i = 0; i < FD_MAX; i++) {
       if(!(ptab[cur_ctx]->fds[i] & FD_PRESENT)) {
 	ptab[cur_ctx]->fds[i] |= FD_PRESENT;
@@ -55,9 +57,10 @@ void do_syscall(regs_t r) {
     }
     SYS_RET(-1);
     break;
-  case SYS_FORK:
+  case SYS_FORK: // 5
     r->ecx = fork(r);
-    switch_ctx(r);
+    if((unsigned) cur_ctx != r->ecx)
+      switch_ctx(r);
     break;
   case SYS_BINDFD:
     ptab[cur_ctx]->fds[SYS_A2] |= FD_BOUND;
@@ -74,21 +77,29 @@ void do_syscall(regs_t r) {
     break;
   case SYS_READ: // sys_read(fd, buf); reads 1 FS block (or less) from
 		 // fd
-    superblock = malloc(sizeof(struct ext2_superblock));
-    read_superblock(superblock);
-    printd("Read superblock\n");
-    read_inode(superblock, &inode, ptab[cur_ctx]->bound[SYS_A1].inode);
-    int block_idx = ptab[cur_ctx]->bound[SYS_A1].off / 1024;
-    int n_bytes = ptab[cur_ctx]->bound[SYS_A1].size - ptab[cur_ctx]->bound[SYS_A1].off;
-    ptab[cur_ctx]->bound[SYS_A1].off += n_bytes;
-    get_block(&inode, block_idx, (unsigned char *) SYS_A2);
-    if(n_bytes > 1024) n_bytes = 1024;
-    else ((char *) SYS_A2)[n_bytes] = -1;
-    SYS_RET(n_bytes);
-    printd("Read completed\n");
-    free(superblock);
+    if(SYS_A1) {
+      superblock = malloc(sizeof(struct ext2_superblock));
+      read_superblock(superblock);
+      printd("Read superblock\n");
+      read_inode(superblock, &inode, ptab[cur_ctx]->bound[SYS_A1].inode);
+      int block_idx = ptab[cur_ctx]->bound[SYS_A1].off / 1024;
+      int n_bytes = ptab[cur_ctx]->bound[SYS_A1].size - ptab[cur_ctx]->bound[SYS_A1].off;
+      ptab[cur_ctx]->bound[SYS_A1].off += n_bytes;
+      get_block(&inode, block_idx, (unsigned char *) SYS_A2);
+      if(n_bytes > 1024) n_bytes = 1024;
+      else ((char *) SYS_A2)[n_bytes++] = -1;
+      SYS_RET(n_bytes);
+      printd("Read completed\n");
+      free(superblock);
+    } else {
+      int n_bytes = 0;
+      while(((((char *) SYS_A2)[n_bytes] = keyboard_getchar()) > 0)
+	    && (n_bytes <= 1024)) n_bytes++;
+      SYS_RET(n_bytes);
+    }
     break;
   case SYS_EXEC: // exec(path, argv[])
+    printf("exec `%s`\n", (char *) SYS_A1);
     superblock = malloc(sizeof(struct ext2_superblock));
     read_superblock(superblock);
     read_inode(superblock, &inode, get_path_inode(superblock, (char *) SYS_A1));

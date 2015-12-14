@@ -88,7 +88,10 @@ void *malloc_a(unsigned int size, int align) {
 	     PTR_SUB(ptr, MALLOC_ARENA, unsigned int));
       if(align) {
 	printd("\tChecking alignment...\n");
-	if(header_diff(ptr) < (unsigned int) align_address(ptr, align) + size) continue;
+	if(header_diff(ptr) < (unsigned int) align_address(ptr, align) + size) {
+	  ptr = ptr->next;
+	  continue;
+	}
       }
       ptr->type = BLOCK_USED;
       ptr->length = size;

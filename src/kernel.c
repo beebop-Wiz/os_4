@@ -12,6 +12,8 @@
 #include "ext2.h"
 #include "util.h"
 #include "elf.h"
+#include "pic.h"
+#include "keyboard.h"
 
 page_table_t kernel_pages = 0;
 
@@ -36,7 +38,8 @@ void kernel_main(unsigned int **bdata) {
   load_bios_gdt(bdata[1]);
   page_all_allocations();
   load_page_directory();
-  timer_init(1);
+  timer_init(10);
+  setup_keyboard();
   printf("Booted os_4 %s\n", VERSION);
   init_mt();
   //  new_process((unsigned int) test_mt);

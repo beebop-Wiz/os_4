@@ -407,6 +407,30 @@ kernel.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/kernel.c.s
 .PHONY : kernel.c.s
 
+keyboard.o: keyboard.c.o
+.PHONY : keyboard.o
+
+# target to build an object file
+keyboard.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/keyboard.c.o
+.PHONY : keyboard.c.o
+
+keyboard.i: keyboard.c.i
+.PHONY : keyboard.i
+
+# target to preprocess a source file
+keyboard.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/keyboard.c.i
+.PHONY : keyboard.c.i
+
+keyboard.s: keyboard.c.s
+.PHONY : keyboard.s
+
+# target to generate assembly for a file
+keyboard.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/keyboard.c.s
+.PHONY : keyboard.c.s
+
 malloc.o: malloc.c.o
 .PHONY : malloc.o
 
@@ -478,6 +502,30 @@ paging.s: paging.c.s
 paging.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/paging.c.s
 .PHONY : paging.c.s
+
+pic.o: pic.c.o
+.PHONY : pic.o
+
+# target to build an object file
+pic.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/pic.c.o
+.PHONY : pic.c.o
+
+pic.i: pic.c.i
+.PHONY : pic.i
+
+# target to preprocess a source file
+pic.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/pic.c.i
+.PHONY : pic.c.i
+
+pic.s: pic.c.s
+.PHONY : pic.s
+
+# target to generate assembly for a file
+pic.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/pic.c.s
+.PHONY : pic.c.s
 
 port.o: port.c.o
 .PHONY : port.o
@@ -795,6 +843,9 @@ help:
 	@echo "... kernel.o"
 	@echo "... kernel.i"
 	@echo "... kernel.s"
+	@echo "... keyboard.o"
+	@echo "... keyboard.i"
+	@echo "... keyboard.s"
 	@echo "... malloc.o"
 	@echo "... malloc.i"
 	@echo "... malloc.s"
@@ -804,6 +855,9 @@ help:
 	@echo "... paging.o"
 	@echo "... paging.i"
 	@echo "... paging.s"
+	@echo "... pic.o"
+	@echo "... pic.i"
+	@echo "... pic.s"
 	@echo "... port.o"
 	@echo "... port.i"
 	@echo "... port.s"
