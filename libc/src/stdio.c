@@ -20,6 +20,13 @@ void init_stdio(void) {
   f_stdin->bufwp = f_stdin->bufrp = f_stdout->bufwp = f_stdout->bufrp = f_stderr->bufwp = f_stderr->bufrp = 0;
 }
 
+FILE *fdopen(int fd, const char *mode) {
+  FILE *r = malloc(sizeof(struct __file_struct));
+  r->fd = fd;
+  r->bufrp = r->bufwp = 0;
+  return r;
+}
+
 int fflush(FILE *f) {
   f->buf[f->bufwp] = 0;
   char * b = f->buf + f->bufrp;
@@ -154,4 +161,18 @@ int vfprintf(FILE *f, const char *fmt, __builtin_va_list ap) {
     }
   }
   return 0;
+}
+
+int fgetc(FILE *f) {
+  int r;
+  if((f->bufrp != f->bufwp) &&
+     (f->bufrp < (BUFSIZ - 1))) { // data available
+    r = f->buf[f->bufrp++];
+    if(f->bufrp >= BUFSIZ) f->bufrp = 0;
+  } else { // data not available, refill buffer
+    f->bufrp = 0;
+    f->bufwp = syscall(7, f->fd, (int) f->buf, 0);
+    r = f->buf[f->bufrp++];
+  }
+  return r;
 }

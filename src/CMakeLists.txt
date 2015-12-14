@@ -40,11 +40,15 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../fs_mount/boot/)
 link_directories(../libc/lib/)
 include_directories(../libc/include/)
 add_executable(init.exe init/init.c)
+add_executable(test.exe init/test.c)
 add_custom_command(
-  TARGET init.exe
+  TARGET init.exe test.exe
   POST_BUILD
   COMMAND /bin/sync
   COMMENT "Synchronizing file system..."
   )
 add_dependencies(init.exe ../libc/lib/libc.a)
+add_dependencies(test.exe ../libc/lib/libc.a)
 target_link_libraries(init.exe c)
+target_link_libraries(test.exe c)
+

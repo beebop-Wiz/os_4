@@ -55,7 +55,7 @@ void *align_address(void *addr, int align) {
 }
 
 void *page_allocation(void *addr, unsigned int size) {
-  printd("Allocating %x (%d)\n", addr, paging_enabled);
+  printd("Allocating %x + %x (%d)\n", addr, size, paging_enabled);
   if(!paging_enabled) return addr;
   printd("Paging new memory for allocation at %x (page %x, dir %x)\n", (unsigned int) addr, (unsigned int) addr / 4096 , ((unsigned int) addr / 4096) / 1024);
   unsigned int i;
@@ -81,8 +81,8 @@ void *malloc_a(unsigned int size, int align) {
   printd("Beginning allocation of %d bytes (up to %d).\n", size, size + align);
   // traverse the array looking for free blocks
   while(ptr->next) {
-    printd("Checking block at %x\n", ptr);
-    if(ptr->type == BLOCK_FREE && ptr->length < size + sizeof(struct malloc_header)) {
+    printd("Checking block at %x + %x\n", ptr, ptr->length);
+    if(ptr->type == BLOCK_FREE && ptr->length > size + sizeof(struct malloc_header)) {
       // found a free block
       printd("Found a free, allocated block at offset %x\n",
 	     PTR_SUB(ptr, MALLOC_ARENA, unsigned int));
@@ -99,7 +99,7 @@ void *malloc_a(unsigned int size, int align) {
   }
   // if we're here now, there was either no free block, or it was the
   // last block.
-  if(ptr->type == BLOCK_FREE && ptr->length < size + sizeof(struct malloc_header)) {
+  if(ptr->type == BLOCK_FREE && ptr->length > size + sizeof(struct malloc_header)) {
     // found a free block
     printd("Found a free, allocated block at offset %x (last block)\n",
 	   PTR_SUB(ptr, MALLOC_ARENA, unsigned int));
@@ -140,6 +140,6 @@ void free(void *mem) {
   }
   ptr->type = BLOCK_FREE;
   ptr->owner = 0;
-  printd("Freed %d bytes\n", ptr->length);
+  printd("Freed %x +%x bytes\n", ptr, ptr->length);
 }
 

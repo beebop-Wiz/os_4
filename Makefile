@@ -190,6 +190,19 @@ os_4.bin/fast:
 .PHONY : os_4.bin/fast
 
 #=============================================================================
+# Target rules for targets named test.exe
+
+# Build rule for target.
+test.exe: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test.exe
+.PHONY : test.exe
+
+# fast build rule for target.
+test.exe/fast:
+	$(MAKE) -f src/CMakeFiles/test.exe.dir/build.make src/CMakeFiles/test.exe.dir/build
+.PHONY : test.exe/fast
+
+#=============================================================================
 # Target rules for targets named version
 
 # Build rule for target.
@@ -305,6 +318,7 @@ help:
 	@echo "... os_4.bin"
 	@echo "... boot2.bin"
 	@echo "... init.exe"
+	@echo "... test.exe"
 	@echo "... doc"
 	@echo "... regen_tests"
 	@echo "... c"

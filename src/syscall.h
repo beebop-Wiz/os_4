@@ -9,6 +9,8 @@ enum syscalls {
   SYS_GETFD,			/* 4 */
   SYS_FORK,			/* 5 */
   SYS_BINDFD,			/* 6 */
+  SYS_READ,			/* 7 */
+  SYS_EXEC,			/* 8 */
 };
 
 #include "idt.h"

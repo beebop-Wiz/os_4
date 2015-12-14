@@ -21,6 +21,7 @@ struct process {
   int fds[FD_MAX];
   struct fdinfo {
     int inode, off;
+    unsigned long size;
   } bound[FD_MAX];
 };
 

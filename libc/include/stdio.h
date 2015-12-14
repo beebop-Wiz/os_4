@@ -84,7 +84,7 @@ void     perror(const char *);
 FILE    *popen(const char *, const char *);
 int      printf(const char *, ...);
 int      putc(int, FILE *);
-int      putchar(int);
+#define putchar(c) fputc(c, f_stdout);
 int      putc_unlocked(int, FILE *);
 int      putchar_unlocked(int);
 int      puts(const char *);

@@ -23,6 +23,7 @@
 #include <depend/types_pid_t.h>
 
 pid_t fork(void);
+int execv(const char *path, char *const argv[]);
 
 #endif
 
