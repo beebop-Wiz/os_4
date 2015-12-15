@@ -126,6 +126,34 @@ boot2.bin/fast:
 .PHONY : boot2.bin/fast
 
 # Convenience name for target.
+src/CMakeFiles/coreutils.dir/rule:
+	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/coreutils.dir/rule
+.PHONY : src/CMakeFiles/coreutils.dir/rule
+
+# Convenience name for target.
+coreutils: src/CMakeFiles/coreutils.dir/rule
+.PHONY : coreutils
+
+# fast build rule for target.
+coreutils/fast:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/coreutils.dir/build.make src/CMakeFiles/coreutils.dir/build
+.PHONY : coreutils/fast
+
+# Convenience name for target.
+src/CMakeFiles/hello.dir/rule:
+	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/hello.dir/rule
+.PHONY : src/CMakeFiles/hello.dir/rule
+
+# Convenience name for target.
+hello: src/CMakeFiles/hello.dir/rule
+.PHONY : hello
+
+# fast build rule for target.
+hello/fast:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/hello.dir/build.make src/CMakeFiles/hello.dir/build
+.PHONY : hello/fast
+
+# Convenience name for target.
 src/CMakeFiles/image.dir/rule:
 	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/image.dir/rule
 .PHONY : src/CMakeFiles/image.dir/rule
@@ -166,20 +194,6 @@ os_4.bin: src/CMakeFiles/os_4.bin.dir/rule
 os_4.bin/fast:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/build
 .PHONY : os_4.bin/fast
-
-# Convenience name for target.
-src/CMakeFiles/test.exe.dir/rule:
-	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/test.exe.dir/rule
-.PHONY : src/CMakeFiles/test.exe.dir/rule
-
-# Convenience name for target.
-test.exe: src/CMakeFiles/test.exe.dir/rule
-.PHONY : test.exe
-
-# fast build rule for target.
-test.exe/fast:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/test.exe.dir/build.make src/CMakeFiles/test.exe.dir/build
-.PHONY : test.exe/fast
 
 # Convenience name for target.
 src/CMakeFiles/version.dir/rule:
@@ -335,6 +349,30 @@ idt.nasm.o:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.nasm.o
 .PHONY : idt.nasm.o
 
+init/hello.o: init/hello.c.o
+.PHONY : init/hello.o
+
+# target to build an object file
+init/hello.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/hello.dir/build.make src/CMakeFiles/hello.dir/init/hello.c.o
+.PHONY : init/hello.c.o
+
+init/hello.i: init/hello.c.i
+.PHONY : init/hello.i
+
+# target to preprocess a source file
+init/hello.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/hello.dir/build.make src/CMakeFiles/hello.dir/init/hello.c.i
+.PHONY : init/hello.c.i
+
+init/hello.s: init/hello.c.s
+.PHONY : init/hello.s
+
+# target to generate assembly for a file
+init/hello.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/hello.dir/build.make src/CMakeFiles/hello.dir/init/hello.c.s
+.PHONY : init/hello.c.s
+
 init/init.o: init/init.c.o
 .PHONY : init/init.o
 
@@ -358,30 +396,6 @@ init/init.s: init/init.c.s
 init/init.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/init.exe.dir/build.make src/CMakeFiles/init.exe.dir/init/init.c.s
 .PHONY : init/init.c.s
-
-init/test.o: init/test.c.o
-.PHONY : init/test.o
-
-# target to build an object file
-init/test.c.o:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/test.exe.dir/build.make src/CMakeFiles/test.exe.dir/init/test.c.o
-.PHONY : init/test.c.o
-
-init/test.i: init/test.c.i
-.PHONY : init/test.i
-
-# target to preprocess a source file
-init/test.c.i:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/test.exe.dir/build.make src/CMakeFiles/test.exe.dir/init/test.c.i
-.PHONY : init/test.c.i
-
-init/test.s: init/test.c.s
-.PHONY : init/test.s
-
-# target to generate assembly for a file
-init/test.c.s:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/test.exe.dir/build.make src/CMakeFiles/test.exe.dir/init/test.c.s
-.PHONY : init/test.c.s
 
 kernel.o: kernel.c.o
 .PHONY : kernel.o
@@ -808,15 +822,16 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... coreutils"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... version"
 	@echo "... image"
+	@echo "... hello"
 	@echo "... os_4.bin"
 	@echo "... boot2.bin"
 	@echo "... test"
 	@echo "... init.exe"
-	@echo "... test.exe"
 	@echo "... boot.o"
 	@echo "... boot2.o"
 	@echo "... boot2.i"
@@ -834,12 +849,12 @@ help:
 	@echo "... idt.i"
 	@echo "... idt.s"
 	@echo "... idt.o"
+	@echo "... init/hello.o"
+	@echo "... init/hello.i"
+	@echo "... init/hello.s"
 	@echo "... init/init.o"
 	@echo "... init/init.i"
 	@echo "... init/init.s"
-	@echo "... init/test.o"
-	@echo "... init/test.i"
-	@echo "... init/test.s"
 	@echo "... kernel.o"
 	@echo "... kernel.i"
 	@echo "... kernel.s"

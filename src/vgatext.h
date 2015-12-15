@@ -52,4 +52,8 @@ void vga_setwin(int w, int h, int x, int y);
  */
 void printf(const char *fmt, ...);
 
+void vga_addch(int x, int y, char c);
+
+void vga_update_curs();
+
 #endif

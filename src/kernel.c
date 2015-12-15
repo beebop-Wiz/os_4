@@ -105,6 +105,7 @@ void kernel_main(unsigned int **bdata) {
   }
   set_process_entry(init_pid, init_header.entry);
   printf("Starting MT.\n");
+  vga_clear_text();
   enable_mt();
   for(;;) {
     asm("hlt");

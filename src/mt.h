@@ -18,6 +18,8 @@ struct process {
   page_table_t pt;
   regs_t r;
   unsigned int regs_cksum;
+  unsigned char wait_status;
+  unsigned short ppid;
   int fds[FD_MAX];
   struct fdinfo {
     int inode, off;

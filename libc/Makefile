@@ -229,6 +229,30 @@ src/stdlib.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/stdlib.c.s
 .PHONY : src/stdlib.c.s
 
+src/sys_wait.o: src/sys_wait.c.o
+.PHONY : src/sys_wait.o
+
+# target to build an object file
+src/sys_wait.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/sys_wait.c.o
+.PHONY : src/sys_wait.c.o
+
+src/sys_wait.i: src/sys_wait.c.i
+.PHONY : src/sys_wait.i
+
+# target to preprocess a source file
+src/sys_wait.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/sys_wait.c.i
+.PHONY : src/sys_wait.c.i
+
+src/sys_wait.s: src/sys_wait.c.s
+.PHONY : src/sys_wait.s
+
+# target to generate assembly for a file
+src/sys_wait.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/sys_wait.c.s
+.PHONY : src/sys_wait.c.s
+
 src/syscall.o: src/syscall.c.o
 .PHONY : src/syscall.o
 
@@ -300,6 +324,9 @@ help:
 	@echo "... src/stdlib.o"
 	@echo "... src/stdlib.i"
 	@echo "... src/stdlib.s"
+	@echo "... src/sys_wait.o"
+	@echo "... src/sys_wait.i"
+	@echo "... src/sys_wait.s"
 	@echo "... src/syscall.o"
 	@echo "... src/syscall.i"
 	@echo "... src/syscall.s"

@@ -82,6 +82,7 @@ ext2_dirstate_t opendir(struct ext2_inode *inode) {
   r->inode = malloc(sizeof(struct ext2_inode));
   r->ent_idx = 0;
   r->last = 0;
+  r->n_dirents = inode->size_low / sizeof(struct ext2_dirent);
   memcpy(r->inode, inode, sizeof(struct ext2_inode));
   return r;
 }
@@ -159,9 +160,12 @@ int get_file_inode(struct ext2_superblock *s, int dir_inode, const char *name) {
   read_inode(s, &dir, dir_inode);
   ext2_dirstate_t ds = opendir(&dir);
   ext2_dirent_t d;
-  while((d = dirwalk(ds)))
+  while((d = dirwalk(ds))) {
     if(d->nlen && streq(d->name, name)) break;
-  int r = d->inode;
+  }
+  int r;
+  if(!d) r = -1; 
+  else r = d->inode;
   closedir(ds);
   return r;
 }
@@ -205,8 +209,9 @@ int get_path_inode(struct ext2_superblock *s, const char *p) {
   while((token = path_tokenize(path, &path))) {
     if(!strlen(token)) break;
     read_inode(s, &dir, dir_inode);
-    list_directory(s, &dir);
+    //    list_directory(s, &dir);
     dir_inode = get_file_inode(s, dir_inode, token);
+    if(dir_inode == -1) return -1;
   }
   free(p_orig);
   return dir_inode;

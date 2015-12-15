@@ -99,10 +99,15 @@ void do_syscall(regs_t r) {
     }
     break;
   case SYS_EXEC: // exec(path, argv[])
-    printf("exec `%s`\n", (char *) SYS_A1);
+    printd("exec `%s`\n", (char *) SYS_A1);
     superblock = malloc(sizeof(struct ext2_superblock));
     read_superblock(superblock);
-    read_inode(superblock, &inode, get_path_inode(superblock, (char *) SYS_A1));
+    int inode_num = get_path_inode(superblock, (char *) SYS_A1);
+    if(inode_num < 0) {
+      SYS_RET(inode_num);
+      break;
+    }
+    read_inode(superblock, &inode, inode_num);
     unsigned char *prog_buf = malloc(inode.n_sectors * 512);
     for(i = 0; i < inode.size_low; i += 1024)
       get_block(&inode, i / 1024, prog_buf + i);
@@ -118,6 +123,10 @@ void do_syscall(regs_t r) {
       memcpy((void *) ph.p_vaddr, prog_buf + ph.p_offset, ph.p_filesz);
     }
     r->eip = prog_header.entry;
+    break;
+  case SYS_WAIT:
+    SYS_RET(ptab[cur_ctx]->wait_status);
+    ptab[cur_ctx]->wait_status = 0;
     break;
   default: return;
   }

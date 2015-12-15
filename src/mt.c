@@ -85,6 +85,8 @@ unsigned short fork(regs_t r) {
     ptab[pid]->fds[i] = ptab[cur_ctx]->fds[i];
     memcpy(&ptab[pid]->bound[i], &ptab[cur_ctx]->bound[i], sizeof(struct fdinfo));
   }
+  ptab[pid]->ppid = cur_ctx;
+  ptab[pid]->wait_status = 0;
   printd("New pid: %d Old pid %d\n", pid, cur_ctx);
   ptab[pid]->r->ecx = 0;
   return pid;
@@ -146,11 +148,14 @@ void free_ptab(page_table_t pt) {
 }
 
 void proc_exit(regs_t r) {
-  printf("Process %d exiting...\n", cur_ctx);
+  printd("Process %d exiting...\n", cur_ctx);
+  ptab[ptab[cur_ctx]->ppid]->wait_status++;
   free_ptab(ptab[cur_ctx]->pt);
+  printd("Freed page table\n");
   free(ptab[cur_ctx]->r);
+  printd("Freed regs\n");
   free(ptab[cur_ctx]);
   ptab[cur_ctx] = 0;
-  printf("done\n");
+  printd("done\n");
   switch_ctx(r);
 }

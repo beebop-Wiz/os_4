@@ -63,6 +63,9 @@ void *page_allocation(void *addr, unsigned int size) {
   for(i = 0; i < (size / 4096) + 2; i++) {
     id_page(kernel_pages, (((unsigned int) addr) / 4096) + i);
   }
+  for(i = 0; i < (size / 4); i++) {
+    ((int *) addr)[i]= 0;
+  }
   return addr;
 }
 

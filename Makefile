@@ -151,6 +151,32 @@ boot2.bin/fast:
 .PHONY : boot2.bin/fast
 
 #=============================================================================
+# Target rules for targets named coreutils
+
+# Build rule for target.
+coreutils: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 coreutils
+.PHONY : coreutils
+
+# fast build rule for target.
+coreutils/fast:
+	$(MAKE) -f src/CMakeFiles/coreutils.dir/build.make src/CMakeFiles/coreutils.dir/build
+.PHONY : coreutils/fast
+
+#=============================================================================
+# Target rules for targets named hello
+
+# Build rule for target.
+hello: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hello
+.PHONY : hello
+
+# fast build rule for target.
+hello/fast:
+	$(MAKE) -f src/CMakeFiles/hello.dir/build.make src/CMakeFiles/hello.dir/build
+.PHONY : hello/fast
+
+#=============================================================================
 # Target rules for targets named image
 
 # Build rule for target.
@@ -188,19 +214,6 @@ os_4.bin: cmake_check_build_system
 os_4.bin/fast:
 	$(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/build
 .PHONY : os_4.bin/fast
-
-#=============================================================================
-# Target rules for targets named test.exe
-
-# Build rule for target.
-test.exe: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test.exe
-.PHONY : test.exe
-
-# fast build rule for target.
-test.exe/fast:
-	$(MAKE) -f src/CMakeFiles/test.exe.dir/build.make src/CMakeFiles/test.exe.dir/build
-.PHONY : test.exe/fast
 
 #=============================================================================
 # Target rules for targets named version
@@ -313,12 +326,13 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... mkimg"
 	@echo "... test"
+	@echo "... coreutils"
 	@echo "... version"
 	@echo "... image"
+	@echo "... hello"
 	@echo "... os_4.bin"
 	@echo "... boot2.bin"
 	@echo "... init.exe"
-	@echo "... test.exe"
 	@echo "... doc"
 	@echo "... regen_tests"
 	@echo "... c"

@@ -11,6 +11,7 @@ enum syscalls {
   SYS_BINDFD,			/* 6 */
   SYS_READ,			/* 7 */
   SYS_EXEC,			/* 8 */
+  SYS_WAIT,			/* 9 */
 };
 
 #include "idt.h"

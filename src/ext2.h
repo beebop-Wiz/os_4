@@ -91,7 +91,7 @@ struct ext2_dirent {
 } __attribute__ ((packed));
 
 struct ext2_dirstate {
-  unsigned int ent_idx;
+  unsigned int ent_idx, n_dirents;
   struct ext2_inode *inode;
   struct ext2_dirent *last;
 };

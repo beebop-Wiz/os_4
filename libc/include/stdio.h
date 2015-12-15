@@ -5,8 +5,9 @@
 
 struct __file_struct {
   int fd;
-  char buf[BUFSIZ];
-  int bufwp, bufrp;
+  char buf_raw[BUFSIZ];
+  char buf_cooked[BUFSIZ];
+  int bufwp, bufrp, bufcwp, bufcrp;
   int err;
 };
 
