@@ -4,17 +4,17 @@
 #define EXT2_MAGIC 0xef53
 
 struct ext2_superblock {
-  unsigned int n_inodes;        // 0
-  unsigned int n_blocks;        // 4
-  unsigned int n_resb;          // 8
-  unsigned int n_ua_blocks;     // 12
-  unsigned int n_ua_inodes;     // 16
-  unsigned int sb_off;          // 20
-  unsigned int block_size;      // 24
-  unsigned int fragment_size;   // 28
-  unsigned int bg_size;         // 32
-  unsigned int fg_size;         // 36
-  unsigned int ig_size;         // 40
+  unsigned int n_inodes;        // s_inodes_count
+  unsigned int n_blocks;        // s_blocks_count
+  unsigned int n_resb;          // s_r_blocks_count
+  unsigned int n_ua_blocks;     // s_free_blocks_count
+  unsigned int n_ua_inodes;     // s_free_inodes_count
+  unsigned int sb_off;          // s_first_data_block
+  unsigned int block_size;      // s_log_block_size
+  unsigned int fragment_size;   // s_log_fragment_size
+  unsigned int bg_size;         // s_blocks_per_group
+  unsigned int fg_size;         // s_fragments_per_group
+  unsigned int ig_size;         // s_inodes_per_group
   unsigned int rtime;           // 44
   unsigned int wtime;           // 48
   unsigned short nm_since_cons; // 52
@@ -91,7 +91,7 @@ struct ext2_dirent {
 } __attribute__ ((packed));
 
 struct ext2_dirstate {
-  unsigned int ent_idx;
+  unsigned int ent_idx, n_dirents;
   struct ext2_inode *inode;
   struct ext2_dirent *last;
 };
@@ -109,5 +109,8 @@ ext2_dirent_t dirwalk(ext2_dirstate_t s);
 void closedir(ext2_dirstate_t s);
 
 void parse_inode_type(unsigned short type, char *out);
+
+int get_file_inode(struct ext2_superblock *s, int dir_inode, const char *name);
+int get_path_inode(struct ext2_superblock *s, const char *path);
 
 #endif

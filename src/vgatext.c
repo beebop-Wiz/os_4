@@ -162,6 +162,11 @@ void init_vgatext(void) {
   cbg = 0x073642;
 }
 
+void vga_addch(int x, int y, char c) {
+  term[x][y].c = c;
+  term[x][y].mod = 1;
+}
+
 void vga_set_color(int fg, int bg) {
   cfg = fg;
   cbg = bg;
@@ -187,6 +192,7 @@ void vga_setwin(int w, int h, int x, int y) {
 }
 
 void vga_redraw(void) {
+  vga_update_curs();
   unsigned int x, y, tx, ty;
   for(x = 0; x < ww; x++) {
     for(y = 0; y < wh; y++) {
@@ -247,13 +253,34 @@ void vga_scroll() {
   }
 }
 
+volatile int cs;
+
+void vga_update_curs() {
+  if(cs) {
+    vga_addch(cx, cy, '_');
+  } else {
+    vga_addch(cx, cy, ' ');
+  }
+}
+
 void vga_putchar(char c) {
   switch(c) {
   case '\n':
-    for(; cx < ww; cx++) term[cx][cy].c = ' ';
+    for(; cx < ww; cx++) {
+      term[cx][cy].c = ' ';
+      term[cx][cy].mod = 1;
+    }
     cx = 0;
     cy++;
     vga_redraw();
+    break;
+  case '\b':
+    cx--;
+    if(cx == (unsigned int) -1) cx = 0;
+    else {
+      term[cx + 1][cy].c = ' ';
+      term[cx + 1][cy].mod = 1;
+    }
     break;
   default:
     term[cx][cy].mod = 1;
@@ -271,6 +298,7 @@ void vga_putchar(char c) {
     vga_scroll();
   }
   outb(0x3f8, c);
+  vga_update_curs();
 }
 
 void vga_puts(char *s) {

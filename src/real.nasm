@@ -45,7 +45,7 @@ entry_16:
 	mov cr0,eax
 	jmp 0:goreal
 goreal:
-	mov sp,0x8000
+	mov esp,0x8000
 	mov ax,0
 	mov ds,ax
 	mov es,ax

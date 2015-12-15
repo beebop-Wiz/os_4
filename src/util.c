@@ -17,7 +17,7 @@ void *memcpy(void *dest, const void *src, unsigned long n) {
 }
 
 int strlen(const char *s) {
-  int i;
+  int i = 0;
   while(*s++) i++;
   return i;
 }

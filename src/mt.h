@@ -9,15 +9,22 @@
 #include "paging.h"
 
 #define FD_MAX 256
-#define FD_PRESENT 0x1
-#define FD_READ    0x2
-#define FD_WRITE   0x4
-#define FD_TERM    0x8
-
+#define FD_PRESENT 0x01
+#define FD_READ    0x02
+#define FD_WRITE   0x04
+#define FD_TERM    0x08
+#define FD_BOUND   0x10
 struct process {
   page_table_t pt;
   regs_t r;
+  unsigned int regs_cksum;
+  unsigned char wait_status;
+  unsigned short ppid;
   int fds[FD_MAX];
+  struct fdinfo {
+    int inode, off;
+    unsigned long size;
+  } bound[FD_MAX];
 };
 
 void init_mt();

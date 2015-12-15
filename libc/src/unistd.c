@@ -1,7 +1,10 @@
 #include <unistd.h>
+#include <sys/call.h>
 
 pid_t fork(void) {
-  pid_t r;
-  asm volatile("mov $5, %%eax\nint $0x81\nmov %%cx, %0" : "=m" (r) : : "eax", "cx");
-  return r;
+  return syscall(5, 0, 0, 0);
+}
+
+int execv(const char *path, char *const argv[]) {
+  return syscall(8, (int) path, (int) argv, 0);
 }

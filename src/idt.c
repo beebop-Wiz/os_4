@@ -4,6 +4,7 @@
 #include "port.h"
 #include "syscall.h"
 #include "timer.h"
+#include "pic.h"
 
 char *exc[] = {
   "Divide by zero",
@@ -57,7 +58,7 @@ void bsod(regs_t r) {
     r->ebp = *((unsigned int *) r->ebp);
   }
   printf("\n\n\nWill now halt.\n");
-  for(;;) asm volatile ("hlt");
+  for(;;) asm volatile ("cli\nhlt");
 }
 
 void c_intr(regs_t r) {
@@ -72,6 +73,9 @@ void c_intr(regs_t r) {
     do_syscall(r);
 #endif
   }
+#ifdef KERNEL_SOURCE
+  check_pic_reset(r);
+#endif
 }
 
 idt_gate_t idt[256];

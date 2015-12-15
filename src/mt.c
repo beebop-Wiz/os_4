@@ -80,6 +80,13 @@ unsigned short fork(regs_t r) {
     }
     old = old->next;
   }
+  int i;
+  for(i = 0; i < FD_MAX; i++) {
+    ptab[pid]->fds[i] = ptab[cur_ctx]->fds[i];
+    memcpy(&ptab[pid]->bound[i], &ptab[cur_ctx]->bound[i], sizeof(struct fdinfo));
+  }
+  ptab[pid]->ppid = cur_ctx;
+  ptab[pid]->wait_status = 0;
   printd("New pid: %d Old pid %d\n", pid, cur_ctx);
   ptab[pid]->r->ecx = 0;
   return pid;
@@ -97,10 +104,23 @@ void shutdown() {
   }
 }
 
+unsigned int calc_regs_cksum(regs_t r) {
+  unsigned int v = 0;
+  unsigned int i;
+  for(i = 0; i < sizeof(struct registers); i++) {
+    v += ((char *) r)[i] << (i % 24);
+  }
+  return v;
+}
+
 void switch_ctx(regs_t r) {
+  if(!mt_enabled) return;
   printd("CONTEXT SWITCH\n");
-  if(mt_enabled > 1 && ptab[cur_ctx]) 
+  if(mt_enabled > 1 && ptab[cur_ctx]) {
+    printd("Old cksum (%d) %x => %x\n", cur_ctx, ptab[cur_ctx]->regs_cksum, calc_regs_cksum(r));
+    ptab[cur_ctx]->regs_cksum = calc_regs_cksum(r);
     memcpy(ptab[cur_ctx]->r, r, sizeof(struct registers));
+  }
   int i;
   for(i = 0; i < 65536; i++) {
     if(ptab[i] && i > cur_ctx) goto no_rollover;
@@ -116,7 +136,9 @@ void switch_ctx(regs_t r) {
   memcpy(r, ptab[i]->r, sizeof(struct registers));
   cur_ctx = i;
   mt_enabled = 2;		/* init bootstrap complete :) */
-  printd("loaded ctx %d\n", i);
+  printd("New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
+  ptab[i]->regs_cksum = calc_regs_cksum(r);
+  printd("loaded ctx %d (%x)\n", i, r->eip);
 }
 
 void free_ptab(page_table_t pt) {
@@ -126,9 +148,14 @@ void free_ptab(page_table_t pt) {
 }
 
 void proc_exit(regs_t r) {
+  printd("Process %d exiting...\n", cur_ctx);
+  ptab[ptab[cur_ctx]->ppid]->wait_status++;
   free_ptab(ptab[cur_ctx]->pt);
+  printd("Freed page table\n");
   free(ptab[cur_ctx]->r);
+  printd("Freed regs\n");
   free(ptab[cur_ctx]);
   ptab[cur_ctx] = 0;
+  printd("done\n");
   switch_ctx(r);
 }

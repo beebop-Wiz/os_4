@@ -2,13 +2,12 @@
 #include <stdio.h>
 #undef STDIO_C
 #include <stdlib.h>
+#include <sys/call.h>
 
 FILE *f_stderr, *f_stdin, *f_stdout;
 
 int sys_getfd() {
-  int r;
-  asm volatile("mov $4, %%eax\nint $0x81\nmov %%ecx, %0" : "=m" (r) : : "eax", "ecx");
-  return r;
+  return syscall(4, 0, 0, 0);
 }
 
 void init_stdio(void) {
@@ -19,18 +18,26 @@ void init_stdio(void) {
   f_stdout->fd = sys_getfd();
   f_stderr->fd = sys_getfd();
   f_stdin->bufwp = f_stdin->bufrp = f_stdout->bufwp = f_stdout->bufrp = f_stderr->bufwp = f_stderr->bufrp = 0;
+  f_stdin->bufcwp = f_stdin->bufcrp = f_stdout->bufcwp = f_stdout->bufcrp = f_stderr->bufcwp = f_stderr->bufcrp = 0;
+}
+
+FILE *fdopen(int fd, const char *mode) {
+  FILE *r = malloc(sizeof(struct __file_struct));
+  r->fd = fd;
+  r->bufrp = r->bufwp = r->bufcwp = r->bufcrp = 0;
+  return r;
 }
 
 int fflush(FILE *f) {
-  f->buf[f->bufwp] = 0;
-  char * b = f->buf + f->bufrp;
-  asm volatile("mov $0, %%eax\nmov %0, %%ebx\nint $0x81" : : "m" (b));
+  f->buf_raw[f->bufwp] = 0;
+  char * b = f->buf_raw + f->bufrp;
+  syscall(0, (int) b, 0, 0);
   f->bufrp = f->bufwp = 0;
   return 0;
 }
 
 int fputc(int c, FILE *f) {
-  f->buf[f->bufwp++] = c;
+  f->buf_raw[f->bufwp++] = c;
   if(f->bufwp >= BUFSIZ) fflush(f);
   if(c == '\n') fflush(f);
   return c;
@@ -155,4 +162,57 @@ int vfprintf(FILE *f, const char *fmt, __builtin_va_list ap) {
     }
   }
   return 0;
+}
+
+int fgetc_raw(FILE *f) {
+  int r;
+  if((f->bufrp != f->bufwp) &&
+     (f->bufrp < (BUFSIZ - 1))) { // data available
+    r = f->buf_raw[f->bufrp++];
+    if(f->bufrp >= BUFSIZ) f->bufrp = 0;
+  } else if(f->err) {
+    r = -1;
+  } else { // data not available, refill buffer
+    f->bufrp = 0;
+    do {
+      f->bufwp = syscall(7, f->fd, (int) f->buf_raw, 0); // busy-wait until data available
+      int i;
+      for(i = 0; i < 1000000; i++);
+    } while(!f->bufwp);
+    r = f->buf_raw[f->bufrp++];
+  }
+  if(r == (char) -1) f->err = 1;
+  return r;
+}
+
+int fgetc(FILE *f) { // handles line buffering and read-ptr incrementation
+  int r;
+  if((f->bufcwp != f->bufcrp) &&
+     (f->bufcrp < (BUFSIZ - 1))) {
+    r = f->buf_cooked[f->bufcrp++];
+    if(f->bufcrp >= BUFSIZ) f->bufcrp = 0;
+  } else if(f->err) {
+    r = -1;
+  } else { // buffer a line
+    f->bufcwp = f->bufcrp = 0;
+    char c;
+    while((c = fgetc_raw(f)) > 0) {
+      f->buf_cooked[f->bufcwp++] = c;
+      if(c == '\n') break;
+      else if(c == '\b') {
+	f->buf_cooked[--f->bufcwp] = 0;
+	if(f->bufcwp < 0) f->bufcwp = 0;
+	f->buf_cooked[--f->bufcwp] = 0;
+	if(f->bufcwp < 0) f->bufcwp = 0;
+      }
+    }
+    r = f->buf_cooked[f->bufcrp++];
+  }
+  return r;
+}
+
+char *fgets(char *f, int size, FILE *stream) {
+  int i;
+  for(i = 0; ((*f++ = fgetc(stream)) > 0) && (i < size); i++) ;
+  return f;
 }

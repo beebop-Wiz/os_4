@@ -151,6 +151,32 @@ boot2.bin/fast:
 .PHONY : boot2.bin/fast
 
 #=============================================================================
+# Target rules for targets named coreutils
+
+# Build rule for target.
+coreutils: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 coreutils
+.PHONY : coreutils
+
+# fast build rule for target.
+coreutils/fast:
+	$(MAKE) -f src/CMakeFiles/coreutils.dir/build.make src/CMakeFiles/coreutils.dir/build
+.PHONY : coreutils/fast
+
+#=============================================================================
+# Target rules for targets named hello
+
+# Build rule for target.
+hello: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hello
+.PHONY : hello
+
+# fast build rule for target.
+hello/fast:
+	$(MAKE) -f src/CMakeFiles/hello.dir/build.make src/CMakeFiles/hello.dir/build
+.PHONY : hello/fast
+
+#=============================================================================
 # Target rules for targets named image
 
 # Build rule for target.
@@ -300,8 +326,10 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... mkimg"
 	@echo "... test"
+	@echo "... coreutils"
 	@echo "... version"
 	@echo "... image"
+	@echo "... hello"
 	@echo "... os_4.bin"
 	@echo "... boot2.bin"
 	@echo "... init.exe"

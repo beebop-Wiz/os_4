@@ -5,8 +5,10 @@
 
 struct __file_struct {
   int fd;
-  char buf[BUFSIZ];
-  int bufwp, bufrp;
+  char buf_raw[BUFSIZ];
+  char buf_cooked[BUFSIZ];
+  int bufwp, bufrp, bufcwp, bufcrp;
+  int err;
 };
 
 typedef struct __file_struct FILE;
@@ -23,9 +25,7 @@ typedef unsigned long fpos_t;
 #define _IOLBF 1
 #define _IONBF 2
 
-#define SEEK_CUR 0
-#define SEEK_END 1
-#define SEEK_SET 2
+#include <depend/stdio_seek.h>
 
 #define FILENAME_MAX 255
 #define FOPEN_MAX 255
@@ -74,7 +74,7 @@ int      ftrylockfile(FILE *);
 void     funlockfile(FILE *);
 size_t   fwrite(const void *, size_t, size_t, FILE *);
 int      getc(FILE *);
-int      getchar(void);
+#define  getchar() (fgetc(f_stdin))
 int      getc_unlocked(FILE *);
 int      getchar_unlocked(void);
 ssize_t  getdelim(char **, size_t *, int, FILE *);
@@ -86,7 +86,7 @@ void     perror(const char *);
 FILE    *popen(const char *, const char *);
 int      printf(const char *, ...);
 int      putc(int, FILE *);
-int      putchar(int);
+#define  putchar(c) (fputc(c, f_stdout))
 int      putc_unlocked(int, FILE *);
 int      putchar_unlocked(int);
 int      puts(const char *);
