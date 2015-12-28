@@ -4,5 +4,5 @@ set disassembly-flavor intel
 
 source os_4.img-gdb.py
 
-b main
+b _start
 c

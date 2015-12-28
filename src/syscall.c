@@ -75,8 +75,8 @@ void do_syscall(regs_t r) {
     ptab[cur_ctx]->bound[SYS_A2].size = inode.size_low;
     free(superblock);
     break;
-  case SYS_READ: // sys_read(fd, buf); reads 1 FS block (or less) from
-		 // fd
+  case SYS_READ: // sys_read(fd, buf, id); reads 1 FS block (or
+		 // less) from fd
     if(SYS_A1) {
       superblock = malloc(sizeof(struct ext2_superblock));
       read_superblock(superblock);
@@ -91,15 +91,16 @@ void do_syscall(regs_t r) {
       SYS_RET(n_bytes);
       printd("Read completed\n");
       free(superblock);
+      ptab[cur_ctx]->async_callbacks[ASYNC_TYPE_IO].generated = 0;
+      ptab[cur_ctx]->async_callbacks[ASYNC_TYPE_IO].id = SYS_A3;
+      queue_callback(cur_ctx, ASYNC_TYPE_IO, SYS_A3, n_bytes);
     } else {
-      int n_bytes = 0;
-      while(((((char *) SYS_A2)[n_bytes] = keyboard_getchar()) > 0)
-	    && (n_bytes <= 1024)) n_bytes++;
-      SYS_RET(n_bytes);
+      ptab[cur_ctx]->async_callbacks[ASYNC_TYPE_IO].generated = 0;
+      ptab[cur_ctx]->async_callbacks[ASYNC_TYPE_IO].id = SYS_A3;
     }
     break;
   case SYS_EXEC: // exec(path, argv[])
-    printd("exec `%s`\n", (char *) SYS_A1);
+    printf("exec `%s`\n", (char *) SYS_A1);
     superblock = malloc(sizeof(struct ext2_superblock));
     read_superblock(superblock);
     int inode_num = get_path_inode(superblock, (char *) SYS_A1);
@@ -127,6 +128,13 @@ void do_syscall(regs_t r) {
   case SYS_WAIT:
     SYS_RET(ptab[cur_ctx]->wait_status);
     ptab[cur_ctx]->wait_status = 0;
+    break;
+  case SYS_SET_HANDLER:
+    ptab[cur_ctx]->async_callbacks[SYS_A1].callback = (void (*)(unsigned int, unsigned int)) SYS_A2;
+    break;
+  case SYS_WAIT_ASYNC:
+    ptab[cur_ctx]->async_mask |= 1 << SYS_A1;
+    switch_ctx(r);
     break;
   default: return;
   }

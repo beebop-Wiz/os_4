@@ -125,6 +125,30 @@ c/fast:
 	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/build
 .PHONY : c/fast
 
+src/chdir.o: src/chdir.c.o
+.PHONY : src/chdir.o
+
+# target to build an object file
+src/chdir.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/chdir.c.o
+.PHONY : src/chdir.c.o
+
+src/chdir.i: src/chdir.c.i
+.PHONY : src/chdir.i
+
+# target to preprocess a source file
+src/chdir.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/chdir.c.i
+.PHONY : src/chdir.c.i
+
+src/chdir.s: src/chdir.c.s
+.PHONY : src/chdir.s
+
+# target to generate assembly for a file
+src/chdir.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/chdir.c.s
+.PHONY : src/chdir.c.s
+
 src/crt0.o: src/crt0.nasm.o
 .PHONY : src/crt0.o
 
@@ -229,6 +253,30 @@ src/stdlib.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/stdlib.c.s
 .PHONY : src/stdlib.c.s
 
+src/string.o: src/string.c.o
+.PHONY : src/string.o
+
+# target to build an object file
+src/string.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/string.c.o
+.PHONY : src/string.c.o
+
+src/string.i: src/string.c.i
+.PHONY : src/string.i
+
+# target to preprocess a source file
+src/string.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/string.c.i
+.PHONY : src/string.c.i
+
+src/string.s: src/string.c.s
+.PHONY : src/string.s
+
+# target to generate assembly for a file
+src/string.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/string.c.s
+.PHONY : src/string.c.s
+
 src/sys_wait.o: src/sys_wait.c.o
 .PHONY : src/sys_wait.o
 
@@ -311,6 +359,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... c"
 	@echo "... test"
+	@echo "... src/chdir.o"
+	@echo "... src/chdir.i"
+	@echo "... src/chdir.s"
 	@echo "... src/crt0.o"
 	@echo "... src/dirent.o"
 	@echo "... src/dirent.i"
@@ -324,6 +375,9 @@ help:
 	@echo "... src/stdlib.o"
 	@echo "... src/stdlib.i"
 	@echo "... src/stdlib.s"
+	@echo "... src/string.o"
+	@echo "... src/string.i"
+	@echo "... src/string.s"
 	@echo "... src/sys_wait.o"
 	@echo "... src/sys_wait.i"
 	@echo "... src/sys_wait.s"

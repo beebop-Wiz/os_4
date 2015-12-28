@@ -3,13 +3,14 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <sys/call.h>
 
 int main(void) {
   char cmd_buf[128];
   int cmd_ptr;
   pid_t child;
   while(1) {
-    printf("$ ");
+    printf("# ");
     fflush(stdout);
     cmd_ptr = 0;
     while((cmd_buf[cmd_ptr++] = getchar()) != '\n') ;

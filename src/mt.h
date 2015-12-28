@@ -7,6 +7,7 @@
 
 #include "idt.h"
 #include "paging.h"
+#include "async.h"
 
 #define FD_MAX 256
 #define FD_PRESENT 0x01
@@ -25,6 +26,12 @@ struct process {
     int inode, off;
     unsigned long size;
   } bound[FD_MAX];
+  struct {
+    void (*callback)(unsigned int, unsigned int);
+    unsigned int id, generated;
+  } async_callbacks[ASYNC_TYPE_MAX];
+  callback_queue_t cb_queue;
+  unsigned int async_mask;
 };
 
 void init_mt();
@@ -35,4 +42,6 @@ void set_process_entry(int proc, unsigned int entry);
 void switch_ctx(regs_t r);
 void proc_exit();
 unsigned short fork(regs_t r);
+char *get_process_stack(int proc);
+void queue_callback(int proc, int cbtype, unsigned int id, unsigned int data);
 #endif

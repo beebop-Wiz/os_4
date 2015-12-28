@@ -5,6 +5,7 @@
 #include "user.h"
 #include "gdt.h"
 #include "vgatext.h"
+#include "async.h"
 
 #ifdef DEBUG_MT
 #define printd(fmt, ...) printf(fmt, ##__VA_ARGS__)
@@ -43,6 +44,7 @@ int new_process(unsigned int entry) {
   ptab[i]->r->eflags = 0x200;
   ptab[i]->pt = malloc(sizeof(struct page_table));
   memset(ptab[i]->pt, 0, sizeof(struct page_table));
+  ptab[i]->cb_queue = malloc(sizeof(struct callback_queue));
   unsigned int j;
   for(j = PROCESS_STACK_BOTTOM; j < PROCESS_STACK_TOP; j += 4096) {
     nonid_page(ptab[i]->pt, j / 4096, 0);
@@ -126,7 +128,7 @@ void switch_ctx(regs_t r) {
     if(ptab[i] && i > cur_ctx) goto no_rollover;
   }
   for(i = 0; !ptab[i] && i < 65536; i++);
-  if(i > 65535) shutdown();
+  if(i > 65535) asm volatile("hlt");
  no_rollover:
   if(ptab[cur_ctx]) {
     swap_page_table(ptab[cur_ctx]->pt, ptab[i]->pt);
@@ -139,6 +141,12 @@ void switch_ctx(regs_t r) {
   printd("New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
   ptab[i]->regs_cksum = calc_regs_cksum(r);
   printd("loaded ctx %d (%x)\n", i, r->eip);
+  // run userspace callback if available
+  async_closure_t clo = get_next_callback(i);
+  if(clo) {
+    ptab[i]->async_mask &= ~(1 << clo->type);
+    call_usermode(r->useresp, clo->callback, clo->id, clo->data);
+  }
 }
 
 void free_ptab(page_table_t pt) {
@@ -158,4 +166,15 @@ void proc_exit(regs_t r) {
   ptab[cur_ctx] = 0;
   printd("done\n");
   switch_ctx(r);
+}
+
+void queue_callback(int proc, int cbtype, unsigned int id, unsigned int data) {
+  if(proc < 0) {
+    int i;
+    for(i = 0; i < 65536; i++) {
+      if(ptab[i]) queue_callback(i, cbtype, id, data);
+    }
+  }
+  if(ptab[proc] && ptab[proc]->async_mask & (1 << cbtype))
+    queue_user_callback(proc, cbtype, ptab[proc]->async_callbacks[cbtype].callback, (ptab[proc]->async_callbacks[cbtype].generated) ? id : ptab[proc]->async_callbacks[cbtype].id, data);
 }

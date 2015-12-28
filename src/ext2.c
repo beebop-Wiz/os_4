@@ -70,6 +70,11 @@ void get_block(struct ext2_inode *inode, int block_idx, unsigned char *block) {
   unsigned int block_addr;
   if(block_idx < 12) {
     block_addr = inode->bp[block_idx];
+  } else if(block_idx < 268) {
+    read_sector(inode->bpp * 2, block);
+    read_sector(inode->bpp * 2 + 1, block + 512);
+    int bpp_idx = (block_idx - 12);
+    block_addr = ((unsigned int *) block)[bpp_idx];
   } else {
     printf("EXT2 error: you need to fix indirection\n");
   }
@@ -209,7 +214,7 @@ int get_path_inode(struct ext2_superblock *s, const char *p) {
   while((token = path_tokenize(path, &path))) {
     if(!strlen(token)) break;
     read_inode(s, &dir, dir_inode);
-    //    list_directory(s, &dir);
+    //list_directory(s, &dir);
     dir_inode = get_file_inode(s, dir_inode, token);
     if(dir_inode == -1) return -1;
   }

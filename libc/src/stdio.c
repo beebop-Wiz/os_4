@@ -10,6 +10,18 @@ int sys_getfd() {
   return syscall(4, 0, 0, 0);
 }
 
+volatile int waiting = 0;
+
+void sysread_callback(unsigned int id, unsigned int data) {
+  FILE *f = (FILE *) id;
+  if(data & 0x80000000) { // read from character device
+    f->buf_raw[f->bufwp++] = data & 0xff;
+  } else {
+    f->bufwp += data;
+  }
+  waiting = 0;
+}
+
 void init_stdio(void) {
   f_stderr = malloc(sizeof(struct __file_struct));
   f_stdin = malloc(sizeof(struct __file_struct));
@@ -19,6 +31,7 @@ void init_stdio(void) {
   f_stderr->fd = sys_getfd();
   f_stdin->bufwp = f_stdin->bufrp = f_stdout->bufwp = f_stdout->bufrp = f_stderr->bufwp = f_stderr->bufrp = 0;
   f_stdin->bufcwp = f_stdin->bufcrp = f_stdout->bufcwp = f_stdout->bufcrp = f_stderr->bufcwp = f_stderr->bufcrp = 0;
+  syscall(10, 1, (int) sysread_callback, 0);
 }
 
 FILE *fdopen(int fd, const char *mode) {
@@ -173,12 +186,11 @@ int fgetc_raw(FILE *f) {
   } else if(f->err) {
     r = -1;
   } else { // data not available, refill buffer
-    f->bufrp = 0;
-    do {
-      f->bufwp = syscall(7, f->fd, (int) f->buf_raw, 0); // busy-wait until data available
-      int i;
-      for(i = 0; i < 1000000; i++);
-    } while(!f->bufwp);
+    f->bufrp = f->bufwp = 0;
+    waiting = 1;
+    syscall(7, f->fd, (int) f->buf_raw, (int) f); // busy-wait until data available
+    syscall(11, 1, 0, 0);
+    while(waiting) ;
     r = f->buf_raw[f->bufrp++];
   }
   if(r == (char) -1) f->err = 1;

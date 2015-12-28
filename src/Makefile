@@ -209,6 +209,38 @@ version/fast:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/version.dir/build.make src/CMakeFiles/version.dir/build
 .PHONY : version/fast
 
+async.o: async.c.o
+.PHONY : async.o
+
+# target to build an object file
+async.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/async.c.o
+.PHONY : async.c.o
+
+async.i: async.c.i
+.PHONY : async.i
+
+# target to preprocess a source file
+async.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/async.c.i
+.PHONY : async.c.i
+
+async.s: async.c.s
+.PHONY : async.s
+
+# target to generate assembly for a file
+async.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/async.c.s
+.PHONY : async.c.s
+
+async.o: async.nasm.o
+.PHONY : async.o
+
+# target to build an object file
+async.nasm.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/async.nasm.o
+.PHONY : async.nasm.o
+
 boot.o: boot.nasm.o
 .PHONY : boot.o
 
@@ -832,6 +864,10 @@ help:
 	@echo "... boot2.bin"
 	@echo "... test"
 	@echo "... init.exe"
+	@echo "... async.o"
+	@echo "... async.i"
+	@echo "... async.s"
+	@echo "... async.o"
 	@echo "... boot.o"
 	@echo "... boot2.o"
 	@echo "... boot2.i"

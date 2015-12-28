@@ -39,7 +39,6 @@ void kernel_main(unsigned int **bdata) {
   page_all_allocations();
   load_page_directory();
   timer_init(10);
-  setup_keyboard();
   printf("Booted os_4 %s\n", VERSION);
   init_mt();
   //  new_process((unsigned int) test_mt);
@@ -106,6 +105,8 @@ void kernel_main(unsigned int **bdata) {
   set_process_entry(init_pid, init_header.entry);
   printf("Starting MT.\n");
   vga_clear_text();
+  init_async();
+  setup_keyboard();  
   enable_mt();
   for(;;) {
     asm("hlt");

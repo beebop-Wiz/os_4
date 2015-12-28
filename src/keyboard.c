@@ -4,6 +4,8 @@
 #include "vgatext.h"
 #include "port.h"
 #include "malloc.h"
+#include "async.h"
+#include "mt.h"
 
 unsigned int kbdus[2][128] = {
   {
@@ -28,39 +30,38 @@ unsigned int kbdus[2][128] = {
 };
 
 volatile int kbd_state = 0;
+unsigned char *kbdbuf;
+volatile int kbwritep = 0, kbreadp = 0;
+
+void flush_keyboard_queue() {
+  async_event_t evt;
+  while((evt = get_next_event(ASYNC_TYPE_IO))) {
+    queue_callback(-1, ASYNC_TYPE_IO, evt->id, evt->data);
+  }
+}
 
 void setup_keyboard() {
   PIC_clear_line(1);
   register_irq_handler(1, keyboard_intr);
   kbdbuf = malloc(KBD_BUFSIZ);
+  //  async_queues[ASYNC_TYPE_IO] = new_queue(ASYNC_TYPE_IO);
+  register_queue(ASYNC_TYPE_IO, flush_keyboard_queue);
 }
 
 void keyboard_intr() {
   unsigned char scan = inb(0x60);
-  kbdbuf[kbwritep++] = scan;
-  if(kbwritep > KBD_BUFSIZ) kbwritep = 0;
   if(scan < 0x80) {
     if(kbdus[kbd_state % 2][(int) scan] > (int) 0xff) {
       kbd_state |= kbdus[kbd_state % 2][(int) scan] >> 8;
     } else {
+      queue_event(ASYNC_TYPE_IO, 0x80000000 | kbdus[kbd_state % 2][(int) scan]);
+      flush_queue(ASYNC_TYPE_IO);
       printf("%c", kbdus[kbd_state % 2][(int) scan]);
       vga_redraw();
+      kbdbuf[kbwritep++] = kbdus[kbd_state % 2][(int) scan];
+      if(kbwritep > KBD_BUFSIZ) kbwritep = 0;
     }
   } else if(kbdus[kbd_state % 2][(int) (scan & 0x7f)] > 0xff) {
     kbd_state &= ~kbdus[kbd_state % 2][(int) (scan & 0x7f)] >> 8;
   }
-}
-
-char get_next_sc() {
-  if(kbreadp > KBD_BUFSIZ) kbreadp = 0;
-  return (kbwritep != kbreadp) ? kbdbuf[kbreadp++] : -1;
-}
-
-int keyboard_getchar() {
-  char scan;
-  do {
-    scan = get_next_sc();
-  } while(scan & 0x80 && scan != -1);
-  if(scan == -1) return -1;
-  return kbdus[kbd_state % 2][(int) scan];
 }
