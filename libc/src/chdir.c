@@ -11,7 +11,14 @@ void alloc_cwd_buf() {
 
 void set_cwd(char *newcwd) {
   int i;
+  for(i = 0; i < CWD_BUFSIZ; i++) cwd[i] = 0;
   for(i = 0; (cwd[i] = newcwd[i]) && (i < CWD_BUFSIZ); i++) ;
+  if(newcwd[strlen(newcwd) - 1] != '/') cwd[i++] = '/';
+  cwd[i] = 0;
+}
+
+const char *get_cwd() {
+  return cwd;
 }
 
 char *get_full_path(const char *rel) {

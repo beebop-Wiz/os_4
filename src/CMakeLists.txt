@@ -51,10 +51,12 @@ target_link_libraries(init.exe c)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../fs_mount/bin/)
 add_executable(hello init/hello.c)
-add_dependencies(hello ../libc/lib/libc.a)
 target_link_libraries(hello c)
-
-add_custom_target(coreutils ALL DEPENDS hello)
+add_executable(env coreutils/env.c)
+target_link_libraries(env c)
+add_executable(echo coreutils/echo.c)
+target_link_libraries(echo c)
+add_custom_target(coreutils ALL DEPENDS hello env echo)
 
 add_custom_command(
   TARGET coreutils

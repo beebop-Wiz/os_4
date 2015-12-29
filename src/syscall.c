@@ -99,8 +99,8 @@ void do_syscall(regs_t r) {
       ptab[cur_ctx]->async_callbacks[ASYNC_TYPE_IO].id = SYS_A3;
     }
     break;
-  case SYS_EXEC: // exec(path, argv[])
-    printf("exec `%s`\n", (char *) SYS_A1);
+  case SYS_EXEC: // exec(path, argv[], envp[])
+    printd("exec `%s`\n", (char *) SYS_A1);
     superblock = malloc(sizeof(struct ext2_superblock));
     read_superblock(superblock);
     int inode_num = get_path_inode(superblock, (char *) SYS_A1);
@@ -124,6 +124,19 @@ void do_syscall(regs_t r) {
       memcpy((void *) ph.p_vaddr, prog_buf + ph.p_offset, ph.p_filesz);
     }
     r->eip = prog_header.entry;
+    r->esi = SYS_A3;
+    unsigned int argc;
+    char **argv_orig = (char **) SYS_A2;
+    for(argc = 0; *argv_orig++; argc++);
+    char **argv = (char **) malloc(argc * sizeof(char *));
+    argv_orig = (char **) SYS_A2;
+    for(i = 0; i < argc; i++) {
+      argv[i] = malloc(strlen(argv_orig[i]) + 1);
+      memcpy(argv[i], argv_orig[i], strlen(argv_orig[i]) + 1);
+      argv[i][strlen(argv[i])] = 0;
+    }
+    r->eax = argc;
+    r->ebx = (unsigned int) argv;
     break;
   case SYS_WAIT:
     SYS_RET(ptab[cur_ctx]->wait_status);

@@ -164,6 +164,32 @@ coreutils/fast:
 .PHONY : coreutils/fast
 
 #=============================================================================
+# Target rules for targets named echo
+
+# Build rule for target.
+echo: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 echo
+.PHONY : echo
+
+# fast build rule for target.
+echo/fast:
+	$(MAKE) -f src/CMakeFiles/echo.dir/build.make src/CMakeFiles/echo.dir/build
+.PHONY : echo/fast
+
+#=============================================================================
+# Target rules for targets named env
+
+# Build rule for target.
+env: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 env
+.PHONY : env
+
+# fast build rule for target.
+env/fast:
+	$(MAKE) -f src/CMakeFiles/env.dir/build.make src/CMakeFiles/env.dir/build
+.PHONY : env/fast
+
+#=============================================================================
 # Target rules for targets named hello
 
 # Build rule for target.
@@ -329,6 +355,8 @@ help:
 	@echo "... coreutils"
 	@echo "... version"
 	@echo "... image"
+	@echo "... echo"
+	@echo "... env"
 	@echo "... hello"
 	@echo "... os_4.bin"
 	@echo "... boot2.bin"

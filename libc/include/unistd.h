@@ -21,9 +21,18 @@
 #define STDOUT_FILENO 1
 
 #include <depend/types_pid_t.h>
+#include <depend/stddef_size_t.h>
+
+#ifndef UNISTD_C
+extern char **environ;
+#endif
+
 
 pid_t fork(void);
 int execv(const char *path, char *const argv[]);
+int execve(const char *path, char *const argv[], char *const envp[]);
+char *getcwd(char *buf, size_t size);
+int chdir(const char *path);
 
 #endif
 

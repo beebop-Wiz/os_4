@@ -140,6 +140,34 @@ coreutils/fast:
 .PHONY : coreutils/fast
 
 # Convenience name for target.
+src/CMakeFiles/echo.dir/rule:
+	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/echo.dir/rule
+.PHONY : src/CMakeFiles/echo.dir/rule
+
+# Convenience name for target.
+echo: src/CMakeFiles/echo.dir/rule
+.PHONY : echo
+
+# fast build rule for target.
+echo/fast:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/echo.dir/build.make src/CMakeFiles/echo.dir/build
+.PHONY : echo/fast
+
+# Convenience name for target.
+src/CMakeFiles/env.dir/rule:
+	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/env.dir/rule
+.PHONY : src/CMakeFiles/env.dir/rule
+
+# Convenience name for target.
+env: src/CMakeFiles/env.dir/rule
+.PHONY : env
+
+# fast build rule for target.
+env/fast:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/env.dir/build.make src/CMakeFiles/env.dir/build
+.PHONY : env/fast
+
+# Convenience name for target.
 src/CMakeFiles/hello.dir/rule:
 	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/hello.dir/rule
 .PHONY : src/CMakeFiles/hello.dir/rule
@@ -272,6 +300,54 @@ boot2.s: boot2.c.s
 boot2.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/boot2.c.s
 .PHONY : boot2.c.s
+
+coreutils/echo.o: coreutils/echo.c.o
+.PHONY : coreutils/echo.o
+
+# target to build an object file
+coreutils/echo.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/echo.dir/build.make src/CMakeFiles/echo.dir/coreutils/echo.c.o
+.PHONY : coreutils/echo.c.o
+
+coreutils/echo.i: coreutils/echo.c.i
+.PHONY : coreutils/echo.i
+
+# target to preprocess a source file
+coreutils/echo.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/echo.dir/build.make src/CMakeFiles/echo.dir/coreutils/echo.c.i
+.PHONY : coreutils/echo.c.i
+
+coreutils/echo.s: coreutils/echo.c.s
+.PHONY : coreutils/echo.s
+
+# target to generate assembly for a file
+coreutils/echo.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/echo.dir/build.make src/CMakeFiles/echo.dir/coreutils/echo.c.s
+.PHONY : coreutils/echo.c.s
+
+coreutils/env.o: coreutils/env.c.o
+.PHONY : coreutils/env.o
+
+# target to build an object file
+coreutils/env.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/env.dir/build.make src/CMakeFiles/env.dir/coreutils/env.c.o
+.PHONY : coreutils/env.c.o
+
+coreutils/env.i: coreutils/env.c.i
+.PHONY : coreutils/env.i
+
+# target to preprocess a source file
+coreutils/env.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/env.dir/build.make src/CMakeFiles/env.dir/coreutils/env.c.i
+.PHONY : coreutils/env.c.i
+
+coreutils/env.s: coreutils/env.c.s
+.PHONY : coreutils/env.s
+
+# target to generate assembly for a file
+coreutils/env.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/env.dir/build.make src/CMakeFiles/env.dir/coreutils/env.c.s
+.PHONY : coreutils/env.c.s
 
 debug.o: debug.c.o
 .PHONY : debug.o
@@ -859,6 +935,8 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... version"
 	@echo "... image"
+	@echo "... echo"
+	@echo "... env"
 	@echo "... hello"
 	@echo "... os_4.bin"
 	@echo "... boot2.bin"
@@ -872,6 +950,12 @@ help:
 	@echo "... boot2.o"
 	@echo "... boot2.i"
 	@echo "... boot2.s"
+	@echo "... coreutils/echo.o"
+	@echo "... coreutils/echo.i"
+	@echo "... coreutils/echo.s"
+	@echo "... coreutils/env.o"
+	@echo "... coreutils/env.i"
+	@echo "... coreutils/env.s"
 	@echo "... debug.o"
 	@echo "... debug.i"
 	@echo "... debug.s"
