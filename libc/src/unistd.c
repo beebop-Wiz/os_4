@@ -33,3 +33,12 @@ int chdir(const char *path) {
   set_cwd((char *) path);
   return 0;
 }
+
+int tcsetpgrp(int fildes, pid_t pgid_id) {
+  syscall(13, pgid_id, 0, 0);
+  return 0;
+}
+
+pid_t getpid() {
+  return (pid_t) syscall(14, 0, 0, 0);
+}

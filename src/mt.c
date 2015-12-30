@@ -15,6 +15,7 @@
 
 struct process *ptab[65536];
 volatile int cur_ctx;
+volatile unsigned short foreground;
 int mt_enabled = 0;
 
 void init_mt() {
@@ -45,6 +46,8 @@ int new_process(unsigned int entry) {
   ptab[i]->pt = malloc(sizeof(struct page_table));
   memset(ptab[i]->pt, 0, sizeof(struct page_table));
   ptab[i]->cb_queue = malloc(sizeof(struct callback_queue));
+  ptab[i]->suspend = SUS_RUNNING;
+  ptab[i]->waitcnt = 0;
   unsigned int j;
   for(j = PROCESS_STACK_BOTTOM; j < PROCESS_STACK_TOP; j += 4096) {
     nonid_page(ptab[i]->pt, j / 4096, 0);
@@ -88,7 +91,7 @@ unsigned short fork(regs_t r) {
     memcpy(&ptab[pid]->bound[i], &ptab[cur_ctx]->bound[i], sizeof(struct fdinfo));
   }
   ptab[pid]->ppid = cur_ctx;
-  ptab[pid]->wait_status = 0;
+  ptab[pid]->suspend = SUS_RUNNING;
   printd("New pid: %d Old pid %d\n", pid, cur_ctx);
   ptab[pid]->r->ecx = 0;
   return pid;
@@ -124,29 +127,40 @@ void switch_ctx(regs_t r) {
     memcpy(ptab[cur_ctx]->r, r, sizeof(struct registers));
   }
   int i;
-  for(i = 0; i < 65536; i++) {
-    if(ptab[i] && i > cur_ctx) goto no_rollover;
-  }
-  for(i = 0; !ptab[i] && i < 65536; i++);
-  if(i > 65535) asm volatile("hlt");
- no_rollover:
-  if(ptab[cur_ctx]) {
-    swap_page_table(ptab[cur_ctx]->pt, ptab[i]->pt);
-  } else {
-    swap_page_table((page_table_t) 0, ptab[i]->pt);
-  }
-  memcpy(r, ptab[i]->r, sizeof(struct registers));
-  cur_ctx = i;
-  mt_enabled = 2;		/* init bootstrap complete :) */
-  printd("New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
-  ptab[i]->regs_cksum = calc_regs_cksum(r);
-  printd("loaded ctx %d (%x)\n", i, r->eip);
-  // run userspace callback if available
-  async_closure_t clo = get_next_callback(i);
-  if(clo) {
-    ptab[i]->async_mask &= ~(1 << clo->type);
-    call_usermode(r->useresp, clo->callback, clo->id, clo->data);
-  }
+  do {
+    for(i = 0; i < 65536; i++) {
+      if(ptab[i] && i > cur_ctx) goto no_rollover;
+    }
+    for(i = 0; !ptab[i] && i < 65536; i++);
+    if(i > 65535) asm volatile("hlt");
+  no_rollover:
+    if(ptab[cur_ctx]) {
+      swap_page_table(ptab[cur_ctx]->pt, ptab[i]->pt);
+    } else {
+      swap_page_table((page_table_t) 0, ptab[i]->pt);
+    }
+    memcpy(r, ptab[i]->r, sizeof(struct registers));
+    cur_ctx = i;
+    mt_enabled = 2;		/* init bootstrap complete :) */
+    printd("New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
+    ptab[i]->regs_cksum = calc_regs_cksum(r);
+    printd("loaded ctx %d (%x)\n", i, r->eip);
+    // run userspace callback if available
+    async_closure_t clo = get_next_callback(i);
+    if(clo) {
+      if(clo->type == ASYNC_TYPE_PSIG && clo->data == 5) {
+	ptab[i]->suspend &= ~SUS_STOPPED;
+      } else {
+	call_usermode(r, clo->id, clo->data);
+	r->eip = (unsigned int) clo->callback;
+      }
+    }
+    if((ptab[i]->suspend & SUS_WAIT)
+       && (ptab[i]->waitcnt)) {
+      ptab[i]->suspend &= ~SUS_WAIT;
+      ptab[i]->waitcnt = 0;
+    }
+  } while(ptab[i]->suspend);
 }
 
 void free_ptab(page_table_t pt) {
@@ -157,7 +171,7 @@ void free_ptab(page_table_t pt) {
 
 void proc_exit(regs_t r) {
   printd("Process %d exiting...\n", cur_ctx);
-  ptab[ptab[cur_ctx]->ppid]->wait_status++;
+  ptab[ptab[cur_ctx]->ppid]->waitcnt++;
   free_ptab(ptab[cur_ctx]->pt);
   printd("Freed page table\n");
   free(ptab[cur_ctx]->r);
@@ -175,6 +189,18 @@ void queue_callback(int proc, int cbtype, unsigned int id, unsigned int data) {
       if(ptab[i]) queue_callback(i, cbtype, id, data);
     }
   }
-  if(ptab[proc] && ptab[proc]->async_mask & (1 << cbtype))
+  if(ptab[proc])
     queue_user_callback(proc, cbtype, ptab[proc]->async_callbacks[cbtype].callback, (ptab[proc]->async_callbacks[cbtype].generated) ? id : ptab[proc]->async_callbacks[cbtype].id, data);
+}
+
+void set_foreground(unsigned short proc) {
+  foreground = proc;
+}
+
+unsigned short get_foreground() {
+  return foreground;
+}
+
+void signal_foreground(int signum) {
+  queue_callback(foreground, ASYNC_TYPE_PSIG, 1, signum);
 }

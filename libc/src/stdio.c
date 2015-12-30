@@ -189,8 +189,7 @@ int fgetc_raw(FILE *f) {
     f->bufrp = f->bufwp = 0;
     waiting = 1;
     syscall(7, f->fd, (int) f->buf_raw, (int) f); // busy-wait until data available
-    syscall(11, 1, 0, 0);
-    while(waiting) ;
+    while(waiting) syscall(9, -1, 0, 0);
     r = f->buf_raw[f->bufrp++];
   }
   if(r == (char) -1) f->err = 1;

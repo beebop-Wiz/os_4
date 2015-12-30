@@ -53,9 +53,14 @@ void keyboard_intr() {
   if(scan < 0x80) {
     if(kbdus[kbd_state % 2][(int) scan] > (int) 0xff) {
       kbd_state |= kbdus[kbd_state % 2][(int) scan] >> 8;
+    } else if(kbd_state & (BUCKY_CTL >> 8)) {
+      char c = kbdus[kbd_state % 2][(int) scan];
+      printf("^%c", kbdus[kbd_state % 2][(int) scan]);
+      if(c == 'c') {
+	signal_foreground(9);
+      }
     } else {
-      queue_event(ASYNC_TYPE_IO, 0x80000000 | kbdus[kbd_state % 2][(int) scan]);
-      flush_queue(ASYNC_TYPE_IO);
+      queue_callback(get_foreground(), ASYNC_TYPE_IO, 0, 0x80000000 | kbdus[kbd_state % 2][(int) scan]);
       printf("%c", kbdus[kbd_state % 2][(int) scan]);
       vga_redraw();
       kbdbuf[kbwritep++] = kbdus[kbd_state % 2][(int) scan];

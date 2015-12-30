@@ -205,6 +205,30 @@ src/fcntl.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/fcntl.c.s
 .PHONY : src/fcntl.c.s
 
+src/signal.o: src/signal.c.o
+.PHONY : src/signal.o
+
+# target to build an object file
+src/signal.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/signal.c.o
+.PHONY : src/signal.c.o
+
+src/signal.i: src/signal.c.i
+.PHONY : src/signal.i
+
+# target to preprocess a source file
+src/signal.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/signal.c.i
+.PHONY : src/signal.c.i
+
+src/signal.s: src/signal.c.s
+.PHONY : src/signal.s
+
+# target to generate assembly for a file
+src/signal.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f libc/CMakeFiles/c.dir/build.make libc/CMakeFiles/c.dir/src/signal.c.s
+.PHONY : src/signal.c.s
+
 src/stdio.o: src/stdio.c.o
 .PHONY : src/stdio.o
 
@@ -369,6 +393,9 @@ help:
 	@echo "... src/fcntl.o"
 	@echo "... src/fcntl.i"
 	@echo "... src/fcntl.s"
+	@echo "... src/signal.o"
+	@echo "... src/signal.i"
+	@echo "... src/signal.s"
 	@echo "... src/stdio.o"
 	@echo "... src/stdio.i"
 	@echo "... src/stdio.s"

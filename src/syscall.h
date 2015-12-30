@@ -13,7 +13,10 @@ enum syscalls {
   SYS_EXEC,			/* 8 */
   SYS_WAIT,			/* 9 */
   SYS_SET_HANDLER,		/* 10 */
-  SYS_WAIT_ASYNC,		/* 11 */
+  SYS_WAIT_ASYNC,		/* 11, defunct */
+  SYS_KILL,			/* 12 */
+  SYS_TCSETPGRP,		/* 13 */
+  SYS_GETPID,			/* 14 */
 };
 
 #include "idt.h"

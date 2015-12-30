@@ -34,6 +34,7 @@ typedef struct callback_queue *callback_queue_t;
 enum async_types {
   ASYNC_TYPE_DUMMY,
   ASYNC_TYPE_IO,
+  ASYNC_TYPE_PSIG,
   ASYNC_TYPE_MAX
 };
 
@@ -54,6 +55,8 @@ async_event_t get_next_event_raw(async_queue_t *q); // Returns either the first-
 void queue_user_callback(int process, int type, void (*callback)(unsigned int, unsigned int), unsigned int id, unsigned int data);
 async_closure_t get_next_callback(int process);
 
-void call_usermode(unsigned int stack, void (*func)(unsigned int, unsigned int), unsigned int id, unsigned int data);
+#include "idt.h"
+
+void call_usermode(struct registers *r, int id, int data);
 
 #endif

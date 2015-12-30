@@ -125,6 +125,7 @@ void do_syscall(regs_t r) {
     }
     r->eip = prog_header.entry;
     r->esi = SYS_A3;
+    for(i = 0; i < FD_MAX; i++) ptab[cur_ctx]->fds[i] = 0;
     unsigned int argc;
     char **argv_orig = (char **) SYS_A2;
     for(argc = 0; *argv_orig++; argc++);
@@ -139,15 +140,29 @@ void do_syscall(regs_t r) {
     r->ebx = (unsigned int) argv;
     break;
   case SYS_WAIT:
-    SYS_RET(ptab[cur_ctx]->wait_status);
-    ptab[cur_ctx]->wait_status = 0;
+    if(SYS_A1 == (unsigned int) SUS_SCHED) {
+      switch_ctx(r);
+    } else {
+      ptab[cur_ctx]->suspend |= SYS_A1;
+    }
+    if(SYS_A2)
+      switch_ctx(r);
     break;
   case SYS_SET_HANDLER:
     ptab[cur_ctx]->async_callbacks[SYS_A1].callback = (void (*)(unsigned int, unsigned int)) SYS_A2;
     break;
-  case SYS_WAIT_ASYNC:
+    /*  case SYS_WAIT_ASYNC:
     ptab[cur_ctx]->async_mask |= 1 << SYS_A1;
     switch_ctx(r);
+    break; */
+  case SYS_KILL:
+    queue_callback(SYS_A1, ASYNC_TYPE_PSIG, 0, SYS_A2);
+    break;
+  case SYS_TCSETPGRP:
+    set_foreground(SYS_A1);
+    break;
+  case SYS_GETPID:
+    SYS_RET(cur_ctx);
     break;
   default: return;
   }

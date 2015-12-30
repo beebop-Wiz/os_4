@@ -151,6 +151,19 @@ boot2.bin/fast:
 .PHONY : boot2.bin/fast
 
 #=============================================================================
+# Target rules for targets named cat
+
+# Build rule for target.
+cat: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 cat
+.PHONY : cat
+
+# fast build rule for target.
+cat/fast:
+	$(MAKE) -f src/CMakeFiles/cat.dir/build.make src/CMakeFiles/cat.dir/build
+.PHONY : cat/fast
+
+#=============================================================================
 # Target rules for targets named coreutils
 
 # Build rule for target.
@@ -360,6 +373,7 @@ help:
 	@echo "... hello"
 	@echo "... os_4.bin"
 	@echo "... boot2.bin"
+	@echo "... cat"
 	@echo "... init.exe"
 	@echo "... doc"
 	@echo "... regen_tests"

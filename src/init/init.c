@@ -20,6 +20,7 @@ char *initial_environment[] = {
 int main(void) {
   environ = (char **) initial_environment;
   setenv("SHELL", "/boot/init.exe", 1);
+  tcsetpgrp(1, getpid());
   char cmd_buf[128];
   char *cmd_tok[64];
   char cwd_buf[256];
@@ -47,6 +48,7 @@ int main(void) {
       }
     } else { // not a builtin
       if(!(child = fork())) {
+	tcsetpgrp(1, getpid());
 	if(!strchr(cmd_tok[0], '/')) { // relative path
 	  char *path_orig = strdup(getenv("PATH"));
 	  char *path = path_orig;
@@ -66,7 +68,10 @@ int main(void) {
 	    exit(127);
 	  }
 	}
-      } else wait(0);
+      } else {
+	wait(0);
+	tcsetpgrp(0, getpid());
+      }
     }
   }
   return 0;

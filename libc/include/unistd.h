@@ -33,6 +33,8 @@ int execv(const char *path, char *const argv[]);
 int execve(const char *path, char *const argv[], char *const envp[]);
 char *getcwd(char *buf, size_t size);
 int chdir(const char *path);
+int tcsetpgrp(int fildes, pid_t pgid_id);
+pid_t getpid(void);
 
 #endif
 

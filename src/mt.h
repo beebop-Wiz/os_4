@@ -15,11 +15,17 @@
 #define FD_WRITE   0x04
 #define FD_TERM    0x08
 #define FD_BOUND   0x10
+
+#define SUS_SCHED   -1
+#define SUS_RUNNING 0
+#define SUS_STOPPED 0x1
+#define SUS_WAIT    0x2
+
 struct process {
   page_table_t pt;
   regs_t r;
   unsigned int regs_cksum;
-  unsigned char wait_status;
+  unsigned char suspend, waitcnt;
   unsigned short ppid;
   int fds[FD_MAX];
   struct fdinfo {
@@ -31,7 +37,6 @@ struct process {
     unsigned int id, generated;
   } async_callbacks[ASYNC_TYPE_MAX];
   callback_queue_t cb_queue;
-  unsigned int async_mask;
 };
 
 void init_mt();
@@ -44,4 +49,8 @@ void proc_exit();
 unsigned short fork(regs_t r);
 char *get_process_stack(int proc);
 void queue_callback(int proc, int cbtype, unsigned int id, unsigned int data);
+void set_foreground(unsigned short proc);
+unsigned short get_foreground(void);
+void signal_foreground(int signum);
+
 #endif

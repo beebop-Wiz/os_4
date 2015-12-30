@@ -1,6 +1,7 @@
 extern main
 extern init_stdio
 extern alloc_cwd_buf
+extern setup_signals
 extern environ
 global _start
 _start:
@@ -9,6 +10,7 @@ _start:
 	mov [argv], ebx
 	call alloc_cwd_buf
 	call init_stdio
+	call setup_signals
 	push dword [argv]
 	push dword [argc]
 	call main

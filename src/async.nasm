@@ -1,47 +1,60 @@
-global call_usermode;(int stack, void (*func)(int, int), int id, int data)
+global call_usermode;(struct regs *r, int id, int data)
 call_usermode:
 	push ebp
-	mov ebp,esp
-
-	mov ax, ds
-	push ax
-	mov ax, es
-	push ax
-	mov ax, fs
-	push ax
-	mov ax, gs
-	push ax
-	mov ax, ss
-	push ax
+	mov ebp, esp
+	push ebx
 	
-	mov eax, 0x2b
-	mov ds,ax
-	mov es,ax
-	mov fs,ax
-	mov gs,ax
-;	mov ss,ax
+	mov eax, [ebp+8]	;eax is address of structure
+	mov ebx, esp		;save current stack pointer
+	mov esp, [eax+60]
+	push dword [eax+56]	;eflags
+	push dword 0x2b		;cs
+	push dword [eax+48]	;eip
+	
+	push dword [eax+8]	;edi
+	push dword [eax+12]	;esi
+	push dword [eax+16]	;ebp
+	push dword [eax+24]	;ebx
+	push dword [eax+28]	;edx
+	push dword [eax+32]	;ecx
+	push dword [eax+36]	;eax
+	push word [eax]		;gs
+	push word [eax+2]	;fs
+	push word [eax+4]	;es
+	push word [eax+6]	;ds
 
-	mov eax, esp
-	mov esp, [ebp + 8]
-	push eax
-	mov eax, [ebp + 12]
+; now build our stack frame
+	
+	push dword [ebp+16]
+	push dword [ebp+12]
+	push dword ucall_end
+	push ebp
 
-	push dword [ebp + 20]
-	push dword [ebp + 16]
-	call eax
-	pop eax
-	pop eax
-	pop esp
+	add esp, 4
+	mov [eax+60], esp
+	
+	mov esp, ebx
+	pop ebx
+	pop ebp
+	ret
+	
+ucall_end:
+	add esp, 8
 	pop ax
-	mov ss, ax
-	pop ax
-	mov gs, ax
-	pop ax
-	mov fs, ax
+	mov ds, ax
 	pop ax
 	mov es, ax
 	pop ax
-	mov ds, ax
-
+	mov fs, ax
+	pop ax
+	mov gs, ax
+	pop eax
+	pop ecx
+	pop edx
+	pop ebx
 	pop ebp
-	ret
+	pop esi
+	pop edi
+
+	iret
+	

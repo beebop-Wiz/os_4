@@ -33,10 +33,10 @@ typedef struct idtr idtr_t;
 #define MAKE_ADDR(s, a) do { s.offset_lo = ((unsigned int) a) & 0xFFFF; s.offset_hi = (((unsigned int) a) >> 16) & 0xFFFF;} while(0);
 
 struct registers {
-  unsigned short gs, fs, es, ds;
-  unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax;
-  unsigned int int_no, err;
-  unsigned int eip, cs, eflags, useresp, ss;
+  unsigned short gs, fs, es, ds;                       // 0 2 4 6
+  unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax; // 8 12 16 20 24 28 32 36
+  unsigned int int_no, err;			       // 40 44
+  unsigned int eip, cs, eflags, useresp, ss;           // 48 52 56 60 64
 } __attribute__ ((packed));
 
 typedef struct registers * regs_t;
