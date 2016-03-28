@@ -4,6 +4,9 @@
 #include "vgatext.h"
 #include "vgadraw.h"
 #include "idt.h"
+#include "log.h"
+
+volatile unsigned long long jiffy_clock = 0;
 
 extern char vbeinfo[512];
 extern struct {
@@ -71,26 +74,26 @@ void boot2_main() {
   vga_setwin(80, 24, 80, 108);
   vga_set_color(0x93a1a1, 0x002b36);
   vga_clear_text();
-  printf("Loaded second stage bootstrap.\n");
-  printf("Loading kernel from LBA %d\n", sector_offset);
+  log(LOG_BOOT, LOG_INFO, "Loaded second stage bootstrap.\n");
+  log(LOG_BOOT, LOG_INFO, "Loading kernel from LBA %d\n", sector_offset);
   int lba = sector_offset;
   int knsectors = -1;
   do {
     read_sector(lba++, (unsigned char *) &bh);
     knsectors = bh.ksize;
-    printf("Read chunk, size = %d linear %x.\n", bh.nsectors, bh.addr.l);
+    log(LOG_BOOT, LOG_INFO, "Read chunk, size = %d linear %x.\n", bh.nsectors, bh.addr.l);
     if(!bh.nsectors) break;
-    printf("Copying...\n");
+    log(LOG_BOOT, LOG_INFO, "Copying...\n");
     int i;
     for(i = 0; i < bh.nsectors; i++) {
-      printf("    LBA %d (%d%%)\n", lba, ((lba - sector_offset) * 100) / knsectors);
+      log(LOG_BOOT, LOG_INFO, "    LBA %d (%d%%)\n", lba, ((lba - sector_offset) * 100) / knsectors);
       read_sector(lba, bh.addr.l);
       lba++;
       bh.addr.l += 512;
       vga_rect(BAR_X, BAR_Y, ((lba - sector_offset) * BAR_WIDTH) / knsectors, BAR_HEIGHT, 0x2aa198);
     }
   } while(bh.nsectors);
-  printf("Booting (%x)\n", bh.addr.l);
+  log(LOG_BOOT, LOG_INFO, "Booting (%x)\n", bh.addr.l);
   bh.addr.fn((unsigned int *) &sector_offset);
   asm("cli");
   for(;;) {

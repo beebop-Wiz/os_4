@@ -12,7 +12,8 @@ void dfl_stop() {
   syscall(9, 1, 0, 0);
 }
 
-void (*signal_handlers[N_SIGNALS])(int) = {
+void (*signal_handlers[N_SIGNALS + 1])(int) = {
+  0,
   dfl_term, 			/* SIGABRT */
   dfl_term,			/* SIGALRM */
   dfl_term,			/* SIGBUS */
@@ -39,7 +40,8 @@ void (*signal_handlers[N_SIGNALS])(int) = {
   dfl_term,			/* SIGXFSZ */
 };
 
-void (*const dfl_handlers[N_SIGNALS])(int) = {
+void (*const dfl_handlers[N_SIGNALS + 1])(int) = {
+  0,
   dfl_term, 			/* SIGABRT */
   dfl_term,			/* SIGALRM */
   dfl_term,			/* SIGBUS */
@@ -80,4 +82,8 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *old) {
 
 void setup_signals() {
   syscall(10, 2, (int) sig_handler, 0);
+}
+
+int kill(pid_t pid, int sig) {
+  return syscall(12, pid, sig, 0);
 }

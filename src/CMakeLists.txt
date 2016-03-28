@@ -13,7 +13,7 @@ enable_language(ASM_NASM)
 
 # Build the second stage bootstrap (boot2.bin)
 
-add_executable(boot2.bin boot2.c vga.c vgatext.c boot.nasm port.c vbe.c real.nasm real.c vgadraw.c idt.c idt.nasm)
+add_executable(boot2.bin boot2.c vga.c vgatext.c boot.nasm port.c vbe.c real.nasm real.c vgadraw.c idt.c idt.nasm log.c)
 target_link_libraries(boot2.bin "-T boot2.ld" -ffreestanding -nostdlib -O2 gcc)
 
 # Build the kernel (os_4.bin)
@@ -26,7 +26,7 @@ add_custom_command(
   )
 add_custom_target(version DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/version.h)
 
-add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c gdt.c user.nasm ring3.c syscall.c timer.c mt.c util.c ext2.c keyboard.c pic.c async.c async.nasm)
+add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c gdt.c user.nasm ring3.c syscall.c timer.c mt.c util.c ext2.c keyboard.c pic.c async.c log.c fs/fs.c)
 add_dependencies(os_4.bin version)
 
 target_link_libraries(os_4.bin "-T linker.ld" -ffreestanding -nostdlib -O2 gcc)
@@ -41,28 +41,28 @@ link_directories(../libc/lib/)
 include_directories(../libc/include/)
 add_executable(init.exe init/init.c)
 add_custom_command(
-  TARGET init.exe
-  POST_BUILD
-  COMMAND /bin/sync
-  COMMENT "Synchronizing file system..."
-  )
+   TARGET init.exe
+   POST_BUILD
+   COMMAND /bin/sync
+   COMMENT "Synchronizing file system..."
+   )
 add_dependencies(init.exe ../libc/lib/libc.a)
 target_link_libraries(init.exe c)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../fs_mount/bin/)
-add_executable(hello init/hello.c)
-target_link_libraries(hello c)
-add_executable(env coreutils/env.c)
-target_link_libraries(env c)
-add_executable(echo coreutils/echo.c)
-target_link_libraries(echo c)
-add_executable(cat coreutils/cat.c)
-target_link_libraries(cat c)
-add_custom_target(coreutils ALL DEPENDS hello env echo cat)
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../fs_mount/bin/)
+# add_executable(hello init/hello.c)
+# target_link_libraries(hello c)
+# add_executable(env coreutils/env.c)
+# target_link_libraries(env c)
+# add_executable(echo coreutils/echo.c)
+# target_link_libraries(echo c)
+# add_executable(cat coreutils/cat.c)
+# target_link_libraries(cat c)
+# add_custom_target(coreutils ALL DEPENDS hello env echo cat)
 
-add_custom_command(
-  TARGET coreutils
-  POST_BUILD
-  COMMAND /bin/sync
-  COMMENT "Synchronizing file system..."
-  )
+# add_custom_command(
+#   TARGET coreutils
+#   POST_BUILD
+#   COMMAND /bin/sync
+#   COMMENT "Synchronizing file system..."
+#   )

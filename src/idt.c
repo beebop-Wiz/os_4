@@ -5,6 +5,7 @@
 #include "syscall.h"
 #include "timer.h"
 #include "pic.h"
+#include "log.h"
 
 char *exc[] = {
   "Divide by zero",
@@ -40,21 +41,21 @@ void bsod(regs_t r) {
   vga_clearcolor(BLUE);
   vga_set_color(WHITE, BLUE);
   vga_clear_text();
-  printf("Kernel panic: err 0x%x (%s)\n", r->int_no, exc[r->int_no]);
+  log(LOG_GENERAL, LOG_CRITICAL, "Kernel panic: err 0x%x (%s)\n", r->int_no, exc[r->int_no]);
 #ifdef KERNEL_SOURCE
-  printf("Current process: %d\n", cur_ctx);
+  log(LOG_GENERAL, LOG_CRITICAL, "Current process: %d\n", cur_ctx);
 #endif
-  printf("\tCS:EIP %x:%x\n", r->cs, r->eip);
-  printf("\tEDI: %x ESI: %x EBP: %x ESP: %x (%x)\n", r->edi, r->esi, r->ebp, r->esp, r->useresp);
-  printf("\tEBX: %x EDX: %x ECX: %x EAX: %x\n", r->ebx, r->edx, r->ecx, r->eax);
+  log(LOG_GENERAL, LOG_CRITICAL, "\tCS:EIP %x:%x\n", r->cs, r->eip);
+  log(LOG_GENERAL, LOG_CRITICAL, "\tEDI: %x ESI: %x EBP: %x ESP: %x (%x)\n", r->edi, r->esi, r->ebp, r->esp, r->useresp);
+  log(LOG_GENERAL, LOG_CRITICAL, "\tEBX: %x EDX: %x ECX: %x EAX: %x\n", r->ebx, r->edx, r->ecx, r->eax);
   unsigned int cr;
   asm volatile("mov %%cr2, %0" : "=r" (cr));
-  printf("\tCR2: %x\n", cr);
-  printf("Err: %x flags %x\n", r->err, r->eflags);
-  printf("\nStacktrace:\n");
-  printf("%x\n", r->eip);
+  log(LOG_GENERAL, LOG_CRITICAL, "\tCR2: %x\n", cr);
+  log(LOG_GENERAL, LOG_CRITICAL, "Err: %x flags %x\n", r->err, r->eflags);
+  log(LOG_GENERAL, LOG_CRITICAL, "\nStacktrace:\n");
+  log(LOG_GENERAL, LOG_CRITICAL, "%x\n", r->eip);
   while(r->ebp) {
-    printf("%x\n", *((unsigned int *) r->ebp + 1));
+    log(LOG_GENERAL, LOG_CRITICAL, "%x\n", *((unsigned int *) r->ebp + 1));
     r->ebp = *((unsigned int *) r->ebp);
   }
   printf("\n\n\nWill now halt.\n");
@@ -69,7 +70,7 @@ void c_intr(regs_t r) {
 #ifdef KERNEL_SOURCE
   } else if(r->int_no > 31 && r->int_no < 48) {
     handle_irq(r);
-  } else if(r->int_no == 0x81) {
+  } else if(r->int_no == 0x80 || r->int_no == 0x81) {
     do_syscall(r);
 #endif
   }
@@ -133,7 +134,8 @@ void setup_idt() {
   LOAD_ISR(45);
   LOAD_ISR(46);
   LOAD_ISR(47);
-  
+
+  LOAD_ISR(128);
   LOAD_ISR(129);
   idt_r.size = sizeof(idt);
   idt_r.offset = (unsigned int) &idt;

@@ -7,7 +7,6 @@
 
 #include "idt.h"
 #include "paging.h"
-#include "async.h"
 
 #define FD_MAX 256
 #define FD_PRESENT 0x01
@@ -21,22 +20,29 @@
 #define SUS_STOPPED 0x1
 #define SUS_WAIT    0x2
 
+#ifdef USE_ASYNC
+#include "async.h"
+#endif
+
 struct process {
   page_table_t pt;
   regs_t r;
   unsigned int regs_cksum;
-  unsigned char suspend, waitcnt;
+  unsigned char suspend;
+  unsigned short waitpid, waitflags, waitcnt;
   unsigned short ppid;
   int fds[FD_MAX];
   struct fdinfo {
     int inode, off;
     unsigned long size;
   } bound[FD_MAX];
+#ifdef USE_ASYNC
   struct {
     void (*callback)(unsigned int, unsigned int);
     unsigned int id, generated;
   } async_callbacks[ASYNC_TYPE_MAX];
   callback_queue_t cb_queue;
+#endif
 };
 
 void init_mt();
@@ -52,5 +58,6 @@ void queue_callback(int proc, int cbtype, unsigned int id, unsigned int data);
 void set_foreground(unsigned short proc);
 unsigned short get_foreground(void);
 void signal_foreground(int signum);
+void clear_wait(unsigned short proc, unsigned short status);
 
 #endif

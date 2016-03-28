@@ -126,76 +126,6 @@ boot2.bin/fast:
 .PHONY : boot2.bin/fast
 
 # Convenience name for target.
-src/CMakeFiles/cat.dir/rule:
-	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/cat.dir/rule
-.PHONY : src/CMakeFiles/cat.dir/rule
-
-# Convenience name for target.
-cat: src/CMakeFiles/cat.dir/rule
-.PHONY : cat
-
-# fast build rule for target.
-cat/fast:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/cat.dir/build.make src/CMakeFiles/cat.dir/build
-.PHONY : cat/fast
-
-# Convenience name for target.
-src/CMakeFiles/coreutils.dir/rule:
-	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/coreutils.dir/rule
-.PHONY : src/CMakeFiles/coreutils.dir/rule
-
-# Convenience name for target.
-coreutils: src/CMakeFiles/coreutils.dir/rule
-.PHONY : coreutils
-
-# fast build rule for target.
-coreutils/fast:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/coreutils.dir/build.make src/CMakeFiles/coreutils.dir/build
-.PHONY : coreutils/fast
-
-# Convenience name for target.
-src/CMakeFiles/echo.dir/rule:
-	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/echo.dir/rule
-.PHONY : src/CMakeFiles/echo.dir/rule
-
-# Convenience name for target.
-echo: src/CMakeFiles/echo.dir/rule
-.PHONY : echo
-
-# fast build rule for target.
-echo/fast:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/echo.dir/build.make src/CMakeFiles/echo.dir/build
-.PHONY : echo/fast
-
-# Convenience name for target.
-src/CMakeFiles/env.dir/rule:
-	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/env.dir/rule
-.PHONY : src/CMakeFiles/env.dir/rule
-
-# Convenience name for target.
-env: src/CMakeFiles/env.dir/rule
-.PHONY : env
-
-# fast build rule for target.
-env/fast:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/env.dir/build.make src/CMakeFiles/env.dir/build
-.PHONY : env/fast
-
-# Convenience name for target.
-src/CMakeFiles/hello.dir/rule:
-	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/hello.dir/rule
-.PHONY : src/CMakeFiles/hello.dir/rule
-
-# Convenience name for target.
-hello: src/CMakeFiles/hello.dir/rule
-.PHONY : hello
-
-# fast build rule for target.
-hello/fast:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/hello.dir/build.make src/CMakeFiles/hello.dir/build
-.PHONY : hello/fast
-
-# Convenience name for target.
 src/CMakeFiles/image.dir/rule:
 	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/image.dir/rule
 .PHONY : src/CMakeFiles/image.dir/rule
@@ -275,14 +205,6 @@ async.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/async.c.s
 .PHONY : async.c.s
 
-async.o: async.nasm.o
-.PHONY : async.o
-
-# target to build an object file
-async.nasm.o:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/async.nasm.o
-.PHONY : async.nasm.o
-
 boot.o: boot.nasm.o
 .PHONY : boot.o
 
@@ -314,78 +236,6 @@ boot2.s: boot2.c.s
 boot2.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/boot2.c.s
 .PHONY : boot2.c.s
-
-coreutils/cat.o: coreutils/cat.c.o
-.PHONY : coreutils/cat.o
-
-# target to build an object file
-coreutils/cat.c.o:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/cat.dir/build.make src/CMakeFiles/cat.dir/coreutils/cat.c.o
-.PHONY : coreutils/cat.c.o
-
-coreutils/cat.i: coreutils/cat.c.i
-.PHONY : coreutils/cat.i
-
-# target to preprocess a source file
-coreutils/cat.c.i:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/cat.dir/build.make src/CMakeFiles/cat.dir/coreutils/cat.c.i
-.PHONY : coreutils/cat.c.i
-
-coreutils/cat.s: coreutils/cat.c.s
-.PHONY : coreutils/cat.s
-
-# target to generate assembly for a file
-coreutils/cat.c.s:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/cat.dir/build.make src/CMakeFiles/cat.dir/coreutils/cat.c.s
-.PHONY : coreutils/cat.c.s
-
-coreutils/echo.o: coreutils/echo.c.o
-.PHONY : coreutils/echo.o
-
-# target to build an object file
-coreutils/echo.c.o:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/echo.dir/build.make src/CMakeFiles/echo.dir/coreutils/echo.c.o
-.PHONY : coreutils/echo.c.o
-
-coreutils/echo.i: coreutils/echo.c.i
-.PHONY : coreutils/echo.i
-
-# target to preprocess a source file
-coreutils/echo.c.i:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/echo.dir/build.make src/CMakeFiles/echo.dir/coreutils/echo.c.i
-.PHONY : coreutils/echo.c.i
-
-coreutils/echo.s: coreutils/echo.c.s
-.PHONY : coreutils/echo.s
-
-# target to generate assembly for a file
-coreutils/echo.c.s:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/echo.dir/build.make src/CMakeFiles/echo.dir/coreutils/echo.c.s
-.PHONY : coreutils/echo.c.s
-
-coreutils/env.o: coreutils/env.c.o
-.PHONY : coreutils/env.o
-
-# target to build an object file
-coreutils/env.c.o:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/env.dir/build.make src/CMakeFiles/env.dir/coreutils/env.c.o
-.PHONY : coreutils/env.c.o
-
-coreutils/env.i: coreutils/env.c.i
-.PHONY : coreutils/env.i
-
-# target to preprocess a source file
-coreutils/env.c.i:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/env.dir/build.make src/CMakeFiles/env.dir/coreutils/env.c.i
-.PHONY : coreutils/env.c.i
-
-coreutils/env.s: coreutils/env.c.s
-.PHONY : coreutils/env.s
-
-# target to generate assembly for a file
-coreutils/env.c.s:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/env.dir/build.make src/CMakeFiles/env.dir/coreutils/env.c.s
-.PHONY : coreutils/env.c.s
 
 debug.o: debug.c.o
 .PHONY : debug.o
@@ -434,6 +284,30 @@ ext2.s: ext2.c.s
 ext2.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/ext2.c.s
 .PHONY : ext2.c.s
+
+fs/fs.o: fs/fs.c.o
+.PHONY : fs/fs.o
+
+# target to build an object file
+fs/fs.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/fs/fs.c.o
+.PHONY : fs/fs.c.o
+
+fs/fs.i: fs/fs.c.i
+.PHONY : fs/fs.i
+
+# target to preprocess a source file
+fs/fs.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/fs/fs.c.i
+.PHONY : fs/fs.c.i
+
+fs/fs.s: fs/fs.c.s
+.PHONY : fs/fs.s
+
+# target to generate assembly for a file
+fs/fs.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/fs/fs.c.s
+.PHONY : fs/fs.c.s
 
 gdt.o: gdt.c.o
 .PHONY : gdt.o
@@ -494,30 +368,6 @@ idt.nasm.o:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/idt.nasm.o
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/idt.nasm.o
 .PHONY : idt.nasm.o
-
-init/hello.o: init/hello.c.o
-.PHONY : init/hello.o
-
-# target to build an object file
-init/hello.c.o:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/hello.dir/build.make src/CMakeFiles/hello.dir/init/hello.c.o
-.PHONY : init/hello.c.o
-
-init/hello.i: init/hello.c.i
-.PHONY : init/hello.i
-
-# target to preprocess a source file
-init/hello.c.i:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/hello.dir/build.make src/CMakeFiles/hello.dir/init/hello.c.i
-.PHONY : init/hello.c.i
-
-init/hello.s: init/hello.c.s
-.PHONY : init/hello.s
-
-# target to generate assembly for a file
-init/hello.c.s:
-	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/hello.dir/build.make src/CMakeFiles/hello.dir/init/hello.c.s
-.PHONY : init/hello.c.s
 
 init/init.o: init/init.c.o
 .PHONY : init/init.o
@@ -590,6 +440,33 @@ keyboard.s: keyboard.c.s
 keyboard.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/keyboard.c.s
 .PHONY : keyboard.c.s
+
+log.o: log.c.o
+.PHONY : log.o
+
+# target to build an object file
+log.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/log.c.o
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/log.c.o
+.PHONY : log.c.o
+
+log.i: log.c.i
+.PHONY : log.i
+
+# target to preprocess a source file
+log.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/log.c.i
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/log.c.i
+.PHONY : log.c.i
+
+log.s: log.c.s
+.PHONY : log.s
+
+# target to generate assembly for a file
+log.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/log.c.s
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/log.c.s
+.PHONY : log.c.s
 
 malloc.o: malloc.c.o
 .PHONY : malloc.o
@@ -968,42 +845,30 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... coreutils"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... version"
 	@echo "... image"
-	@echo "... echo"
-	@echo "... env"
-	@echo "... hello"
 	@echo "... os_4.bin"
 	@echo "... boot2.bin"
 	@echo "... test"
-	@echo "... cat"
 	@echo "... init.exe"
 	@echo "... async.o"
 	@echo "... async.i"
 	@echo "... async.s"
-	@echo "... async.o"
 	@echo "... boot.o"
 	@echo "... boot2.o"
 	@echo "... boot2.i"
 	@echo "... boot2.s"
-	@echo "... coreutils/cat.o"
-	@echo "... coreutils/cat.i"
-	@echo "... coreutils/cat.s"
-	@echo "... coreutils/echo.o"
-	@echo "... coreutils/echo.i"
-	@echo "... coreutils/echo.s"
-	@echo "... coreutils/env.o"
-	@echo "... coreutils/env.i"
-	@echo "... coreutils/env.s"
 	@echo "... debug.o"
 	@echo "... debug.i"
 	@echo "... debug.s"
 	@echo "... ext2.o"
 	@echo "... ext2.i"
 	@echo "... ext2.s"
+	@echo "... fs/fs.o"
+	@echo "... fs/fs.i"
+	@echo "... fs/fs.s"
 	@echo "... gdt.o"
 	@echo "... gdt.i"
 	@echo "... gdt.s"
@@ -1011,9 +876,6 @@ help:
 	@echo "... idt.i"
 	@echo "... idt.s"
 	@echo "... idt.o"
-	@echo "... init/hello.o"
-	@echo "... init/hello.i"
-	@echo "... init/hello.s"
 	@echo "... init/init.o"
 	@echo "... init/init.i"
 	@echo "... init/init.s"
@@ -1023,6 +885,9 @@ help:
 	@echo "... keyboard.o"
 	@echo "... keyboard.i"
 	@echo "... keyboard.s"
+	@echo "... log.o"
+	@echo "... log.i"
+	@echo "... log.s"
 	@echo "... malloc.o"
 	@echo "... malloc.i"
 	@echo "... malloc.s"

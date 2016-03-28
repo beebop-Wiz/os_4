@@ -12,7 +12,7 @@ enable_language(ASM_NASM)
 
 include_directories(../src/libc/include ../src)
 
-set(KERNEL_SRCS kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c gdt.c user.nasm ring3.c syscall.c timer.c mt.c util.c ext2.c keyboard.c pic.c async.c async.nasm)
+set(KERNEL_SRCS )
 
 add_custom_target(regen_tests ALL perl regen_tests.pl
   SOURCES regen_tests.pl

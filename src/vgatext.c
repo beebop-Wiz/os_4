@@ -332,9 +332,15 @@ void vga_itoa_s(signed long i, int radix) {
 #define LEN_32 2
 #define LEN_64 3
 
+
 void printf(const char *fmt, ...) {
   __builtin_va_list ap;
   __builtin_va_start(ap, fmt);
+  vprintf(fmt, ap);
+  __builtin_va_end(ap);
+}
+
+void vprintf(const char *fmt, __builtin_va_list ap) {
   char c;
   int length = -1;
   while(*fmt) {
@@ -361,7 +367,7 @@ void printf(const char *fmt, ...) {
       case 'i':
 	switch(length) {
 	case LEN_64:
-	  vga_itoa_s(__builtin_va_arg(ap, signed long), 10);
+	  vga_itoa_s(__builtin_va_arg(ap, signed long long), 10);
 	  break;
 	default:
 	  vga_itoa_s(__builtin_va_arg(ap, signed int), 10);
@@ -412,5 +418,4 @@ void printf(const char *fmt, ...) {
       vga_putchar(gc(fmt));
     }
   }
-  __builtin_va_end(ap);
 }

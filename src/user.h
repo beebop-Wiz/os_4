@@ -3,5 +3,5 @@
 
 void jump_usermode();
 void tss_flush();
-
+void call_usermode(struct registers *r, int id, int data);
 #endif

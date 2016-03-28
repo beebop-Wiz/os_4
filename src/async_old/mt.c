@@ -5,6 +5,7 @@
 #include "user.h"
 #include "gdt.h"
 #include "vgatext.h"
+#include "async.h"
 
 #ifdef DEBUG_MT
 #define printd(fmt, ...) printf(fmt, ##__VA_ARGS__)
@@ -27,7 +28,6 @@ void enable_mt() {
   mt_enabled = 1;
   // fake a IRQ to kick-start it
   tss_flush();
-  printf("Started.\n");
   asm volatile ("int $0x20");
 }
 
@@ -45,6 +45,7 @@ int new_process(unsigned int entry) {
   ptab[i]->r->eflags = 0x200;
   ptab[i]->pt = malloc(sizeof(struct page_table));
   memset(ptab[i]->pt, 0, sizeof(struct page_table));
+  ptab[i]->cb_queue = malloc(sizeof(struct callback_queue));
   ptab[i]->suspend = SUS_RUNNING;
   ptab[i]->waitcnt = 0;
   unsigned int j;
@@ -144,6 +145,16 @@ void switch_ctx(regs_t r) {
     printd("New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
     ptab[i]->regs_cksum = calc_regs_cksum(r);
     printd("loaded ctx %d (%x)\n", i, r->eip);
+    // run userspace callback if available
+    async_closure_t clo = get_next_callback(i);
+    if(clo) {
+      if(clo->type == ASYNC_TYPE_PSIG && clo->data == 5) {
+	ptab[i]->suspend &= ~SUS_STOPPED;
+      } else {
+	call_usermode(r, clo->id, clo->data);
+	r->eip = (unsigned int) clo->callback;
+      }
+    }
     if((ptab[i]->suspend & SUS_WAIT) && ptab[i]->waitcnt) {
       ptab[i]->suspend &= ~SUS_WAIT;
       ptab[i]->waitcnt = 0;
@@ -170,6 +181,17 @@ void proc_exit(regs_t r) {
   switch_ctx(r);
 }
 
+void queue_callback(int proc, int cbtype, unsigned int id, unsigned int data) {
+  if(proc < 0) {
+    int i;
+    for(i = 0; i < 65536; i++) {
+      if(ptab[i]) queue_callback(i, cbtype, id, data);
+    }
+  }
+  if(ptab[proc])
+    queue_user_callback(proc, cbtype, ptab[proc]->async_callbacks[cbtype].callback, (ptab[proc]->async_callbacks[cbtype].generated) ? id : ptab[proc]->async_callbacks[cbtype].id, data);
+}
+
 void set_foreground(unsigned short proc) {
   foreground = proc;
 }
@@ -178,13 +200,9 @@ unsigned short get_foreground() {
   return foreground;
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
 void signal_foreground(int signum) {
-  
-  //  queue_callback(foreground, ASYNC_TYPE_PSIG, 1, signum);
+  queue_callback(foreground, ASYNC_TYPE_PSIG, 1, signum);
 }
-#pragma GCC diagnostic pop
 
 void clear_wait(unsigned short proc, unsigned short status) {
   ptab[ptab[proc]->ppid]->waitpid = 0;

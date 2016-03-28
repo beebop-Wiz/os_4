@@ -6,8 +6,8 @@ start:
 	mov ax,cs
 	mov ds,ax	
 ; enable A20
-	mov ax, 0x2401
-	int 0x15
+;	mov ax, 0x2401
+;	int 0x15
 ; set screen mode 0x03
 	mov al,0x03
 	mov ah,0

@@ -5,7 +5,7 @@
 #define SIGALRM 2
 #define SIGBUS 3
 #define SIGCHLD 4
- #define SIGCONT 5
+#define SIGCONT 5
 #define SIGFPE 6
 #define SIGHUP 7
 #define SIGILL 8
@@ -60,5 +60,5 @@ struct sigaction {
 };
 
 int sigaction(int signum, const struct sigaction *act, struct sigaction *old);
-
+int kill(pid_t pid, int sig);
 #endif

@@ -4,7 +4,6 @@
 #include "vgatext.h"
 #include "port.h"
 #include "malloc.h"
-#include "async.h"
 #include "mt.h"
 
 unsigned int kbdus[2][128] = {
@@ -33,19 +32,10 @@ volatile int kbd_state = 0;
 unsigned char *kbdbuf;
 volatile int kbwritep = 0, kbreadp = 0;
 
-void flush_keyboard_queue() {
-  async_event_t evt;
-  while((evt = get_next_event(ASYNC_TYPE_IO))) {
-    queue_callback(-1, ASYNC_TYPE_IO, evt->id, evt->data);
-  }
-}
-
 void setup_keyboard() {
   PIC_clear_line(1);
   register_irq_handler(1, keyboard_intr);
   kbdbuf = malloc(KBD_BUFSIZ);
-  //  async_queues[ASYNC_TYPE_IO] = new_queue(ASYNC_TYPE_IO);
-  register_queue(ASYNC_TYPE_IO, flush_keyboard_queue);
 }
 
 void keyboard_intr() {
@@ -56,11 +46,15 @@ void keyboard_intr() {
     } else if(kbd_state & (BUCKY_CTL >> 8)) {
       char c = kbdus[kbd_state % 2][(int) scan];
       printf("^%c", kbdus[kbd_state % 2][(int) scan]);
-      if(c == 'c') {
+      if(c == 'c') {		/* SIGINT */
 	signal_foreground(9);
+      } else if(c == 'd') {	/* EOF */
+	//	queue_callback(get_foreground(), ASYNC_TYPE_IO, 0, 0x800000ff);
+      } else if(c == 'z') {	/* SIGSTOP */
+	signal_foreground(14);
       }
     } else {
-      queue_callback(get_foreground(), ASYNC_TYPE_IO, 0, 0x80000000 | kbdus[kbd_state % 2][(int) scan]);
+      //      queue_callback(get_foreground(), ASYNC_TYPE_IO, 0, 0x80000000 | kbdus[kbd_state % 2][(int) scan]);
       printf("%c", kbdus[kbd_state % 2][(int) scan]);
       vga_redraw();
       kbdbuf[kbwritep++] = kbdus[kbd_state % 2][(int) scan];

@@ -4,6 +4,7 @@
 #include "util.h"
 #include "vgatext.h"
 #include "malloc.h"
+#include "log.h"
 
 extern char vbeinfo[512];
 extern struct {
@@ -76,7 +77,7 @@ void get_block(struct ext2_inode *inode, int block_idx, unsigned char *block) {
     int bpp_idx = (block_idx - 12);
     block_addr = ((unsigned int *) block)[bpp_idx];
   } else {
-    printf("EXT2 error: you need to fix indirection\n");
+    log(LOG_GENERAL, LOG_FAILURE, "EXT2 error: you need to fix indirection\n");
   }
   read_sector(block_addr * 2, block);
   read_sector(block_addr * 2 + 1, block + 512);
@@ -197,7 +198,7 @@ void list_directory(struct ext2_superblock *s, struct ext2_inode *i) {
       d->name[d->nlen] = 0;
       read_inode(s, &sub, d->inode);
       parse_inode_type(sub.type, out);
-      printf("%s %s %d %d\n", out, d->name, sub.size_low, d->inode);
+      log(LOG_GENERAL, LOG_INFO, "%s %s %d %d\n", out, d->name, sub.size_low, d->inode);
     }
   }
   closedir(root);

@@ -15,6 +15,7 @@
 #undef DEBUG_PAGING
 #undef DEBUG_PAGING_MEMORY
 #undef DEBUG_MT
+#undef DEBUG_SYSCALL
 
 int dummy_print(char *f, ...);
 
