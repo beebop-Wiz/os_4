@@ -1,0 +1,10 @@
+int | num | interface | function
+----+-----+-----------+-----------------------
+80h | 1   | unix      | usys_exit
+80h | 2   | unix      | usys_fork
+80h | 3   | unix      | usys_read
+80h | 4   | unix      | usys_write
+80h | 5   | unix      | usys_open
+80h | 6   | unix      | usys_close
+80h | 11  | unix      | usys_execve
+80h | 45  | unix      | usys_brk

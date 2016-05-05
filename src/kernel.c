@@ -16,6 +16,7 @@
 #include "keyboard.h"
 #include "syscall.h"
 #include "log.h"
+#include "fs/fs.h"
 
 page_table_t kernel_pages = 0;
 
@@ -67,8 +68,8 @@ void kernel_main(unsigned int **bdata) {
   log(LOG_BOOT, LOG_INFO, "Looking for init... \n");
   read_inode(&superblock, &sub, init_inode = get_path_inode(&superblock, "boot/init.exe"));
   log(LOG_BOOT, LOG_INFO, "\tinit at %d\n", init_inode);
-  /*  printf("\n\nListing:\n");
-  ext2_dirstate_t root = opendir(&rd);
+  /*printf("\n\nListing:\n");
+    ext2_dirstate_t root = opendir(&rd);
   ext2_dirent_t d;
   while((d = dirwalk(root))) {
     if(d->nlen) {
@@ -81,8 +82,9 @@ void kernel_main(unsigned int **bdata) {
   }
   closedir(root); */
   int init_pid = new_process(0);
-  log(LOG_BOOT, LOG_INFO, "\nInit size: %d\n", sub.size_low);
+  log(LOG_BOOT, LOG_INFO, "Init size: %d\n", sub.size_low);
   unsigned char *init_buf = malloc(sub.n_sectors * 512);
+  log(LOG_BOOT, LOG_DEBUG, "Allocated init buffer\n");
   for(i = 0; i < sub.size_low; i += 1024) {
     get_block(&sub, i / 1024, init_buf + i);
   }
@@ -102,13 +104,16 @@ void kernel_main(unsigned int **bdata) {
   }
   set_process_entry(init_pid, init_header.entry);
   log(LOG_BOOT, LOG_INFO, "Init at %x\n", init_header.entry);
-  log(LOG_BOOT, LOG_INFO, "Starting MT.\n");
   vga_clear_text();
 #ifdef USE_ASYNC
   init_async();
 #endif
   setup_keyboard();
+  log(LOG_BOOT, LOG_INFO, "Initializing system call handler\n");
   init_syscall();
+  log(LOG_BOOT, LOG_INFO, "Initializing filesystem\n");
+  fs_init();
+  log(LOG_BOOT, LOG_INFO, "Starting MT.\n");
   enable_mt();
   for(;;) {
     asm("hlt");

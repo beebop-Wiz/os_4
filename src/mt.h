@@ -5,6 +5,9 @@
 #define PROCESS_STACK_BOTTOM 0x0C000000
 #define PROCESS_STACK_TOP (PROCESS_STACK_BOTTOM + PROCESS_STACK_SIZE)
 
+#define PROCESS_BRK_INITIAL (PROCESS_STACK_TOP + 1024)
+#define PROCESS_BRK_INIT_SIZE 0x10000
+
 #include "idt.h"
 #include "paging.h"
 
@@ -24,25 +27,18 @@
 #include "async.h"
 #endif
 
+
+#include "fs/fs.h"
+
 struct process {
   page_table_t pt;
+  unsigned int brk;
   regs_t r;
   unsigned int regs_cksum;
   unsigned char suspend;
   unsigned short waitpid, waitflags, waitcnt;
   unsigned short ppid;
-  int fds[FD_MAX];
-  struct fdinfo {
-    int inode, off;
-    unsigned long size;
-  } bound[FD_MAX];
-#ifdef USE_ASYNC
-  struct {
-    void (*callback)(unsigned int, unsigned int);
-    unsigned int id, generated;
-  } async_callbacks[ASYNC_TYPE_MAX];
-  callback_queue_t cb_queue;
-#endif
+  struct fd *fds;
 };
 
 void init_mt();

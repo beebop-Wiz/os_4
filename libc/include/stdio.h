@@ -5,14 +5,20 @@
 
 struct __file_struct {
   int fd;
-  char buf[BUFSIZ];
+  char *buf;
   int bufwp, bufrp;
   int err;
 };
 
 typedef struct __file_struct FILE;
 
-int printf(char *fmt, ...);
+int printf(const char *fmt, ...);
+int vprintf(const char *fmt, __builtin_va_list ap);
+int putchar(int c);
+int fputc(int c, FILE *stream);
+int fgetc(FILE *stream);
+int getchar();
+int fflush(FILE *stream);
 
 #ifndef STDIO_C
 extern FILE *stdin, *stdout, *stderr;

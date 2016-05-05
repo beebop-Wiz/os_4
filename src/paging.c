@@ -69,6 +69,20 @@ void mark_block(int gran, int off) {
   }
 }
 
+void clear_block(int gran, int off) {
+  //  printd("Marked block %d:%x (%x/%d)\n", gran, off, off / 32, off % 32);
+  phy.bitmap[gran][off / 32] &= ~(1 << (off % 32));
+  if(gran) {
+    mark_block(gran - 1, off * 2);
+    mark_block(gran - 1, off * 2 + 1);
+  }
+  for(gran++; gran < 18; gran++) {
+    off /= 2;
+    phy.bitmap[gran][off / 32] &= ~(1 << (off % 32));
+  }
+}
+
+
 unsigned int get_page_block(int gran) {
   int l = (1 << gran) * 4096;
   int bs = (131072 >> gran);
@@ -208,6 +222,20 @@ void mapped_page(page_table_t pt, unsigned int offset, unsigned int map, char up
 	register_page_table(pt->next);
       pt->next->table[offset % 1024] = (map * 4096) | 0x7;
       mark_block(0, map);
+      return;
+    }
+    pt = pt->next;
+  }
+}
+
+
+void unmap_page(page_table_t pt, unsigned int offset) {
+  while(pt) {
+    if(!pt->table) return;
+    if(!pt->next) return;
+    if(pt->idx == offset / 1024) {
+      clear_block(0, pt->table[offset % 1024] / 4096);
+      pt->table[offset % 1024] = 0;
       return;
     }
     pt = pt->next;

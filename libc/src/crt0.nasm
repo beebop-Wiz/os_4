@@ -1,6 +1,8 @@
 extern main
+extern init_stdio
 global _start
 _start:
+	call init_stdio
 	mov [environ], esi
 	mov [argc], eax
 	mov [argv], ebx

@@ -8,18 +8,7 @@
 #include "util.h"
 #include "log.h"
 #include "keyboard.h"
-
-// eax = syscall no
-// ebx = arg 1
-// ecx = return
-// edx = arg 2
-// esi = arg 3
-
-#define SYS_NO (r->eax)
-#define SYS_A1 (r->ebx)
-#define SYS_A2 (r->edx)
-#define SYS_A3 (r->esi)
-#define SYS_RET(n) (r->ecx = (n))
+#include "fs/fs.h"
 
 extern volatile int cur_ctx;
 extern struct process *ptab[65536];
@@ -27,16 +16,91 @@ extern struct process *ptab[65536];
 #define NUM_UNIX_SYSCALLS 190
 void (*unix_syscalls[NUM_UNIX_SYSCALLS])(regs_t r);
 
-void usys_exit() {
-  proc_exit();
+void usys_exit(regs_t r) {
+  proc_exit(r);
+}
+
+void usys_fork(regs_t r) {
+  r->eax = fork(r);
+  if((unsigned) cur_ctx != r->eax)
+    switch_ctx(r);
+}
+
+void usys_read(regs_t r) {
+  r->eax = fs_read(r->ebx, (char *) r->ecx, r->edx);
 }
 
 void usys_write(regs_t r) {
-  printf("%s\n", r->ecx);
+  r->eax = fs_write(r->ebx, (char *) r->ecx, r->edx);
+}
+
+void usys_open(regs_t r) {
+  r->eax = fs_open((char *) r->ebx, r->ecx);
+}
+
+void usys_close(regs_t r) {
+  r->eax = fs_close(r->ebx);
+}
+
+void usys_execve(regs_t r) {
+  struct ext2_superblock *superblock = malloc(sizeof(struct ext2_superblock));
+  struct ext2_inode inode;
+  int inum;
+  unsigned int i;
+  read_superblock(superblock);
+  inum = get_path_inode(superblock, (char *) r->ebx);
+  if(inum < 0) {
+    r->eax = 0;
+    return;
+  }
+  read_inode(superblock, &inode, inum);
+  unsigned char *prog_buf = malloc(inode.n_sectors * 512);
+  for(i = 0; i < inode.size_low; i += 1024)
+    get_block(&inode, i / 1024, prog_buf + i);
+  struct elf_header prog_header;
+  struct pheader ph;
+  memcpy(&prog_header, prog_buf, sizeof(struct elf_header));
+  for(i = 0; i < prog_header.ptidx; i++) {
+    memcpy(&ph, prog_buf + prog_header.header_pos + i * prog_header.ptsize, prog_header.ptsize);
+    unsigned int j;
+    for(j = 0; j < ph.p_memsz; j += 4096) {
+      nonid_page(get_process_pt(cur_ctx), (ph.p_vaddr + j) / 4096, 1);
+    }
+    memcpy((void *) ph.p_vaddr, prog_buf + ph.p_offset, ph.p_filesz);
+  }
+  r->eip = prog_header.entry;
+  r->esi = r->edx;
+  // TODO: copy arguments!
+  r->eax = 0;
+  r->ebx = r->ecx;
+}
+
+void usys_brk(regs_t r) {
+  if(r->ebx < PROCESS_BRK_INITIAL) {
+    r->eax = ptab[cur_ctx]->brk;
+    return;
+  } else {
+    int bdiff = r->ebx - ptab[cur_ctx]->brk, i;
+    if(bdiff < 0) { // deallocate
+      bdiff = -bdiff;
+      for(i = 0; i < bdiff; i += 4096) {
+	unmap_page(ptab[cur_ctx]->pt, (ptab[cur_ctx]->brk - i) / 4096);
+      }
+    } else {
+      for(i = 0; i < bdiff; i += 4096) {
+	if(!get_mapping(ptab[cur_ctx]->pt, (ptab[cur_ctx]->brk + i) / 4096))
+	   nonid_page(ptab[cur_ctx]->pt, (ptab[cur_ctx]->brk + i) / 4096, 1);
+      }
+      if(!get_mapping(ptab[cur_ctx]->pt, (ptab[cur_ctx]->brk + i) / 4096))
+	nonid_page(ptab[cur_ctx]->pt, (ptab[cur_ctx]->brk + i) / 4096, 1);
+    }
+    r->eax = ptab[cur_ctx]->brk = r->ebx;
+  }		  
 }
 
 void syscall_unix(regs_t r) {
   if(unix_syscalls[r->eax]) unix_syscalls[r->eax](r);
+  else log(LOG_SYSCALL, LOG_FAILURE, "Unknown UNIX syscall number %d\n", r->eax);
 }
 
 void do_syscall(regs_t r) {
@@ -47,7 +111,15 @@ void do_syscall(regs_t r) {
   log(LOG_SYSCALL, LOG_INFO, "COMPLETE\n");
 }
 
+// Did you update syscalls.txt?
+
 void init_syscall() {
   unix_syscalls[1] = usys_exit;
+  unix_syscalls[2] = usys_fork;
+  unix_syscalls[3] = usys_read;
   unix_syscalls[4] = usys_write;
+  unix_syscalls[5] = usys_open;
+  unix_syscalls[6] = usys_close;
+  unix_syscalls[11] = usys_execve;
+  unix_syscalls[45] = usys_brk;
 }

@@ -8,6 +8,6 @@
 #define syscall5(a, b, c, d, e, f) syscall(a, b, c, d, e, f, 0)
 #define syscall6(a, b, c, d, e, f, g) syscall(a, b, c, d, e, f, g
 
-void syscall(int errupt, int eax, int ebx, int ecx, int edx, int esi, int edi);
+int syscall(int errupt, int eax, int ebx, int ecx, int edx, int esi, int edi);
 
 #endif

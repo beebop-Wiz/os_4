@@ -5,6 +5,7 @@
 #include "user.h"
 #include "gdt.h"
 #include "vgatext.h"
+#include "log.h"
 
 #ifdef DEBUG_MT
 #define printd(fmt, ...) printf(fmt, ##__VA_ARGS__)
@@ -36,7 +37,6 @@ int new_process(unsigned int entry) {
   for(i = 0; ptab[i]; i++);
   ptab[i] = malloc(sizeof(struct process));
   memset(ptab[i], 0, sizeof(struct process));
-  memset(ptab[i]->fds, 0, FD_MAX * sizeof(int));
   ptab[i]->r = malloc(sizeof(struct registers));
   ptab[i]->r->eip = entry;
   ptab[i]->r->cs  = 0x2b;
@@ -45,12 +45,18 @@ int new_process(unsigned int entry) {
   ptab[i]->r->eflags = 0x200;
   ptab[i]->pt = malloc(sizeof(struct page_table));
   memset(ptab[i]->pt, 0, sizeof(struct page_table));
+  ptab[i]->fds = malloc(sizeof(struct fd) * FD_MAX);
+  memset(ptab[i]->fds, 0, sizeof(struct fd) * FD_MAX);
   ptab[i]->suspend = SUS_RUNNING;
   ptab[i]->waitcnt = 0;
   unsigned int j;
   for(j = PROCESS_STACK_BOTTOM; j < PROCESS_STACK_TOP; j += 4096) {
     nonid_page(ptab[i]->pt, j / 4096, 0);
   }
+  for(j = 0; j < PROCESS_BRK_INIT_SIZE; j += 4096) {
+    nonid_page(ptab[i]->pt, j / 4096 + PROCESS_BRK_INITIAL, 0);
+  }
+  ptab[i]->brk = PROCESS_BRK_INITIAL + PROCESS_BRK_INIT_SIZE;
   /*  for(j = KERNEL_STACK_BOTTOM; j < KERNEL_STACK_TOP; j += 4096) {
     nonid_page(ptab[i]->pt, j / 4096, 0);
     } */
@@ -86,13 +92,12 @@ unsigned short fork(regs_t r) {
   }
   int i;
   for(i = 0; i < FD_MAX; i++) {
-    ptab[pid]->fds[i] = ptab[cur_ctx]->fds[i];
-    memcpy(&ptab[pid]->bound[i], &ptab[cur_ctx]->bound[i], sizeof(struct fdinfo));
+    memcpy(&ptab[pid]->fds[i], &ptab[cur_ctx]->fds[i], sizeof(struct fd));
   }
   ptab[pid]->ppid = cur_ctx;
   ptab[pid]->suspend = SUS_RUNNING;
   printd("New pid: %d Old pid %d\n", pid, cur_ctx);
-  ptab[pid]->r->ecx = 0;
+  ptab[pid]->r->eax = 0;
   return pid;
 }
 
@@ -143,7 +148,7 @@ void switch_ctx(regs_t r) {
     mt_enabled = 2;		/* init bootstrap complete :) */
     printd("New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
     ptab[i]->regs_cksum = calc_regs_cksum(r);
-    printd("loaded ctx %d (%x)\n", i, r->eip);
+    log(LOG_MT, LOG_DEBUG, "loaded ctx %d (%x)\n", i, r->eip);
     if((ptab[i]->suspend & SUS_WAIT) && ptab[i]->waitcnt) {
       ptab[i]->suspend &= ~SUS_WAIT;
       ptab[i]->waitcnt = 0;
@@ -158,15 +163,16 @@ void free_ptab(page_table_t pt) {
 }
 
 void proc_exit(regs_t r) {
-  printd("Process %d exiting...\n", cur_ctx);
+  log(LOG_MT, LOG_INFO, "Process %d exiting...\n", cur_ctx);
   clear_wait(cur_ctx, 0x0100);
+  free(ptab[cur_ctx]->fds);
   free_ptab(ptab[cur_ctx]->pt);
-  printd("Freed page table\n");
+  log(LOG_MT, LOG_DEBUG, "Freed page table\n");
   free(ptab[cur_ctx]->r);
-  printd("Freed regs\n");
+  log(LOG_MT, LOG_DEBUG, "Freed regs\n");
   free(ptab[cur_ctx]);
   ptab[cur_ctx] = 0;
-  printd("done\n");
+  log(LOG_MT, LOG_DEBUG, "done\n");
   switch_ctx(r);
 }
 
@@ -187,6 +193,10 @@ void signal_foreground(int signum) {
 #pragma GCC diagnostic pop
 
 void clear_wait(unsigned short proc, unsigned short status) {
+  if(!ptab[ptab[proc]->ppid]) {
+    log(LOG_MT, LOG_INFO, "Can't find parent of process %d\n", proc);
+    return;
+  }
   ptab[ptab[proc]->ppid]->waitpid = 0;
   ptab[ptab[proc]->ppid]->waitflags = 0;
   ptab[ptab[proc]->ppid]->r->ecx = (status << 16) | proc;

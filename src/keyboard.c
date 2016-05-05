@@ -49,12 +49,12 @@ void keyboard_intr() {
       if(c == 'c') {		/* SIGINT */
 	signal_foreground(9);
       } else if(c == 'd') {	/* EOF */
-	//	queue_callback(get_foreground(), ASYNC_TYPE_IO, 0, 0x800000ff);
+	kbdbuf[kbwritep++] = 255;
+	if(kbwritep > KBD_BUFSIZ) kbwritep = 0;
       } else if(c == 'z') {	/* SIGSTOP */
 	signal_foreground(14);
       }
     } else {
-      //      queue_callback(get_foreground(), ASYNC_TYPE_IO, 0, 0x80000000 | kbdus[kbd_state % 2][(int) scan]);
       printf("%c", kbdus[kbd_state % 2][(int) scan]);
       vga_redraw();
       kbdbuf[kbwritep++] = kbdus[kbd_state % 2][(int) scan];

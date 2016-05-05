@@ -11,5 +11,5 @@ set(CMAKE_C_COMPILER ../gcc-cross/bin/i686-elf-gcc)
 set(CMAKE_C_FLAGS "-ffreestanding -fno-builtin -nostdlib -Wall -Wextra -Werror -Wno-unused-parameter -std=gnu99 -g")
 enable_language(ASM_NASM)
 
-add_library(c STATIC src/crt0.nasm src/stdio.c src/sys_call.c src/string.c)
+add_library(c STATIC src/crt0.nasm src/stdio.c src/sys_call.c src/string.c src/unistd.c src/stdlib.c)
 include_directories(include/)
