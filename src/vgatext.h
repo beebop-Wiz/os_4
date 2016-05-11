@@ -14,7 +14,7 @@ void init_vgatext(void);
  * Redraws the screen on a \n.
  * @param[in] c The character to print.
  */
-void vga_putchar(char c);
+void vga_putchar(int c);
 
 /**
  * Redraws the display from the terminal data.
@@ -53,7 +53,7 @@ void vga_setwin(int w, int h, int x, int y);
 void printf(const char *fmt, ...);
 
 void vprintf(const char *fmp, __builtin_va_list ap);
-void vga_addch(int x, int y, char c);
+void vga_addch(int x, int y, int c);
 
 void vga_update_curs();
 

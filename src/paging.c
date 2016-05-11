@@ -132,6 +132,7 @@ void update_page_table(page_table_t pt) {
 
 unsigned int nonid_page(page_table_t pt, unsigned int offset, char update) {
   unsigned int addr;
+  printdm("Arbitrarily paging page %x (vaddr %x PDI %x)\n", offset, offset * 4096, offset / 1024);
   while(pt) {
     if(!pt->table) {
       pt->table = malloc_a(4 * 4096, 4096);

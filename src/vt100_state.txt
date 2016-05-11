@@ -1,0 +1,16 @@
+in| execute 18 1A ignore 9C | 0 18 1A 80-8F 91-97 99 9A 9C s13 98 9E 9F 1 1B 7 90 s12 9D 3 9B| invariant
+0 | execute 00-17 19 1C-1F print 20-FF | | ground
+1 | execute 00-17 19 1C-1F ignore 7F esc_dispatch 30-4F 51-57 59 5A 5C 60-7E osc_start 5D | 0 30-4F 51-57 59 5A 5C 60-7E s13 58 5E 5F 3 5B 7 50 s12 5D | escape
+2 | execute 00-17 19 1C-1F collect 20-2F ignore 7F esc_dispatch 30-7E | 0 30-7E | esc_intermediate
+3 | execute 00-17 19 1C-1F ignore 7F csi_dispatch 40-7E param 30-39 3B collect 20-2F 3C-3F | 0 40-7E 4 30-39 3B-3F 6 3A 5 20-2F | csi_entry
+4 | execute 00-17 19 1C-1F param 30-39 3B ignore 7F csi_dispatch 40-7E collect 20-2F | 0 40-7E 5 20-2F | csi_param
+5 | execute 00-17 19 1C-1F collect 20-2F ignore 7F csi_dispatch 40-7E | 0 40-7E | csi_intermediate
+6 | execute 00-17 19 1C-1F ignore 20-3F 7F | 0 40-7E | csi_ignore
+7 | ignore 00-17 19 1C-1F 7F collect 20-2F 3C-3F param 30-39 3B | 9 00-17 19 1C-1F 20-2F 7F s11 3A 8 30-39 3C-3F | dcs_entry
+8 | ignore 00-17 19 1C-1F 7F param 30-39 3B collect 20-2F hook 40-7E | 9 20-2F s10 40-7E | dcs_param
+9 | ignore 00-17 19 1C-1F 7F collect 20-2F hook 40-7E | s10 40-7E s11 30-3F | dcs_intermediate
+10| put 00-17 19 1C-1F 20-7E ignore 7F unhook 9C | 0 9C | dcs_passthrough
+11| ignore 00-17 19 1C-1F 20-7F | 0 9C | dcs_ignore
+12| ignore 00-17 19 1C-1F osc_put 20-7F osc_end 9C | 0 9C | osc_string
+13| ignore 00-17 19 1C-7F | 0 9C | apc_string
+

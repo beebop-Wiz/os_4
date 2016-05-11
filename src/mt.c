@@ -34,7 +34,7 @@ void enable_mt() {
 
 int new_process(unsigned int entry) {
   unsigned int i;
-  for(i = 0; ptab[i]; i++);
+  for(i = 1; ptab[i]; i++);
   ptab[i] = malloc(sizeof(struct process));
   memset(ptab[i], 0, sizeof(struct process));
   ptab[i]->r = malloc(sizeof(struct registers));
@@ -53,8 +53,8 @@ int new_process(unsigned int entry) {
   for(j = PROCESS_STACK_BOTTOM; j < PROCESS_STACK_TOP; j += 4096) {
     nonid_page(ptab[i]->pt, j / 4096, 0);
   }
-  for(j = 0; j < PROCESS_BRK_INIT_SIZE; j += 4096) {
-    nonid_page(ptab[i]->pt, j / 4096 + PROCESS_BRK_INITIAL, 0);
+  for(j = PROCESS_BRK_INITIAL; j < PROCESS_BRK_TOP; j += 4096) {
+    nonid_page(ptab[i]->pt, j / 4096, 0);
   }
   ptab[i]->brk = PROCESS_BRK_INITIAL + PROCESS_BRK_INIT_SIZE;
   /*  for(j = KERNEL_STACK_BOTTOM; j < KERNEL_STACK_TOP; j += 4096) {
@@ -75,14 +75,15 @@ unsigned short fork(regs_t r) {
   unsigned int t_loc;
   while(old) {
     int i;
-    printd("Copying PT for idx %x\n", old->idx);
+    printf("Copying PT for idx %x\n", old->idx);
     for(i = 0; i < 1024; i++) {
       mapped_page(ptab[pid]->pt, old->idx * 1024 + i, get_mapping(old, old->idx * 1024 + i), 1);
     }
     for(i = 0; i < 1024; i++) {
       if(!old->table[i]) continue;
+      if(!get_mapping(old, old->idx * 1024 + i)) continue;
       t_loc = nonid_page(ptab[pid]->pt, 0x2000, 1);
-      printd("Copying %x to %x\n", (old->idx * 4096 * 1024) + i * 4096, 0x2000000);
+      printf("Copying %x to %x (%d)\n", (old->idx * 4096 * 1024) + i * 4096, 0x2000000, get_mapping(old, old->idx * 1024 + i));
       memcpy((void *) 0x2000000, (void *) (old->idx * 4096 * 1024) + i * 4096, 4096);
       mapped_page(ptab[pid]->pt, old->idx * 1024 + i, t_loc, 0);
       mapped_page(ptab[pid]->pt, 0x2000, 0, 0);
@@ -96,7 +97,7 @@ unsigned short fork(regs_t r) {
   }
   ptab[pid]->ppid = cur_ctx;
   ptab[pid]->suspend = SUS_RUNNING;
-  printd("New pid: %d Old pid %d\n", pid, cur_ctx);
+  printf("New pid: %d Old pid %d\n", pid, cur_ctx);
   ptab[pid]->r->eax = 0;
   return pid;
 }
@@ -132,10 +133,10 @@ void switch_ctx(regs_t r) {
   }
   int i;
   do {
-    for(i = 0; i < 65536; i++) {
+    for(i = 1; i < 65536; i++) {
       if(ptab[i] && i > cur_ctx) goto no_rollover;
     }
-    for(i = 0; !ptab[i] && i < 65536; i++);
+    for(i = 1; !ptab[i] && i < 65536; i++);
     if(i > 65535) asm volatile("hlt");
   no_rollover:
     if(ptab[cur_ctx]) {

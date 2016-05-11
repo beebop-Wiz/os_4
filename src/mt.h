@@ -7,6 +7,7 @@
 
 #define PROCESS_BRK_INITIAL (PROCESS_STACK_TOP + 1024)
 #define PROCESS_BRK_INIT_SIZE 0x10000
+#define PROCESS_BRK_TOP (PROCESS_BRK_INITIAL + PROCESS_BRK_INIT_SIZE)
 
 #include "idt.h"
 #include "paging.h"

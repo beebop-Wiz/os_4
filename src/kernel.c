@@ -84,7 +84,7 @@ void kernel_main(unsigned int **bdata) {
   int init_pid = new_process(0);
   log(LOG_BOOT, LOG_INFO, "Init size: %d\n", sub.size_low);
   unsigned char *init_buf = malloc(sub.n_sectors * 512);
-  log(LOG_BOOT, LOG_DEBUG, "Allocated init buffer\n");
+  log(LOG_BOOT, LOG_INFO, "Allocated init buffer\n");
   for(i = 0; i < sub.size_low; i += 1024) {
     get_block(&sub, i / 1024, init_buf + i);
   }

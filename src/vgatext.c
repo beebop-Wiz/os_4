@@ -1,8 +1,30 @@
 #include "vgatext.h"
 #include "vga.h"
 #include "port.h"
+#include "vt100_state.h"
 
-unsigned char font8x8_basic[128][8] = {
+const unsigned int console_colors[16] = { // Solarized
+  0x073642, // 0 base02
+  0xdc322f, // 1 red
+  0x859900, // 2 green
+  0xb58900, // 3 yellow
+  0x268bd2, // 4 blue
+  0xd33682, // 5 magenta
+  0x2aa198, // 6 cyan
+  0xeee8d5, // 7 base2
+  0x002b36, // 8 base03
+  0xcb4b16, // 9 orange
+  0x586e75, // 10 base01
+  0x657b83, // 11 base00
+  0x839496, // 12 base0
+  0x6c71c4, // 13 violet
+  0x93a1a1, // 14 base1
+  0xfdf6e3, // 15 base3
+};
+
+unsigned char vt100[15][256] = VT100_state;
+
+unsigned char font8x8_basic[256][8] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+0000 (nul)
     { 0x7e, 0x81, 0xa5, 0x81, 0xbd, 0x99, 0x81, 0x7e},   // U+0001
     { 0x7e, 0xff, 0xdb, 0xff, 0xc3, 0xe7, 0xff, 0x7e},   // U+0002
@@ -130,7 +152,8 @@ unsigned char font8x8_basic[128][8] = {
     { 0x18, 0x18, 0x18, 0x00, 0x18, 0x18, 0x18, 0x00},   // U+007C (|)
     { 0x07, 0x0C, 0x0C, 0x38, 0x0C, 0x0C, 0x07, 0x00},   // U+007D (})
     { 0x6E, 0x3B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+007E (~)
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}    // U+007F
+    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+007F
+    { 0xfe, 0xfc, 0xf8, 0xf0, 0xf0, 0xf8, 0xfc, 0xfe},   // U+0080 (powerline filled >)
 };
 
 unsigned int ww, wh, wx, wy;
@@ -138,10 +161,10 @@ int cfg, cbg;
 
 #define TTY_HEIGHT (600/8)
 #define TTY_WIDTH (800/8)
-
+int vt100_state = 0;
 unsigned int cx, cy;
 struct {
-  char c;
+  unsigned char c;
   unsigned int fgcolor, bgcolor;
   unsigned char mod;
 } term[TTY_WIDTH][TTY_HEIGHT];
@@ -150,20 +173,23 @@ void init_vgatext(void) {
   for(cx = 0; cx < TTY_WIDTH; cx++)
     for(cy = 0; cy < TTY_HEIGHT; cy++) {
       term[cx][cy].c = ' ';
-      term[cx][cy].fgcolor = 0x93a1a1;
-      term[cx][cy].bgcolor = 0x073642;
+      term[cx][cy].fgcolor = console_colors[14];
+      term[cx][cy].bgcolor = console_colors[0];
       term[cx][cy].mod = 1;
     }
   ww = TTY_WIDTH;
   wh = TTY_HEIGHT;
   wx = wy = 0;
   cx = cy = 0;
-  cfg = 0x93a1a1;
-  cbg = 0x073642;
+  cfg = console_colors[14];
+  cbg = console_colors[0];
+  vt100_state = 0;
 }
 
-void vga_addch(int x, int y, char c) {
+void vga_addch(int x, int y, int c) {
   term[x][y].c = c;
+  term[x][y].fgcolor = cfg;
+  term[x][y].bgcolor = cbg;
   term[x][y].mod = 1;
 }
 
@@ -257,13 +283,14 @@ volatile int cs;
 
 void vga_update_curs() {
   if(cs) {
-    vga_addch(cx, cy, '_');
+    term[cx][cy].c = '_';
   } else {
-    vga_addch(cx, cy, ' ');
+    term[cx][cy].c = ' ';
   }
+  term[cx][cy].mod = 1;
 }
 
-void vga_putchar(char c) {
+void vga_writechar(int c) {
   switch(c) {
   case '\n':
     for(; cx < ww; cx++) {
@@ -299,6 +326,70 @@ void vga_putchar(char c) {
   }
   outb(0x3f8, c);
   vga_update_curs();
+}
+
+int vt100_params[16];
+int vt100_pi = 0;
+struct vattrs {
+  char bold;
+} vt100_attr;
+
+void vga_csi_dispatch(int c) {
+  int i;
+  switch(c) {
+  case 'm':
+    for(i = 0; i <= vt100_pi; i++) {
+      if(vt100_params[i] == 0) {
+	cfg = console_colors[14];
+	cbg = console_colors[0];
+	vt100_attr.bold = 0;
+      } else if(vt100_params[i] == 1) {
+	vt100_attr.bold = 1;
+      } else if(vt100_params[i] < 40)
+	cfg = console_colors[(vt100_params[i] - 30) + vt100_attr.bold * 8];
+      else cbg = console_colors[vt100_params[i] - 40];
+    }
+    break;
+  }
+}
+
+void vga_putchar(int c) {
+  // TODO: PROPER UTF-8 SUPPORT! THIS IS A HACK
+  c = (unsigned char) ((char) c);
+  int vt100_desc = vt100[vt100_state][(unsigned int) c];
+  int action = (vt100_desc & 0xF0) >> 4;
+  int state = vt100_desc & 0x0F, i;
+  switch(action) {
+  case 1: // print
+    vga_writechar(c);
+    break;
+  case 2: // execute
+    vga_writechar(c);
+    break;
+  case 3: // clear
+    vt100_pi = 0;
+    break;
+  case 4: // collect
+    break;
+  case 5: // param
+    if(c == ';') vt100_pi++;
+    else {
+      vt100_params[vt100_pi] *= 10;
+      vt100_params[vt100_pi] += c - '0';
+    }
+    break;
+  case 6: // esc_dispatch
+    break;
+  case 7: // csi_dispatch
+    vga_csi_dispatch(c);
+    for(i = 0; i < 16; i++)
+      vt100_params[i] = 0;
+    vt100_pi = 0;
+    break;
+  default:
+    break;
+  }
+  vt100_state = state;
 }
 
 void vga_puts(char *s) {
