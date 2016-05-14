@@ -178,7 +178,7 @@ void init_vgatext(void) {
       term[cx][cy].mod = 1;
     }
   ww = TTY_WIDTH;
-  wh = TTY_HEIGHT;
+  wh = TTY_HEIGHT - 1;
   wx = wy = 0;
   cx = cy = 0;
   cfg = console_colors[14];

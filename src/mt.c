@@ -133,6 +133,11 @@ void switch_ctx(regs_t r) {
   }
   int i;
   do {
+    for(i = 1; i < 16; i++) {
+      vga_addch(i + 80, 0, '.');
+      if(ptab[i]) vga_addch(i + 80, 0, i + '0');
+      vga_redraw();
+    }
     for(i = 1; i < 65536; i++) {
       if(ptab[i] && i > cur_ctx) goto no_rollover;
     }

@@ -36,7 +36,12 @@ char *exc[] = {
 extern volatile int cur_ctx;
 #endif
 
+volatile int order = 0;
+
 void bsod(regs_t r) {
+  if(order++) goto halt;
+  asm volatile ("cli");
+  asm volatile ("mov $0x1800000, %esp");
   vga_setwin(90, 70, 30, 30);
   vga_clearcolor(BLUE);
   vga_set_color(WHITE, BLUE);
@@ -58,7 +63,8 @@ void bsod(regs_t r) {
     log(LOG_GENERAL, LOG_CRITICAL, "%x\n", *((unsigned int *) r->ebp + 1));
     r->ebp = *((unsigned int *) r->ebp);
   }
-  printf("\n\n\nWill now halt.\n");
+  //  printf("\n\n\nWill now halt.\n");
+ halt:
   for(;;) asm volatile ("cli\nhlt");
 }
 

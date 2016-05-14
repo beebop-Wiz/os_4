@@ -9,6 +9,38 @@
 #include "log.h"
 #include "keyboard.h"
 #include "fs/fs.h"
+#include "mt.h"
+
+struct process *ptab[65536];
+volatile int cur_ctx;
+
+// Here be dragons.
+
+// This function is used to "detach" a system call; i.e., run it on
+// the process stack instead of the kernel stack. It must be used for
+// all blocking operations, and must not be used for anything
+// modifying the process stack.
+
+void syscall_detach(void (*f)(regs_t), regs_t r) {
+  unsigned int old_esp, old_ebp;
+  // Dear future me, or anyone else looking at the code: This line (or
+  // its partner at the end of the function) is the problem.
+  asm volatile("mov %%esp, %%eax\n" /* store old esp */
+	       "mov %%ebp, %%ebx\n" /* store old ebp */
+	       "mov %[old_r], %%ecx\n" /* store r */
+	       "mov %[newesp], %%esp\n" /* write new esp */
+	       "mov %%eax, %[oldesp]\n" /* read old esp */
+	       "mov %%ebx, %[oldebp]\n" /* read old ebp */
+	       "mov %%ecx, %[new_r]"	/* read r */
+	       : [oldesp] "=r" (old_esp), [oldebp] "=r" (old_ebp), [new_r] "=r" (r)
+	       : [newesp] "r" (r->useresp - 128), [old_r] "r" (r)
+	       : "eax", "ebx", "ecx"); // move from kernel stack to userspace stack
+  log(LOG_SYSCALL, LOG_INFO, "Detached syscall, new esp %x\n", r->useresp - 128);
+  ptab[cur_ctx]->r->esp = ptab[cur_ctx]->r->useresp = r->useresp - 128;
+  f(r);
+  asm volatile("mov %0, %%eax \n mov %1, %%ebx \n mov %%eax, %%esp \n mov %%ebx, %%ebp"
+	       : : "r" (old_esp), "r" (old_ebp) : "eax", "ebx"); // return to kernel stack
+}
 
 extern volatile int cur_ctx;
 extern struct process *ptab[65536];
@@ -26,8 +58,12 @@ void usys_fork(regs_t r) {
     switch_ctx(r);
 }
 
-void usys_read(regs_t r) {
+void usys_read_wrapper(regs_t r) {
   r->eax = fs_read(r->ebx, (char *) r->ecx, r->edx);
+}  
+
+void usys_read(regs_t r) {
+  syscall_detach(usys_read_wrapper, r);
 }
 
 void usys_write(regs_t r) {
@@ -104,7 +140,7 @@ void syscall_unix(regs_t r) {
 }
 
 void do_syscall(regs_t r) {
-  log(LOG_SYSCALL, LOG_INFO, "%s %x %x %x %x %x %x\n", r->int_no == 0x80 ? "unix" : "os4", r->eax, r->ebx, r->ecx, r->edx, r->esi, r->edi);
+  log(LOG_SYSCALL, LOG_INFO, "%x %s %x %x %x %x %x %x %d\n", r, r->int_no == 0x80 ? "unix" : "os4", r->eax, r->ebx, r->ecx, r->edx, r->esi, r->edi, cur_ctx);
   if(r->int_no == 0x80) {
     syscall_unix(r);
   }

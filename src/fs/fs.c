@@ -3,6 +3,7 @@
 #include "../util.h"
 #include "../mt.h"
 #include "../vgatext.h"
+#include "../log.h"
 
 struct fs_driver *fs_drivers[DRIVER_MAX];
 int ndrv = 0;
@@ -38,6 +39,7 @@ int fs_write(int id, char *s, long len) {
 }
 
 int fs_read(int id, char *s, long len) {
+  log(LOG_SYSCALL, LOG_INFO, "fs_read(%d, %x, %d)\n", id, s, len);
   return fs_drivers[ptab[cur_ctx]->fds[id].driver]->read(id, s, len);
 }
 
