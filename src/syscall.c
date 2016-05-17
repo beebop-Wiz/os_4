@@ -13,6 +13,7 @@
 
 struct process *ptab[65536];
 volatile int cur_ctx;
+volatile int sys_detached = 0;
 
 // Here be dragons.
 
@@ -22,6 +23,7 @@ volatile int cur_ctx;
 // modifying the process stack.
 
 void syscall_detach(void (*f)(regs_t), regs_t r) {
+  sys_detached = 1;
   unsigned int old_esp, old_ebp;
   // Dear future me, or anyone else looking at the code: This line (or
   // its partner at the end of the function) is the problem.
@@ -33,13 +35,14 @@ void syscall_detach(void (*f)(regs_t), regs_t r) {
 	       "mov %%ebx, %[oldebp]\n" /* read old ebp */
 	       "mov %%ecx, %[new_r]"	/* read r */
 	       : [oldesp] "=r" (old_esp), [oldebp] "=r" (old_ebp), [new_r] "=r" (r)
-	       : [newesp] "r" (r->useresp - 128), [old_r] "r" (r)
+	       : [newesp] "r" (ptab[cur_ctx]->detach_stack + DETACH_STACK_SIZE - 16), [old_r] "r" (r)
 	       : "eax", "ebx", "ecx"); // move from kernel stack to userspace stack
-  log(LOG_SYSCALL, LOG_INFO, "Detached syscall, new esp %x\n", r->useresp - 128);
-  ptab[cur_ctx]->r->esp = ptab[cur_ctx]->r->useresp = r->useresp - 128;
+  log(LOG_SYSCALL, LOG_INFO, "Detached syscall, new esp %x old esp %x\n", ptab[cur_ctx]->detach_stack + DETACH_STACK_SIZE, old_esp);
+  //  ptab[cur_ctx]->r->esp = ptab[cur_ctx]->r->useresp = ptab[cur_ctx]->detach_stack + DETACH_STACK_SIZE;
   f(r);
   asm volatile("mov %0, %%eax \n mov %1, %%ebx \n mov %%eax, %%esp \n mov %%ebx, %%ebp"
 	       : : "r" (old_esp), "r" (old_ebp) : "eax", "ebx"); // return to kernel stack
+  sys_detached = 0;
 }
 
 extern volatile int cur_ctx;

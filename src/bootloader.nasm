@@ -69,7 +69,7 @@ pmode:
 	shl eax, 4
 	add eax, ebx
 	pusha
-;	call demo
+;	call demo               ; do gfx nonsense and waste time
 	popa
 	jmp eax
 halt:

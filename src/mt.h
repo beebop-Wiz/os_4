@@ -9,6 +9,8 @@
 #define PROCESS_BRK_INIT_SIZE 0x10000
 #define PROCESS_BRK_TOP (PROCESS_BRK_INITIAL + PROCESS_BRK_INIT_SIZE)
 
+#define DETACH_STACK_SIZE 0x1000
+
 #include "idt.h"
 #include "paging.h"
 
@@ -40,6 +42,7 @@ struct process {
   unsigned short waitpid, waitflags, waitcnt;
   unsigned short ppid;
   struct fd *fds;
+  unsigned int detach_stack;
 };
 
 void init_mt();

@@ -49,6 +49,7 @@ int new_process(unsigned int entry) {
   memset(ptab[i]->fds, 0, sizeof(struct fd) * FD_MAX);
   ptab[i]->suspend = SUS_RUNNING;
   ptab[i]->waitcnt = 0;
+  ptab[i]->detach_stack = (unsigned int) malloc(DETACH_STACK_SIZE);
   unsigned int j;
   for(j = PROCESS_STACK_BOTTOM; j < PROCESS_STACK_TOP; j += 4096) {
     nonid_page(ptab[i]->pt, j / 4096, 0);
@@ -118,7 +119,7 @@ unsigned int calc_regs_cksum(regs_t r) {
   unsigned int v = 0;
   unsigned int i;
   for(i = 0; i < sizeof(struct registers); i++) {
-    v += ((char *) r)[i] << (i % 24);
+    v ^= ((char *) r)[i] << (i % 24);
   }
   return v;
 }
@@ -126,6 +127,9 @@ unsigned int calc_regs_cksum(regs_t r) {
 void switch_ctx(regs_t r) {
   if(!mt_enabled) return;
   printd("CONTEXT SWITCH\n");
+  // This is very annoying. If we come here from a detached system
+  // call, the processor will not set up our stack, leaving us on the
+  // process stack, which we are about to swap out.
   if(mt_enabled > 1 && ptab[cur_ctx]) {
     printd("Old cksum (%d) %x => %x\n", cur_ctx, ptab[cur_ctx]->regs_cksum, calc_regs_cksum(r));
     ptab[cur_ctx]->regs_cksum = calc_regs_cksum(r);
@@ -176,6 +180,7 @@ void proc_exit(regs_t r) {
   log(LOG_MT, LOG_DEBUG, "Freed page table\n");
   free(ptab[cur_ctx]->r);
   log(LOG_MT, LOG_DEBUG, "Freed regs\n");
+  free((void *) ptab[cur_ctx]->detach_stack);
   free(ptab[cur_ctx]);
   ptab[cur_ctx] = 0;
   log(LOG_MT, LOG_DEBUG, "done\n");

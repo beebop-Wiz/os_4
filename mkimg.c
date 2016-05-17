@@ -173,7 +173,6 @@ int main(void) {
   bh.nsectors = 0;
   bh.addr.l = osh.entry;
   write(devfd, &bh, sizeof(bh));
-
   
   close(loaderfd);
   close(osfd);
