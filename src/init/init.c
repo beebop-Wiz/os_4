@@ -11,7 +11,7 @@ int main(void) {
   char **cmd = malloc(2048 * sizeof(char *));
   int argc, i;
   int cmdptr;
-  printf("  0123456701234567\n");
+  /*  printf("  0123456701234567\n");
   printf("0 \e[40m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[1m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[0m\n");
   printf("1 \e[41m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[1m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[0m\n");
   printf("2 \e[42m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[1m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[0m\n");
@@ -19,7 +19,7 @@ int main(void) {
   printf("4 \e[44m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[1m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[0m\n");
   printf("5 \e[45m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[1m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[0m\n");
   printf("6 \e[46m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[1m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[0m\n");
-  printf("7 \e[47m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[1m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[0m\n");
+  printf("7 \e[47m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[1m\e[30m\x80\e[31m\x80\e[32m\x80\e[33m\x80\e[34m\x80\e[35m\x80\e[36m\x80\e[37m\x80\e[0m\n"); */
 
   while(1) {
     printf("\e[44;37;1mroot\e[0;44;37m\x80\e[47;30;1m/\e[0;47;36m\x80\e[30;46m#\e[30;46m\x80\e[0m ");

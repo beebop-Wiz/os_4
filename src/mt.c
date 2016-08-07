@@ -172,18 +172,15 @@ void switch_ctx(regs_t r) {
     ptab[cur_ctx]->regs_cksum = calc_regs_cksum(r);
     memcpy(ptab[cur_ctx]->r, r, sizeof(struct registers));
   }
-  int i;
+  int i, j;
   do {
-    for(i = 1; i < 16; i++) {
-      vga_statchar('.', i);
-      if(ptab[i]) vga_statchar(i+'0', i);
-    }
     for(i = 1; i < 65536; i++) {
-      if(ptab[i] && i > cur_ctx) continue;
+      if(ptab[i] && i > cur_ctx) goto done;
     }
     for(i = 1; !ptab[i] && i < 65536; i++);
     if(i > 65535) asm volatile("hlt");
   } while(ptab[i]->suspend);
+ done:
   if(i != cur_ctx) {
     if(ptab[cur_ctx]) {
       swap_page_table(ptab[cur_ctx]->pt, ptab[i]->pt);
@@ -191,6 +188,11 @@ void switch_ctx(regs_t r) {
       swap_page_table((page_table_t) 0, ptab[i]->pt);
     }
   }
+  for(j = 1; j < 16; j++) {
+    vga_statchar('.', j);
+    if(ptab[j]) vga_statchar(j+'0', j);
+  }
+  vga_statchar('*', i);
   memcpy(r, ptab[i]->r, sizeof(struct registers));
   //    log(LOG_MT, LOG_DEBUG, "New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
   ptab[i]->regs_cksum = calc_regs_cksum(r);
