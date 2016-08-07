@@ -163,13 +163,14 @@ int cfg, cbg;
 #define TTY_WIDTH (800/8)
 int vt100_state = 0;
 unsigned int cx, cy;
-struct {
+struct tcell {
   unsigned char c;
   unsigned int fgcolor, bgcolor;
   unsigned char mod;
 } term[TTY_WIDTH][TTY_HEIGHT];
 
 void init_vgatext(void) {
+  printf("Term at %x to %x", term, term + sizeof(term));
   for(cx = 0; cx < TTY_WIDTH; cx++)
     for(cy = 0; cy < TTY_HEIGHT; cy++) {
       term[cx][cy].c = ' ';
@@ -218,6 +219,7 @@ void vga_setwin(int w, int h, int x, int y) {
 }
 
 void vga_redraw(void) {
+  if((int) term > 0x1000000) printf("term = %x!", term);
   vga_update_curs();
   unsigned int x, y, tx, ty;
   for(x = 0; x < ww; x++) {
@@ -237,6 +239,18 @@ void vga_redraw(void) {
   }
 }
 
+void vga_statchar(int c, int x) {
+  int ty, tx;
+  for(ty = 0; ty < 8; ty++) {
+    for(tx = 0; tx < 8; tx++) {
+      vga_write_pix(
+		    x * 8 + tx,
+		    ty + 592,
+		    (font8x8_basic[c][ty] & (1 << tx)) ? 0x00FF00 : 0x000000);
+    }
+  }
+}
+
 void vga_scroll() {
   unsigned int x, y, tx, ty;
   for(x = 0; x < ww; x++) {
@@ -244,10 +258,6 @@ void vga_scroll() {
       if(term[x][y].c != term[x][y+1].c)
 	for(tx = 0; tx < 8; tx++) {
 	  for(ty = 0; ty < 8; ty++) {
-	    vga_write_pix(
-			  x * 8 + tx + wx,
-			  y * 8 + ty + wy,
-			  0xFF0000);
 	    vga_write_pix(
 			  x * 8 + tx + wx,
 			  y * 8 + ty + wy,
@@ -265,10 +275,6 @@ void vga_scroll() {
   for(x = 0; x < ww; x++) {
     for(tx = 0; tx < 8; tx++) {
       for(ty = 0; ty < 8; ty++) {
-	vga_write_pix(
-		      x * 8 + tx + wx,
-		      y * 8 + ty + wy,
-		      0xFF0000);
 	vga_write_pix(
 		      x * 8 + tx + wx,
 		      y * 8 + ty + wy,

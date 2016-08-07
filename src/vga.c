@@ -33,13 +33,9 @@ void vga_clear() {
 #endif
 
 void vga_write_pix(int x, int y, int color) {
-  // f*** 24 bit color. 32 bits would make this so much faster.
-  unsigned char *b = (vga + (VGA_WIDTH * y + x) * 3);
-  unsigned char *g = b + 1;
-  unsigned char *r = b + 2;
-  *r = (unsigned char) ((color & 0xFF0000) >> 16);
-  *g = (unsigned char) ((color & 0x00FF00) >> 8);
-  *b = (unsigned char) (color & 0x0000FF);
+  unsigned int *begin = (unsigned int *) (vga + (VGA_WIDTH * y + x) * 3);
+  *begin &= 0xFF000000;
+  *begin |= color;
 }
 
 #ifdef KERNEL_SOURCE

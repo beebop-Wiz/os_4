@@ -39,12 +39,16 @@ extern volatile int cur_ctx;
 volatile int order = 0;
 
 void bsod(regs_t r) {
-  if(order++) goto halt;
+  if(order++) {
+    printf("\n\n");
+    log(LOG_GENERAL, LOG_CRITICAL, "Error detected in error handler. Giving up.\n");
+    goto halt;
+  }
   asm volatile ("cli");
   asm volatile ("mov $0x1800000, %esp");
   vga_setwin(90, 70, 30, 30);
-  vga_clearcolor(BLUE);
-  vga_set_color(WHITE, BLUE);
+  vga_clearcolor(0x000000);
+  vga_set_color(0xFF0000, 0x000000);
   vga_clear_text();
   log(LOG_GENERAL, LOG_CRITICAL, "Kernel panic: err 0x%x (%s)\n", r->int_no, exc[r->int_no]);
 #ifdef KERNEL_SOURCE
@@ -57,20 +61,21 @@ void bsod(regs_t r) {
   asm volatile("mov %%cr2, %0" : "=r" (cr));
   log(LOG_GENERAL, LOG_CRITICAL, "\tCR2: %x\n", cr);
   log(LOG_GENERAL, LOG_CRITICAL, "Err: %x flags %x\n", r->err, r->eflags);
-  log(LOG_GENERAL, LOG_CRITICAL, "\nStacktrace:\n");
+  log(LOG_GENERAL, LOG_CRITICAL, "\n");
+  log(LOG_GENERAL, LOG_CRITICAL, "Stacktrace:\n");
   log(LOG_GENERAL, LOG_CRITICAL, "%x\n", r->eip);
   while(r->ebp) {
     log(LOG_GENERAL, LOG_CRITICAL, "%x\n", *((unsigned int *) r->ebp + 1));
     r->ebp = *((unsigned int *) r->ebp);
   }
-  //  printf("\n\n\nWill now halt.\n");
  halt:
+  printf("\n\n\nWill now halt.\n");
   for(;;) asm volatile ("cli\nhlt");
 }
 
 void c_intr(regs_t r) {
   r->int_no &= 0xff;
-  //  printf("Recieved interrupt 0x%x\n", r->int_no);
+  //printf("Recieved interrupt 0x%x\n", r->int_no);
   if(r->int_no < 19) {
     bsod(r);
 #ifdef KERNEL_SOURCE

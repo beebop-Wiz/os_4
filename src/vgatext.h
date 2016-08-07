@@ -56,5 +56,5 @@ void vprintf(const char *fmp, __builtin_va_list ap);
 void vga_addch(int x, int y, int c);
 
 void vga_update_curs();
-
+void vga_statchar(int c, int x);
 #endif

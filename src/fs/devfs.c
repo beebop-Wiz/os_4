@@ -57,8 +57,7 @@ extern unsigned char *kbdbuf;
 extern volatile int kbreadp, kbwritep;
 
 int devfs_read(int f, char *s, long len) {
-  vga_addch(0, 80, 'R');
-  vga_redraw();
+  vga_statchar('R', 20);
   int i;
   unsigned char c;
   for(i = 0; i < len; i++) {
@@ -77,8 +76,7 @@ int devfs_read(int f, char *s, long len) {
     }
   }
   s[i] = 0;
-  vga_addch(0, 80, ' ');
-  vga_redraw();
+  vga_statchar('.', 20);
   return i;
 }
 

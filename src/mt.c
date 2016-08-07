@@ -17,6 +17,7 @@ struct process *ptab[65536];
 volatile int cur_ctx;
 volatile unsigned short foreground;
 int mt_enabled = 0;
+extern page_table_t kernel_pages;
 
 void init_mt() {
   int i;
@@ -64,6 +65,18 @@ int new_process(unsigned int entry) {
   return i;
 }
 
+void dump_process_pt(page_table_t p) {
+  while(p) {
+    printf("|- PDI 0x%x\n", p->idx);
+    int i;
+    for(i = 0; i < 1024; i++) {
+      if(get_mapping(p, p->idx * 1024 + i))
+	printf("| |-0x%x -> 0x%x\n", p->idx * 1024 + i, get_mapping(p, p->idx * 1024 + i));
+    }
+    p = p->next;
+  }
+}
+
 page_table_t get_process_pt(int proc) {
   return ptab[proc]->pt;
 }
@@ -73,7 +86,8 @@ unsigned short fork(regs_t r) {
   memcpy(ptab[pid]->r, r, sizeof(struct registers));
   page_table_t old;
   old = get_process_pt(cur_ctx);
-  unsigned int t_loc;
+  //  unsigned char dummy_maps[1024];
+  unsigned long t_loc;
   while(old) {
     int i;
     printf("Copying PT for idx %x\n", old->idx);
@@ -83,15 +97,37 @@ unsigned short fork(regs_t r) {
     for(i = 0; i < 1024; i++) {
       if(!old->table[i]) continue;
       if(!get_mapping(old, old->idx * 1024 + i)) continue;
-      t_loc = nonid_page(ptab[pid]->pt, 0x2000, 1);
-      printf("Copying %x to %x (%d)\n", (old->idx * 4096 * 1024) + i * 4096, 0x2000000, get_mapping(old, old->idx * 1024 + i));
-      memcpy((void *) 0x2000000, (void *) (old->idx * 4096 * 1024) + i * 4096, 4096);
+      t_loc = nonid_page(ptab[pid]->pt, 0x3000, 1);
+      printf("Copying %x to %x (%x)\n", (old->idx * 4096 * 1024) + i * 4096, 0x3000000, get_mapping(old, old->idx * 1024 + i));
+      memcpy((void *) 0x3000000, (void *) (old->idx * 4096 * 1024) + i * 4096, 4096);
       mapped_page(ptab[pid]->pt, old->idx * 1024 + i, t_loc, 0);
-      mapped_page(ptab[pid]->pt, 0x2000, 0, 0);
+      mapped_page(ptab[pid]->pt, 0x3000, 0, 0);
       update_page_table(ptab[pid]->pt);	
+    } 
+    /*    printf("Copying PT for idx %x\n", old->idx);
+    int i;
+    for(i = 0; i < 1024; i++) {
+      dummy_maps[i] = 0;
+      if(!get_mapping(old, old->idx * 1024 + i)) {
+	mapped_page(ptab[pid]->pt, old->idx * 1024 + i, 0x0000, 1);
+	dummy_maps[i] = 1;
+      }
+      nonid_page(ptab[pid]->pt, 0x3000 + i, 1);
     }
+    printf("Copying memory...\n");
+    update_page_table(ptab[pid]->pt);
+    memcpy((void *) 0x3000000, (void *) (old->idx * 4096 * 1024), 4096 * 1024 - 1);
+    for(i = 0; i < 1024; i++) {
+      if(dummy_maps[i]) {
+	mapped_page(ptab[pid]->pt, old->idx * 1024 + i, 0, 1);
+	continue;
+      }
+      mapped_page(ptab[pid]->pt, (old->idx * 1024) + i, get_mapping(ptab[pid]->pt, i + 0x3000), 0);
+      mapped_page(ptab[pid]->pt, 0x3000 + i, 0, 0);
+      } */
     old = old->next;
   }
+  update_page_table(ptab[pid]->pt);
   int i;
   for(i = 0; i < FD_MAX; i++) {
     memcpy(&ptab[pid]->fds[i], &ptab[cur_ctx]->fds[i], sizeof(struct fd));
@@ -124,12 +160,13 @@ unsigned int calc_regs_cksum(regs_t r) {
   return v;
 }
 
+volatile int idx;
+
 void switch_ctx(regs_t r) {
   if(!mt_enabled) return;
   printd("CONTEXT SWITCH\n");
-  // This is very annoying. If we come here from a detached system
-  // call, the processor will not set up our stack, leaving us on the
-  // process stack, which we are about to swap out.
+  vga_statchar((idx++ + ' '), 30);
+  idx %= 80;
   if(mt_enabled > 1 && ptab[cur_ctx]) {
     printd("Old cksum (%d) %x => %x\n", cur_ctx, ptab[cur_ctx]->regs_cksum, calc_regs_cksum(r));
     ptab[cur_ctx]->regs_cksum = calc_regs_cksum(r);
@@ -138,32 +175,32 @@ void switch_ctx(regs_t r) {
   int i;
   do {
     for(i = 1; i < 16; i++) {
-      vga_addch(i + 80, 0, '.');
-      if(ptab[i]) vga_addch(i + 80, 0, i + '0');
-      vga_redraw();
+      vga_statchar('.', i);
+      if(ptab[i]) vga_statchar(i+'0', i);
     }
     for(i = 1; i < 65536; i++) {
-      if(ptab[i] && i > cur_ctx) goto no_rollover;
+      if(ptab[i] && i > cur_ctx) continue;
     }
     for(i = 1; !ptab[i] && i < 65536; i++);
     if(i > 65535) asm volatile("hlt");
-  no_rollover:
+  } while(ptab[i]->suspend);
+  if(i != cur_ctx) {
     if(ptab[cur_ctx]) {
       swap_page_table(ptab[cur_ctx]->pt, ptab[i]->pt);
     } else {
       swap_page_table((page_table_t) 0, ptab[i]->pt);
     }
-    memcpy(r, ptab[i]->r, sizeof(struct registers));
-    cur_ctx = i;
-    mt_enabled = 2;		/* init bootstrap complete :) */
-    printd("New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
-    ptab[i]->regs_cksum = calc_regs_cksum(r);
-    log(LOG_MT, LOG_DEBUG, "loaded ctx %d (%x)\n", i, r->eip);
-    if((ptab[i]->suspend & SUS_WAIT) && ptab[i]->waitcnt) {
-      ptab[i]->suspend &= ~SUS_WAIT;
-      ptab[i]->waitcnt = 0;
-    }
-  } while(ptab[i]->suspend);
+  }
+  memcpy(r, ptab[i]->r, sizeof(struct registers));
+  //    log(LOG_MT, LOG_DEBUG, "New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
+  ptab[i]->regs_cksum = calc_regs_cksum(r);
+  log(LOG_MT, LOG_DEBUG, "loaded ctx #%d (%x)\n", cur_ctx, r->eip);
+  if((ptab[i]->suspend & SUS_WAIT) && ptab[i]->waitcnt) {
+    ptab[i]->suspend &= ~SUS_WAIT;
+    ptab[i]->waitcnt = 0;
+  }
+  cur_ctx = i;
+  mt_enabled = 2;		/* init bootstrap complete :) */
 }
 
 void free_ptab(page_table_t pt) {
@@ -173,8 +210,11 @@ void free_ptab(page_table_t pt) {
 }
 
 void proc_exit(regs_t r) {
+  /*  dump_process_pt(ptab[cur_ctx]->pt);
+  dump_process_pt(ptab[ptab[cur_ctx]->ppid]->pt);
+  dump_process_pt(kernel_pages); */
   log(LOG_MT, LOG_INFO, "Process %d exiting...\n", cur_ctx);
-  clear_wait(cur_ctx, 0x0100);
+  //  clear_wait(cur_ctx, 0x0100);
   free(ptab[cur_ctx]->fds);
   free_ptab(ptab[cur_ctx]->pt);
   log(LOG_MT, LOG_DEBUG, "Freed page table\n");
@@ -183,7 +223,7 @@ void proc_exit(regs_t r) {
   free((void *) ptab[cur_ctx]->detach_stack);
   free(ptab[cur_ctx]);
   ptab[cur_ctx] = 0;
-  log(LOG_MT, LOG_DEBUG, "done\n");
+  log(LOG_MT, LOG_INFO, "done\n");
   switch_ctx(r);
 }
 

@@ -56,7 +56,7 @@ void keyboard_intr() {
       }
     } else {
       printf("%c", kbdus[kbd_state % 2][(int) scan]);
-      vga_redraw();
+      //      vga_redraw();
       kbdbuf[kbwritep++] = kbdus[kbd_state % 2][(int) scan];
       if(kbwritep > KBD_BUFSIZ) kbwritep = 0;
     }

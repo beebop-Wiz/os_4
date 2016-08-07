@@ -17,7 +17,7 @@
 //                 GENERAL      MALLOC       PAGING       PMEM         MT           SYSCALL      BOOT
 #define LOGLEVELS {LOG_FAILURE, LOG_FAILURE, LOG_FAILURE, LOG_FAILURE, LOG_INFO, LOG_DEBUG, LOG_INFO}
 
-#define LOG_MAX LOG_INFO
+#define LOG_MAX LOG_DEBUG
 
 #define log(c, l, f, ...) do{_log(c,l)?printf(f,##__VA_ARGS__):0;}while(0);
 

@@ -36,7 +36,7 @@ int recv_packet(int sockfd, int type) {
     printf("%s\n", buf);
     break;
   case 2:
-    //    print_reg("eax", buf + 1);
+    print_reg("eax", buf + 1);
     //    print_reg("ecx", buf + 8 + 1);
     //    print_reg("edx", buf + 8*2 + 1);
     //    print_reg("ebx", buf + 8*3 + 1);
@@ -67,7 +67,7 @@ int main(void) {
     perror("connect");
     exit(1);
   }
-    send_packet("Z0,00100150", sockfd);
+  send_packet("Z0,00100150", sockfd);
   recv_packet(sockfd,0);
   send_packet("vCont;c:1", sockfd);
   recv_packet(sockfd, 0);
