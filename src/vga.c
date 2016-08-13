@@ -33,7 +33,7 @@ void vga_clear() {
 #endif
 
 void vga_write_pix(int x, int y, int color) {
-  unsigned int *begin = (unsigned int *) (vga + (VGA_WIDTH * y + x) * 3);
+  unsigned int *begin = VGA_LOC(x, y);
   *begin &= 0xFF000000;
   *begin |= color;
 }

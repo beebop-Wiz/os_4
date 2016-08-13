@@ -8,3 +8,5 @@ int | num | interface | function
 80h | 6   | unix      | usys_close
 80h | 11  | unix      | usys_execve
 80h | 45  | unix      | usys_brk
+80h | 57  | unix      | usys_setpgid
+80h | 66  | unix      | usys_setsid

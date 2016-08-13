@@ -40,7 +40,7 @@ struct process {
   unsigned int regs_cksum;
   unsigned char suspend;
   unsigned short waitpid, waitflags, waitcnt;
-  unsigned short ppid;
+  unsigned short ppid, pgid, sid;
   struct fd *fds;
   unsigned int detach_stack;
 };

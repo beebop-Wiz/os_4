@@ -23,3 +23,11 @@ void *sbrk(int increment) {
   syscall2(0x80, 45, cur_brk);
   return (void *) old_brk;
 }
+
+int setpgid(pid_t pid, pid_t pgid) {
+  return syscall3(0x80, 57, pid, pgid);
+}
+
+pid_t setsid(void) {
+  return syscall1(0x80, 66);
+}

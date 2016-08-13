@@ -86,11 +86,9 @@ unsigned short fork(regs_t r) {
   memcpy(ptab[pid]->r, r, sizeof(struct registers));
   page_table_t old;
   old = get_process_pt(cur_ctx);
-  //  unsigned char dummy_maps[1024];
   unsigned long t_loc;
   while(old) {
     int i;
-    printf("Copying PT for idx %x\n", old->idx);
     for(i = 0; i < 1024; i++) {
       mapped_page(ptab[pid]->pt, old->idx * 1024 + i, get_mapping(old, old->idx * 1024 + i), 1);
     }
@@ -98,33 +96,11 @@ unsigned short fork(regs_t r) {
       if(!old->table[i]) continue;
       if(!get_mapping(old, old->idx * 1024 + i)) continue;
       t_loc = nonid_page(ptab[pid]->pt, 0x3000, 1);
-      printf("Copying %x to %x (%x)\n", (old->idx * 4096 * 1024) + i * 4096, 0x3000000, get_mapping(old, old->idx * 1024 + i));
       memcpy((void *) 0x3000000, (void *) (old->idx * 4096 * 1024) + i * 4096, 4096);
       mapped_page(ptab[pid]->pt, old->idx * 1024 + i, t_loc, 0);
       mapped_page(ptab[pid]->pt, 0x3000, 0, 0);
       update_page_table(ptab[pid]->pt);	
     } 
-    /*    printf("Copying PT for idx %x\n", old->idx);
-    int i;
-    for(i = 0; i < 1024; i++) {
-      dummy_maps[i] = 0;
-      if(!get_mapping(old, old->idx * 1024 + i)) {
-	mapped_page(ptab[pid]->pt, old->idx * 1024 + i, 0x0000, 1);
-	dummy_maps[i] = 1;
-      }
-      nonid_page(ptab[pid]->pt, 0x3000 + i, 1);
-    }
-    printf("Copying memory...\n");
-    update_page_table(ptab[pid]->pt);
-    memcpy((void *) 0x3000000, (void *) (old->idx * 4096 * 1024), 4096 * 1024 - 1);
-    for(i = 0; i < 1024; i++) {
-      if(dummy_maps[i]) {
-	mapped_page(ptab[pid]->pt, old->idx * 1024 + i, 0, 1);
-	continue;
-      }
-      mapped_page(ptab[pid]->pt, (old->idx * 1024) + i, get_mapping(ptab[pid]->pt, i + 0x3000), 0);
-      mapped_page(ptab[pid]->pt, 0x3000 + i, 0, 0);
-      } */
     old = old->next;
   }
   update_page_table(ptab[pid]->pt);
@@ -133,6 +109,9 @@ unsigned short fork(regs_t r) {
     memcpy(&ptab[pid]->fds[i], &ptab[cur_ctx]->fds[i], sizeof(struct fd));
   }
   ptab[pid]->ppid = cur_ctx;
+  ptab[pid]->pgid = ptab[cur_ctx]->pgid;
+  ptab[pid]->sid = ptab[cur_ctx]->sid;
+  
   ptab[pid]->suspend = SUS_RUNNING;
   printf("New pid: %d Old pid %d\n", pid, cur_ctx);
   ptab[pid]->r->eax = 0;
