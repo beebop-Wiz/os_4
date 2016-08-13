@@ -50,7 +50,7 @@ int new_process(unsigned int entry) {
   memset(ptab[i]->fds, 0, sizeof(struct fd) * FD_MAX);
   ptab[i]->suspend = SUS_RUNNING;
   ptab[i]->waitcnt = 0;
-  ptab[i]->detach_stack = (unsigned int) malloc(DETACH_STACK_SIZE);
+  ptab[i]->detach_stack = (unsigned int) malloc_a(DETACH_STACK_SIZE, 4096);
   unsigned int j;
   for(j = PROCESS_STACK_BOTTOM; j < PROCESS_STACK_TOP; j += 4096) {
     nonid_page(ptab[i]->pt, j / 4096, 0);
@@ -194,13 +194,14 @@ void switch_ctx(regs_t r) {
   }
   vga_statchar('*', i);
   memcpy(r, ptab[i]->r, sizeof(struct registers));
-  //    log(LOG_MT, LOG_DEBUG, "New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
+  //  log(LOG_MT, LOG_DEBUG, "New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
   ptab[i]->regs_cksum = calc_regs_cksum(r);
   log(LOG_MT, LOG_DEBUG, "loaded ctx #%d (%x)\n", cur_ctx, r->eip);
   if((ptab[i]->suspend & SUS_WAIT) && ptab[i]->waitcnt) {
     ptab[i]->suspend &= ~SUS_WAIT;
     ptab[i]->waitcnt = 0;
   }
+  set_kernel_stack(ptab[i]->detach_stack);
   cur_ctx = i;
   mt_enabled = 2;		/* init bootstrap complete :) */
 }

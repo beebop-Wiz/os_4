@@ -9,10 +9,9 @@
 #include "log.h"
 #include "keyboard.h"
 #include "fs/fs.h"
-#include "mt.h"
 
-struct process *ptab[65536];
-volatile int cur_ctx;
+extern volatile int cur_ctx;
+extern struct process *ptab[65536];
 volatile int sys_detached = 0;
 
 // Here be dragons.
@@ -27,7 +26,7 @@ void syscall_detach(void (*f)(regs_t), regs_t r) {
   unsigned int old_esp, old_ebp;
   // Dear future me, or anyone else looking at the code: This line (or
   // its partner at the end of the function) is the problem.
-  asm volatile("mov %%esp, %%eax\n" /* store old esp */
+    asm volatile("mov %%esp, %%eax\n" /* store old esp */
 	       "mov %%ebp, %%ebx\n" /* store old ebp */
 	       "mov %[old_r], %%ecx\n" /* store r */
 	       "mov %[newesp], %%esp\n" /* write new esp */
@@ -35,18 +34,18 @@ void syscall_detach(void (*f)(regs_t), regs_t r) {
 	       "mov %%ebx, %[oldebp]\n" /* read old ebp */
 	       "mov %%ecx, %[new_r]"	/* read r */
 	       : [oldesp] "=r" (old_esp), [oldebp] "=r" (old_ebp), [new_r] "=r" (r)
-	       : [newesp] "r" (ptab[cur_ctx]->detach_stack + DETACH_STACK_SIZE - 16), [old_r] "r" (r)
+	       : [newesp] "r" (ptab[cur_ctx]->detach_stack + DETACH_STACK_SIZE - 128), [old_r] "r" (r)
 	       : "eax", "ebx", "ecx"); // move from kernel stack to userspace stack
-  log(LOG_SYSCALL, LOG_INFO, "Detached syscall, new esp %x old esp %x\n", ptab[cur_ctx]->detach_stack + DETACH_STACK_SIZE, old_esp);
   //  ptab[cur_ctx]->r->esp = ptab[cur_ctx]->r->useresp = ptab[cur_ctx]->detach_stack + DETACH_STACK_SIZE;
+  log(LOG_SYSCALL, LOG_INFO, "Detached syscall, ctx %d, new esp %x old esp %x\n", cur_ctx, ptab[cur_ctx]->detach_stack + DETACH_STACK_SIZE, old_esp);
   f(r);
   asm volatile("mov %0, %%eax \n mov %1, %%ebx \n mov %%eax, %%esp \n mov %%ebx, %%ebp"
 	       : : "r" (old_esp), "r" (old_ebp) : "eax", "ebx"); // return to kernel stack
   sys_detached = 0;
 }
 
-extern volatile int cur_ctx;
-extern struct process *ptab[65536];
+#define CANCEL_ON_PID(n) if(cur_ctx==n)usys_exit(r)
+
 
 #define NUM_UNIX_SYSCALLS 190
 void (*unix_syscalls[NUM_UNIX_SYSCALLS])(regs_t r);
@@ -66,7 +65,8 @@ void usys_read_wrapper(regs_t r) {
 }  
 
 void usys_read(regs_t r) {
-  syscall_detach(usys_read_wrapper, r);
+  //  syscall_detach(usys_read_wrapper, r);
+  r->eax = fs_read(r->ebx, (char *) r->ecx, r->edx);
 }
 
 void usys_write(regs_t r) {
@@ -115,7 +115,7 @@ void usys_execve(regs_t r) {
 }
 
 void usys_brk(regs_t r) {
-  if(r->ebx < PROCESS_BRK_INITIAL) {
+    if(r->ebx < PROCESS_BRK_INITIAL) {
     r->eax = ptab[cur_ctx]->brk;
     return;
   } else {
@@ -142,12 +142,16 @@ void syscall_unix(regs_t r) {
   else log(LOG_SYSCALL, LOG_FAILURE, "Unknown UNIX syscall number %d\n", r->eax);
 }
 
+volatile unsigned long sid = 0;
+
 void do_syscall(regs_t r) {
-  log(LOG_SYSCALL, LOG_INFO, "%x %s %x %x %x %x %x %x %d\n", r, r->int_no == 0x80 ? "unix" : "os4", r->eax, r->ebx, r->ecx, r->edx, r->esi, r->edi, cur_ctx);
+  unsigned long this_id = sid++;
+  log(LOG_SYSCALL, LOG_INFO, "%x %s %x %x %x %x %x %x %d %d\n", r, r->int_no == 0x80 ? "unix" : "os4", r->eax, r->ebx, r->ecx, r->edx, r->esi, r->edi, cur_ctx, this_id);
   if(r->int_no == 0x80) {
+    //    syscall_detach(syscall_unix, r);
     syscall_unix(r);
   }
-  log(LOG_SYSCALL, LOG_INFO, "COMPLETE\n");
+  log(LOG_SYSCALL, LOG_INFO, "COMPLETE %d\n", this_id);
 }
 
 // Did you update syscalls.txt?
