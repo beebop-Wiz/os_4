@@ -44,6 +44,16 @@ void usys_close(regs_t r) {
   r->eax = fs_close(r->ebx);
 }
 
+void usys_waitpid(regs_t r) {
+
+  if(r->ebx == (unsigned short) -1) {
+    ptab[cur_ctx]->suspend |= SUS_WAIT;
+    ptab[cur_ctx]->waitcnt = 0;
+  } else {
+    log(LOG_SYSCALL, LOG_FAILURE, "waitpid() on pid != -1 unsupported (got %d)\n", r->ebx);
+  }
+}
+
 void usys_execve(regs_t r) {
   struct ext2_superblock *superblock = malloc(sizeof(struct ext2_superblock));
   struct ext2_inode inode;
@@ -72,10 +82,13 @@ void usys_execve(regs_t r) {
     memcpy((void *) ph.p_vaddr, prog_buf + ph.p_offset, ph.p_filesz);
   }
   r->eip = prog_header.entry;
+  // ebx = filename, ecx = argv, edx = envp
+  // argc = eax, argv = ebx, envp = esi
+  char **argv = (char **) r->ecx;
+  for(r->eax = 0; argv[r->eax]; r->eax++);
   r->esi = r->edx;
-  // TODO: copy arguments!
-  r->eax = 0;
   r->ebx = r->ecx;
+  log(LOG_SYSCALL, LOG_INFO, "exec: argc = %d argv = %x\n", r->eax, r->ebx);
   log(LOG_SYSCALL, LOG_INFO, "execve() complete\n");
 }
 
@@ -138,6 +151,7 @@ void init_syscall() {
   unix_syscalls[4] = usys_write;
   unix_syscalls[5] = usys_open;
   unix_syscalls[6] = usys_close;
+  unix_syscalls[7] = usys_waitpid;
   unix_syscalls[11] = usys_execve;
   unix_syscalls[45] = usys_brk;
   unix_syscalls[57] = usys_setpgid;

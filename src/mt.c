@@ -152,13 +152,11 @@ void switch_ctx(regs_t r) {
     memcpy(ptab[cur_ctx]->r, r, sizeof(struct registers));
   }
   int i, j;
-  do {
-    for(i = 1; i < 65536; i++) {
-      if(ptab[i] && i > cur_ctx) goto done;
-    }
-    for(i = 1; !ptab[i] && i < 65536; i++);
-    if(i > 65535) asm volatile("hlt");
-  } while(ptab[i]->suspend);
+  for(i = 1; i < 65536; i++) {
+    if(ptab[i] && !ptab[i]->suspend && i > cur_ctx) goto done;
+  }
+  for(i = 1; (!ptab[i] || ptab[i]->suspend) && i < 65536; i++);
+  if(i > 65535) return;
  done:
   if(i != cur_ctx) {
     if(ptab[cur_ctx]) {
@@ -172,6 +170,7 @@ void switch_ctx(regs_t r) {
     if(ptab[j]) vga_statchar(j+'0', j);
   }
   vga_statchar('*', i);
+
   memcpy(r, ptab[i]->r, sizeof(struct registers));
   //  log(LOG_MT, LOG_DEBUG, "New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
   ptab[i]->regs_cksum = calc_regs_cksum(r);
@@ -192,11 +191,8 @@ void free_ptab(page_table_t pt) {
 }
 
 void proc_exit(regs_t r) {
-  /*  dump_process_pt(ptab[cur_ctx]->pt);
-  dump_process_pt(ptab[ptab[cur_ctx]->ppid]->pt);
-  dump_process_pt(kernel_pages); */
   log(LOG_MT, LOG_INFO, "Process %d exiting...\n", cur_ctx);
-  //  clear_wait(cur_ctx, 0x0100);
+  clear_wait(cur_ctx, 0x0100);
   free(ptab[cur_ctx]->fds);
   free_ptab(ptab[cur_ctx]->pt);
   log(LOG_MT, LOG_DEBUG, "Freed page table\n");
@@ -234,4 +230,6 @@ void clear_wait(unsigned short proc, unsigned short status) {
   ptab[ptab[proc]->ppid]->waitflags = 0;
   ptab[ptab[proc]->ppid]->r->ecx = (status << 16) | proc;
   ptab[ptab[proc]->ppid]->waitcnt++;
+  ptab[ptab[proc]->ppid]->suspend &= ~SUS_WAIT;
+      
 }

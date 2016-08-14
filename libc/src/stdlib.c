@@ -6,7 +6,7 @@
 unsigned int *malloc_arena = 0;
 unsigned int *endptr = 0;
 
-#define MAGIC 0xA10C2534
+#define MAGIC 0x30313233
 
 struct malloc_header {
   unsigned int magic;

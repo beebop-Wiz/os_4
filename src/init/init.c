@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/wait.h>
 
 // back > fore
 
@@ -31,7 +32,7 @@ int main(void) {
 
     while((s = strtok2(cmdbuf, " "))) {
       printf("%s\n", s);
-      cmd[argc] = malloc(strlen(s));
+      cmd[argc] = malloc(strlen(s) + 1);
       strcpy(cmd[argc], s);
       argc++;
     }
@@ -42,6 +43,8 @@ int main(void) {
     if(!(child = fork())) {
       execve(cmd[0], cmd, 0);
       return 0;
+    } else {
+      waitpid(-1, 0, 0);
     }
     for(i = 0; i < argc; i++) {
       free(cmd[i]);

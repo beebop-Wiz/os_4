@@ -86,7 +86,7 @@ void boot2_main() {
     log(LOG_BOOT, LOG_INFO, "Copying...\n");
     int i;
     for(i = 0; i < bh.nsectors; i++) {
-      log(LOG_BOOT, LOG_INFO, "    LBA %d (%d%%)\n", lba, ((lba - sector_offset) * 100) / knsectors);
+      //      log(LOG_BOOT, LOG_INFO, "    LBA %d (%d%%)\n", lba, ((lba - sector_offset) * 100) / knsectors);
       read_sector(lba, bh.addr.l);
       lba++;
       bh.addr.l += 512;

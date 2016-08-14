@@ -39,7 +39,8 @@ char *strtok(char *str, const char *delim) {
 
 char *strcpy(char *dest, const char *src) {
   int i;
-  for(i = 0; i < strlen(src) + 1; i++)
+  for(i = 0; i < strlen(src); i++)
     dest[i] = src[i];
+  dest[i] = 0;
   return dest;
 }
