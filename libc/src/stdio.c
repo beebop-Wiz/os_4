@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+static int init = 0;
 FILE *stdin, *stdout, *stderr;
 
 void init_stdio(void) {
@@ -17,6 +18,7 @@ void init_stdio(void) {
   stdout->fd = 1;
   stdout->buf = malloc(BUFSIZ);
   stdout->bufwp = stdout->bufrp = stdout->err = 0;
+  init = 1;
 }
 
 int putchar(int c) {
@@ -28,6 +30,7 @@ int getchar() {
 }
 
 int fputc(int c, FILE *stream) {
+  if(!init) return 0;
   stream->buf[stream->bufwp++] = c;
   if(c == '\n') {
     syscall4(0x80, 4, stream->fd, (int) stream->buf, stream->bufwp);

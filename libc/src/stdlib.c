@@ -19,12 +19,13 @@ void *malloc(size_t size) {
     malloc_arena = endptr = sbrk(sizeof(struct malloc_header));
   }
   struct malloc_header *h = (struct malloc_header *) malloc_arena;
-  while(1) {
-    if(h->magic != MAGIC) goto new_allocation;
-    if(!h->used && h->size >= size) return (void *) (h + 1);
+  while(h->magic == MAGIC) {
+    if(!h->used && h->size >= size) {
+      h->used = 1;
+      return (void *) (h + 1);
+    }
     h = ((void *) h) + h->size + sizeof(struct malloc_header);
   }
- new_allocation:
   h->magic = MAGIC;
   h->used = 1;
   h->size = size;
@@ -32,7 +33,6 @@ void *malloc(size_t size) {
     brk(((unsigned int *) h) + size + 2 * sizeof(struct malloc_header));
     endptr = ((unsigned int *) h) + size + 2 * sizeof(struct malloc_header);
   }
-
   return (void *) (h + 1);
 }
 

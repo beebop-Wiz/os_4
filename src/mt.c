@@ -175,7 +175,7 @@ void switch_ctx(regs_t r) {
   //  log(LOG_MT, LOG_DEBUG, "New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
   ptab[i]->regs_cksum = calc_regs_cksum(r);
   log(LOG_MT, LOG_DEBUG, "loaded ctx #%d (%x)\n", cur_ctx, r->eip);
-  if((ptab[i]->suspend & SUS_WAIT) && ptab[i]->waitcnt) {
+  if(ptab[i]->waitcnt) {
     ptab[i]->suspend &= ~SUS_WAIT;
     ptab[i]->waitcnt = 0;
   }
@@ -228,7 +228,8 @@ void clear_wait(unsigned short proc, unsigned short status) {
   }
   ptab[ptab[proc]->ppid]->waitpid = 0;
   ptab[ptab[proc]->ppid]->waitflags = 0;
-  ptab[ptab[proc]->ppid]->r->ecx = (status << 16) | proc;
+  if(ptab[ptab[proc]->ppid]->suspend & SUS_WAIT)
+    ptab[ptab[proc]->ppid]->r->ecx = (status << 16) | proc;
   ptab[ptab[proc]->ppid]->waitcnt++;
   ptab[ptab[proc]->ppid]->suspend &= ~SUS_WAIT;
       

@@ -45,7 +45,6 @@ void usys_close(regs_t r) {
 }
 
 void usys_waitpid(regs_t r) {
-
   if(r->ebx == (unsigned short) -1) {
     ptab[cur_ctx]->suspend |= SUS_WAIT;
     ptab[cur_ctx]->waitcnt = 0;

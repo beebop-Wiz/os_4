@@ -31,8 +31,8 @@ int main(void) {
     printf("Command: `%s'\n", cmdbuf);
 
     while((s = strtok2(cmdbuf, " "))) {
-      printf("%s\n", s);
       cmd[argc] = malloc(strlen(s) + 1);
+      printf("`%s' %x\n", s, cmd[argc]);
       strcpy(cmd[argc], s);
       argc++;
     }
@@ -42,6 +42,7 @@ int main(void) {
     pid_t child;
     if(!(child = fork())) {
       execve(cmd[0], cmd, 0);
+      printf("Unknown command %s\n", cmdbuf);
       return 0;
     } else {
       waitpid(-1, 0, 0);
@@ -49,7 +50,6 @@ int main(void) {
     for(i = 0; i < argc; i++) {
       free(cmd[i]);
     }
-    //    printf("Unknown command %s\n", cmdbuf);
   }
   return 0;
 }
