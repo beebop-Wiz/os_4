@@ -2,6 +2,7 @@
 #define STDIO_H
 
 #define BUFSIZ 1024
+#define EOF -1
 
 struct __file_struct {
   int fd;

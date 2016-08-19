@@ -49,8 +49,7 @@ int fgetc(FILE *stream) {
   if(stream->bufwp > stream->bufrp) {
     return stream->buf[stream->bufrp++];
   } else if(stream->bufwp == stream->bufrp) {
-    syscall4(0x80, 3, stream->fd, (int) stream->buf, 1);
-    stream->bufwp = 1;
+    stream->bufwp = syscall4(0x80, 3, stream->fd, (int) stream->buf, BUFSIZ);
     stream->bufrp = 0;
     return stream->buf[stream->bufrp++];
   } else {

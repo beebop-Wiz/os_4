@@ -56,6 +56,17 @@ CMAKE_BINARY_DIR = /home/beebop/src/os_4
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
+
 # Special rule for the target test
 test:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
@@ -77,17 +88,6 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -135,6 +135,21 @@ boot2.bin: src/CMakeFiles/boot2.bin.dir/rule
 boot2.bin/fast:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/build
 .PHONY : boot2.bin/fast
+
+# Convenience name for target.
+src/CMakeFiles/cat.dir/rule:
+	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/cat.dir/rule
+.PHONY : src/CMakeFiles/cat.dir/rule
+
+# Convenience name for target.
+cat: src/CMakeFiles/cat.dir/rule
+
+.PHONY : cat
+
+# fast build rule for target.
+cat/fast:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/cat.dir/build.make src/CMakeFiles/cat.dir/build
+.PHONY : cat/fast
 
 # Convenience name for target.
 src/CMakeFiles/coreutils.dir/rule:
@@ -303,6 +318,33 @@ boot2.s: boot2.c.s
 boot2.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/boot2.bin.dir/build.make src/CMakeFiles/boot2.bin.dir/boot2.c.s
 .PHONY : boot2.c.s
+
+coreutils/cat.o: coreutils/cat.c.o
+
+.PHONY : coreutils/cat.o
+
+# target to build an object file
+coreutils/cat.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/cat.dir/build.make src/CMakeFiles/cat.dir/coreutils/cat.c.o
+.PHONY : coreutils/cat.c.o
+
+coreutils/cat.i: coreutils/cat.c.i
+
+.PHONY : coreutils/cat.i
+
+# target to preprocess a source file
+coreutils/cat.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/cat.dir/build.make src/CMakeFiles/cat.dir/coreutils/cat.c.i
+.PHONY : coreutils/cat.c.i
+
+coreutils/cat.s: coreutils/cat.c.s
+
+.PHONY : coreutils/cat.s
+
+# target to generate assembly for a file
+coreutils/cat.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/cat.dir/build.make src/CMakeFiles/cat.dir/coreutils/cat.c.s
+.PHONY : coreutils/cat.c.s
 
 coreutils/echo.o: coreutils/echo.c.o
 
@@ -1065,6 +1107,7 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... edit_cache"
 	@echo "... test"
 	@echo "... image"
 	@echo "... version"
@@ -1074,8 +1117,8 @@ help:
 	@echo "... init.exe"
 	@echo "... boot2.bin"
 	@echo "... echo"
+	@echo "... cat"
 	@echo "... coreutils"
-	@echo "... edit_cache"
 	@echo "... async.o"
 	@echo "... async.i"
 	@echo "... async.s"
@@ -1083,6 +1126,9 @@ help:
 	@echo "... boot2.o"
 	@echo "... boot2.i"
 	@echo "... boot2.s"
+	@echo "... coreutils/cat.o"
+	@echo "... coreutils/cat.i"
+	@echo "... coreutils/cat.s"
 	@echo "... coreutils/echo.o"
 	@echo "... coreutils/echo.i"
 	@echo "... coreutils/echo.s"

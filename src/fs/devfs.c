@@ -66,12 +66,15 @@ int devfs_read(int f, char *s, long len) {
       while(kbreadp == kbwritep) ;
       c = kbdbuf[kbreadp++];
       if(kbreadp > KBD_BUFSIZ) kbreadp = 0;
-      if(c == 255) break; // This is separate from the \n test for a
-			  // reason - we should write the newline to
-			  // the string but not the EOF.
       s[i] = c;
-      if(c == '\n') { i++; break; }
-      if(c == '\b') { i -= 2; if(i < -1) i = -1;} // will be set to 0 in the next loop iteration
+      if(c == '\n' || c == 255) { i++; break; }
+      if(c == '\b') {
+	if(i > 0) {
+	  s[i-1] = 0;
+	  i -= 2;
+	}
+	else i = -1;
+      }
       asm volatile("cli");
     }
   }

@@ -58,8 +58,8 @@ target_link_libraries(hello c)
 #target_link_libraries(env c)
 add_executable(echo coreutils/echo.c)
 target_link_libraries(echo c)
-#add_executable(cat coreutils/cat.c)
-#target_link_libraries(cat c)
+add_executable(cat coreutils/cat.c)
+target_link_libraries(cat c)
 add_custom_target(coreutils ALL DEPENDS hello)
 
 add_custom_command(
