@@ -3,7 +3,7 @@
 #include <sys/call.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <stdarg.h>
 static int init = 0;
 FILE *stdin, *stdout, *stderr;
 
@@ -89,14 +89,14 @@ int puts(const char *s) {
 }
 
  int printf(const char *fmt, ...) {
-  __builtin_va_list ap;
-  __builtin_va_start(ap, fmt);
+  va_list ap;
+  va_start(ap, fmt);
   int r = vprintf(fmt, ap);
-  __builtin_va_end(ap);
+  va_end(ap);
   return r;
 }
 
-int vprintf(const char *fmt, __builtin_va_list ap) {
+int vprintf(const char *fmt, va_list ap) {
   char c;
   int length = -1;
   while(*fmt) {
@@ -123,48 +123,48 @@ int vprintf(const char *fmt, __builtin_va_list ap) {
       case 'i':
 	switch(length) {
 	case LEN_64:
-	  itoa_s(__builtin_va_arg(ap, signed long long), 10);
+	  itoa_s(va_arg(ap, signed long long), 10);
 	  break;
 	default:
-	  itoa_s(__builtin_va_arg(ap, signed int), 10);
+	  itoa_s(va_arg(ap, signed int), 10);
 	  break;
 	}
 	break;
       case 'u':
 	switch(length) {
 	case LEN_64:
-	  itoa_u(__builtin_va_arg(ap, unsigned long), 10);
+	  itoa_u(va_arg(ap, unsigned long), 10);
 	  break;
 	default:
-	  itoa_u(__builtin_va_arg(ap, unsigned int), 10);
+	  itoa_u(va_arg(ap, unsigned int), 10);
 	  break;
 	}
 	break;
       case 'o':
 	switch(length) {
 	case LEN_64:
-	  itoa_u(__builtin_va_arg(ap, unsigned long), 8);
+	  itoa_u(va_arg(ap, unsigned long), 8);
 	  break;
 	default:
-	  itoa_u(__builtin_va_arg(ap, unsigned int), 8);
+	  itoa_u(va_arg(ap, unsigned int), 8);
 	  break;
 	}
 	break;
       case 'x':
 	switch(length) {
 	case LEN_64:
-	  itoa_u(__builtin_va_arg(ap, unsigned long), 16);
+	  itoa_u(va_arg(ap, unsigned long), 16);
 	  break;
 	default:
-	  itoa_u(__builtin_va_arg(ap, unsigned int), 16);
+	  itoa_u(va_arg(ap, unsigned int), 16);
 	  break;
 	}
 	break;
       case 'c':
-	putchar(__builtin_va_arg(ap, unsigned int));
+	putchar(va_arg(ap, unsigned int));
 	break;
       case 's':
-	puts(__builtin_va_arg(ap, char *));
+	puts(va_arg(ap, char *));
 	break;
       case '%':
 	putchar('%');
