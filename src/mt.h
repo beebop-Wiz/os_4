@@ -38,8 +38,9 @@ struct process {
   unsigned int brk;
   regs_t r;
   unsigned int regs_cksum;
-  unsigned char suspend;
-  unsigned short waitpid, waitflags, waitcnt;
+  volatile unsigned char suspend;
+  unsigned short waitpid, waitflags;
+  volatile unsigned short waitcnt;
   unsigned short ppid, pgid, sid;
   struct fd *fds;
   unsigned int detach_stack;

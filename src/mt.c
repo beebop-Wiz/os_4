@@ -152,9 +152,8 @@ void switch_ctx(regs_t r) {
     memcpy(ptab[cur_ctx]->r, r, sizeof(struct registers));
   }
   int i, j;
-  for(i = 1; i < 65536; i++) {
-    if(ptab[i] && !ptab[i]->suspend && i > cur_ctx) goto done;
-  }
+  for(i = cur_ctx + 1; i < 65536; i++)
+    if(ptab[i] && !ptab[i]->suspend) goto done;
   for(i = 1; (!ptab[i] || ptab[i]->suspend) && i < 65536; i++);
   if(i > 65535) return;
  done:
@@ -170,15 +169,11 @@ void switch_ctx(regs_t r) {
     if(ptab[j]) vga_statchar(j+'0', j);
   }
   vga_statchar('*', i);
-
+  vga_statchar(ptab[i]->suspend+'0', 35);
   memcpy(r, ptab[i]->r, sizeof(struct registers));
   //  log(LOG_MT, LOG_DEBUG, "New cksum (%d) %x => %x\n", i, ptab[i]->regs_cksum, calc_regs_cksum(r));
   ptab[i]->regs_cksum = calc_regs_cksum(r);
   log(LOG_MT, LOG_DEBUG, "loaded ctx #%d (%x)\n", cur_ctx, r->eip);
-  if(ptab[i]->waitcnt) {
-    ptab[i]->suspend &= ~SUS_WAIT;
-    ptab[i]->waitcnt = 0;
-  }
   set_kernel_stack(ptab[i]->detach_stack);
   cur_ctx = i;
   mt_enabled = 2;		/* init bootstrap complete :) */
@@ -231,6 +226,7 @@ void clear_wait(unsigned short proc, unsigned short status) {
   if(ptab[ptab[proc]->ppid]->suspend & SUS_WAIT)
     ptab[ptab[proc]->ppid]->r->ecx = (status << 16) | proc;
   ptab[ptab[proc]->ppid]->waitcnt++;
+  log(LOG_MT, LOG_INFO, "ptab[%d]->waitcnt == %d\n", ptab[proc]->ppid, ptab[ptab[proc]->ppid]->waitcnt);
   ptab[ptab[proc]->ppid]->suspend &= ~SUS_WAIT;
       
 }

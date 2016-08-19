@@ -48,6 +48,7 @@ void usys_waitpid(regs_t r) {
   if(r->ebx == (unsigned short) -1) {
     ptab[cur_ctx]->suspend |= SUS_WAIT;
     ptab[cur_ctx]->waitcnt = 0;
+    switch_ctx(r);
   } else {
     log(LOG_SYSCALL, LOG_FAILURE, "waitpid() on pid != -1 unsupported (got %d)\n", r->ebx);
   }
