@@ -252,6 +252,19 @@ os_4.bin/fast:
 .PHONY : os_4.bin/fast
 
 #=============================================================================
+# Target rules for targets named sh
+
+# Build rule for target.
+sh: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sh
+.PHONY : sh
+
+# fast build rule for target.
+sh/fast:
+	$(MAKE) -f src/CMakeFiles/sh.dir/build.make src/CMakeFiles/sh.dir/build
+.PHONY : sh/fast
+
+#=============================================================================
 # Target rules for targets named version
 
 # Build rule for target.
@@ -375,6 +388,7 @@ help:
 	@echo "... init.exe"
 	@echo "... boot2.bin"
 	@echo "... echo"
+	@echo "... sh"
 	@echo "... cat"
 	@echo "... coreutils"
 	@echo "... doc"

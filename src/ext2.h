@@ -113,4 +113,5 @@ void parse_inode_type(unsigned short type, char *out);
 int get_file_inode(struct ext2_superblock *s, int dir_inode, const char *name);
 int get_path_inode(struct ext2_superblock *s, const char *path);
 
+void list_directory(struct ext2_superblock *s, struct ext2_inode *d);
 #endif

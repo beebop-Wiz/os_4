@@ -44,3 +44,21 @@ char *strcpy(char *dest, const char *src) {
   dest[i] = 0;
   return dest;
 }
+
+int strncmp(const char *s1, const char *s2, size_t n) {
+  size_t i;
+  for(i = 0; i < n; i++) {
+    if(s1[i] != s2[i]) {
+      if(s1[i] > s2[i]) return 1;
+      else if(s1[i] < s2[i]) return -1;
+      if(s1[i] == 0 && s2[i] == 0) return 0;
+    }
+  }
+  return 0;
+}
+
+int strcmp(const char *s1, const char *s2) {
+  int s1l = strlen(s1);
+  int s2l = strlen(s2);
+  return strncmp(s1, s2, (s1l > s2l) ? s2l : s1l);
+}

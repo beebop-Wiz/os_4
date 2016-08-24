@@ -129,7 +129,8 @@ void closedir(ext2_dirstate_t s) {
     free(s->last->name);
     free(s->last);
   }
-  free(s->inode);
+  if(s->inode)
+    free(s->inode);
   free(s);
 }
 

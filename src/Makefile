@@ -242,6 +242,21 @@ os_4.bin/fast:
 .PHONY : os_4.bin/fast
 
 # Convenience name for target.
+src/CMakeFiles/sh.dir/rule:
+	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/sh.dir/rule
+.PHONY : src/CMakeFiles/sh.dir/rule
+
+# Convenience name for target.
+sh: src/CMakeFiles/sh.dir/rule
+
+.PHONY : sh
+
+# fast build rule for target.
+sh/fast:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/sh.dir/build.make src/CMakeFiles/sh.dir/build
+.PHONY : sh/fast
+
+# Convenience name for target.
 src/CMakeFiles/version.dir/rule:
 	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/version.dir/rule
 .PHONY : src/CMakeFiles/version.dir/rule
@@ -372,6 +387,33 @@ coreutils/echo.s: coreutils/echo.c.s
 coreutils/echo.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/echo.dir/build.make src/CMakeFiles/echo.dir/coreutils/echo.c.s
 .PHONY : coreutils/echo.c.s
+
+coreutils/sh.o: coreutils/sh.c.o
+
+.PHONY : coreutils/sh.o
+
+# target to build an object file
+coreutils/sh.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/sh.dir/build.make src/CMakeFiles/sh.dir/coreutils/sh.c.o
+.PHONY : coreutils/sh.c.o
+
+coreutils/sh.i: coreutils/sh.c.i
+
+.PHONY : coreutils/sh.i
+
+# target to preprocess a source file
+coreutils/sh.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/sh.dir/build.make src/CMakeFiles/sh.dir/coreutils/sh.c.i
+.PHONY : coreutils/sh.c.i
+
+coreutils/sh.s: coreutils/sh.c.s
+
+.PHONY : coreutils/sh.s
+
+# target to generate assembly for a file
+coreutils/sh.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/sh.dir/build.make src/CMakeFiles/sh.dir/coreutils/sh.c.s
+.PHONY : coreutils/sh.c.s
 
 debug.o: debug.c.o
 
@@ -1117,6 +1159,7 @@ help:
 	@echo "... init.exe"
 	@echo "... boot2.bin"
 	@echo "... echo"
+	@echo "... sh"
 	@echo "... cat"
 	@echo "... coreutils"
 	@echo "... async.o"
@@ -1132,6 +1175,9 @@ help:
 	@echo "... coreutils/echo.o"
 	@echo "... coreutils/echo.i"
 	@echo "... coreutils/echo.s"
+	@echo "... coreutils/sh.o"
+	@echo "... coreutils/sh.i"
+	@echo "... coreutils/sh.s"
 	@echo "... debug.o"
 	@echo "... debug.i"
 	@echo "... debug.s"

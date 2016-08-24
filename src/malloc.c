@@ -6,8 +6,11 @@
 #define MALLOC_ARENA ((void *) 0x4000000)
 #define MALLOC_FIRST_BLOCK ((void *) MALLOC_ARENA + sizeof(struct malloc_header))
 
+void *malloc_start, *malloc_end;
+
 void init_malloc() {
-  struct malloc_header *ptr = MALLOC_ARENA;
+  struct malloc_header *ptr = malloc_start = MALLOC_ARENA;
+  malloc_end = malloc_start + sizeof(struct malloc_header) * 4;
   ptr->magic = MALLOC_MAGIC;
   ptr->type = BLOCK_USED;
   ptr->length = 0;
@@ -59,6 +62,10 @@ void *page_allocation(void *addr, unsigned int size) {
   }
   for(i = 0; i < (size / 4); i++) {
     ((int *) addr)[i]= 0;
+  }
+  if(addr + size > malloc_end) {
+    malloc_end = addr + size;
+    malloc_end += sizeof(struct malloc_header);
   }
   return addr;
 }
@@ -130,6 +137,10 @@ void *malloc_a(unsigned int size, int align) {
 }
 
 void free(void *mem) {
+  if(mem < malloc_start || mem > malloc_end) {
+    log(LOG_MALLOC, LOG_FAILURE, "Someone's trying to free a non-malloc'd pointer (%x) (%x - %x)!\n", mem, malloc_start, malloc_end);
+    return;
+  }
   struct malloc_header *ptr = (struct malloc_header *) mem - 1;
   if(ptr->magic != MALLOC_MAGIC) {
     // check if it's an aligned block

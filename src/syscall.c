@@ -84,6 +84,7 @@ void usys_execve(regs_t r) {
   r->eip = prog_header.entry;
   // ebx = filename, ecx = argv, edx = envp
   // argc = eax, argv = ebx, envp = esi
+  free(prog_buf);
   char **argv = (char **) r->ecx;
   for(r->eax = 0; argv[r->eax]; r->eax++);
   r->esi = r->edx;

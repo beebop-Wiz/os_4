@@ -31,3 +31,7 @@ int setpgid(pid_t pid, pid_t pgid) {
 pid_t setsid(void) {
   return syscall1(0x80, 66);
 }
+
+void _exit(int val) {
+  syscall2(0x80, 1, val);
+}

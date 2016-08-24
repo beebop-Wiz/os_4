@@ -9,4 +9,5 @@ int brk(void *addr);
 void *sbrk(int inc);
 int setpgid(pid_t pid, pid_t pgid);
 pid_t setsid(void);
+void _exit(int);
 #endif
