@@ -2,9 +2,6 @@
 #include "vgatext.h"
 #include "port.h"
 
-#define VGA_WIDTH 800
-#define VGA_HEIGHT 600
-
 #define VGA_LOC(x, y) ((unsigned int *) (vga + (VGA_WIDTH * y + x) * 3))
 
 unsigned char *vga = (unsigned char *) 0xFD000000;
@@ -23,8 +20,8 @@ void init_vga(void) {
 
 void vga_clear() {
   int x, y;
-  for(y = 0; y < 600; y++) {
-    for(x = 0; x < 800; x++) {
+  for(y = 0; y < VGA_HEIGHT; y++) {
+    for(x = 0; x < VGA_WIDTH; x++) {
       *VGA_LOC(x, y) = 0;
     }
   }

@@ -68,14 +68,10 @@ done:
 pmode:
 	shl eax, 4
 	add eax, ebx
-	pusha
-;	call demo               ; do gfx nonsense and waste time
-	popa
+	;pusha
+	;call demo               ; do gfx nonsense and waste time
+	;popa
 	jmp eax
-halt:
-	cli
-	hlt
-	jmp halt
 	[bits 16]
 err:
 	mov al,'E'
@@ -98,91 +94,91 @@ address:
 	a_lba_3  dw 0  ; 12
 	a_lba_4  dw 0  ; 14
 
-	[bits 32]
+;	[bits 32]
 
-	; graphics code begins here (0xad)
-demo:
-	mov ch, 0xfa
-wl:
-	mov byte [0xA0000 + ecx], 8
-	loop wl
+	; graphics code begins here
+; demo:
+; 	mov ch, 0xfa
+; wl:
+; 	mov byte [0xA0000 + ecx], 8
+; 	loop wl
 	
-	mov cl, 24
-	shl ecx, cl
-l:
-	dec ecx
-	cmp ecx,300000000
-	je d1
-	cmp ecx,200000000
-	je d2
+; 	mov cl, 24
+; 	shl ecx, cl
+; l:
+; 	dec ecx
+; 	cmp ecx,300000000
+; 	je d1
+; 	cmp ecx,200000000
+; 	je d2
 	
-dr:
-	test ecx, ecx
-	jnz l
-	ret
+; dr:
+; 	test ecx, ecx
+; 	jnz l
+; 	ret
 
-d1:
-	push ecx
-	mov eax, 320
-d1l2:
-	mov bx, 200
-d1l3:
-	lea ecx, [eax - 120]
-	imul ecx, ecx
-	lea edx, [ebx - 100]
-	imul edx, edx
-	add ecx, edx
-	cmp ecx, 2500
-	jg nsp
-	call csetpix
-nsp:
-	dec ebx
-	jnz d1l3
-	dec eax
-	jnz d1l2
-	pop ecx
-	jmp dr
+; d1:
+; 	push ecx
+; 	mov eax, 320
+; d1l2:
+; 	mov bx, 200
+; d1l3:
+; 	lea ecx, [eax - 120]
+; 	imul ecx, ecx
+; 	lea edx, [ebx - 100]
+; 	imul edx, edx
+; 	add ecx, edx
+; 	cmp ecx, 2500
+; 	jg nsp
+; 	call csetpix
+; nsp:
+; 	dec ebx
+; 	jnz d1l3
+; 	dec eax
+; 	jnz d1l2
+; 	pop ecx
+; 	jmp dr
 
-csetpix:
-	imul esi, ebx, 80
-	mov byte [eax + esi*4 + 0xA0028], 15
-	ret
+; csetpix:
+; 	imul esi, ebx, 80
+; 	mov byte [eax + esi*4 + 0xA0028], 15
+; 	ret
 	
-d2:
-	push ecx
-	xor eax, eax
-d2l1:
-	xor ebx, ebx
-d2l2:
-	mov edx, eax
-	shr edx, 3
-	mov ch, [edx + ebx*4 + img + 0x7c00]
-	mov cl, al
-	and cl, 7
-	mov dl, 1
-	shl dl, cl
-	test ch, dl
-	jnz csetpix2
-cs2r:
-	inc ebx
-	cmp ebx, 16
-	jl d2l2
-	inc eax
-	cmp eax, 32
-	jl d2l1
-	pop ecx
-	jmp dr
+; d2:
+; 	push ecx
+; 	xor eax, eax
+; d2l1:
+; 	xor ebx, ebx
+; d2l2:
+; 	mov edx, eax
+; 	shr edx, 3
+; 	mov ch, [edx + ebx*4 + img + 0x7c00]
+; 	mov cl, al
+; 	and cl, 7
+; 	mov dl, 1
+; 	shl dl, cl
+; 	test ch, dl
+; 	jnz csetpix2
+; cs2r:
+; 	inc ebx
+; 	cmp ebx, 16
+; 	jl d2l2
+; 	inc eax
+; 	cmp eax, 32
+; 	jl d2l1
+; 	pop ecx
+; 	jmp dr
 	
-csetpix2:
-	imul esi, ebx, 80
-	mov byte [eax + esi*4 + 0xa7110], 0
-	jmp cs2r
-img:
-dq 4035225266929270784
-dq 3891178515063635968
-dq 9151330262037062499
-dq 3458873791478773859
-dq 71776119866539582
-dq 142410876333326336
-dq 27287610864972592
-dq 100756977832964912
+; csetpix2:
+; 	imul esi, ebx, 80
+; 	mov byte [eax + esi*4 + 0xa7110], 0
+; 	jmp cs2r
+; img:
+; dq 4035225266929270784
+; dq 3891178515063635968
+; dq 9151330262037062499
+; dq 3458873791478773859
+; dq 71776119866539582
+; dq 142410876333326336
+; dq 27287610864972592
+; dq 100756977832964912
