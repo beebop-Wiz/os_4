@@ -58,6 +58,11 @@ struct ext2_bg_desc {
   char pad[14];
 } __attribute__ ((packed));
 
+struct ext2_block_bitmaps {
+  unsigned char *blocks;
+  unsigned char *inodes;
+} __attribute__ ((packed));
+
 struct ext2_inode {
   unsigned short type;
   unsigned short uid;

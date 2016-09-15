@@ -21,6 +21,16 @@ void init_stdio(void) {
   init = 1;
 }
 
+FILE *fopen(const char *path, const char *mode) {
+  int fd = syscall3(0x80, 5, (int) path, 0);
+  if(fd < 0) return 0;
+  FILE *r = malloc(sizeof(FILE));
+  r->fd = fd;
+  r->buf = malloc(BUFSIZ);
+  r->bufwp = r->bufrp = r->err = 0;
+  return r;
+}
+
 int putchar(int c) {
   return fputc(c, stdout);
 }

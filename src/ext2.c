@@ -5,38 +5,9 @@
 #include "vgatext.h"
 #include "malloc.h"
 #include "log.h"
+#include "disk.h"
 
-extern char vbeinfo[512];
-extern struct {
-  unsigned char size;
-  unsigned char res;
-  unsigned short nxfer;
-  struct {
-    unsigned short lo;
-    unsigned short hi;
-  } __attribute__ ((packed)) addr;
-  unsigned int lba;
-  unsigned int pad;
-} __attribute__ ((packed)) rmsector;
-
-void read_sector(unsigned int lba, unsigned char *mem) {
-  rmsector.size = 0x10;
-  rmsector.res = 0;
-  rmsector.nxfer = 1;
-  rmsector.addr.lo = OFF(vbeinfo);
-  rmsector.addr.hi = SEG(vbeinfo);
-  rmsector.lba = lba;
-  rmsector.pad = 0;
-  rmregs.ax = 0x4200;
-  rmregs.dx = 0x0081;
-  rmregs.si = OFF(&rmsector);
-  rmregs.ds = SEG(&rmsector);
-  bios_intr(0x13);
-  int i;
-  for(i = 0; i < 512; i++) {
-    mem[i] = vbeinfo[i];
-  }
-}
+// This ext2 code should not be used after boot - use the fs interface!
 
 void read_superblock(struct ext2_superblock *s) {
   memset(s, 0, 1024);
@@ -81,6 +52,42 @@ void get_block(struct ext2_inode *inode, int block_idx, unsigned char *block) {
   }
   read_sector(block_addr * 2, block);
   read_sector(block_addr * 2 + 1, block + 512);
+}
+
+void get_block_direct(int block_idx, unsigned char *block) {
+  read_sector(block_idx * 2, block);
+  read_sector(block_idx * 2 + 1, block + 512);
+}
+
+void allocate_bitmaps(struct ext2_superblock *s, struct ext2_block_bitmaps *m) {
+  m->blocks = malloc(((s->bg_size / 8) * 1024) / 1024);
+  m->inodes = malloc(((s->ig_size / 8) * 1024) / 1024);
+}
+
+void free_bitmaps(struct ext2_block_bitmaps *m) {
+  free(m->blocks);
+  free(m->inodes);
+}
+
+void read_bitmaps(struct ext2_superblock *s, struct ext2_bg_desc *b, struct ext2_block_bitmaps *m) {
+  int n_bg_blocks = ((s->bg_size / 8) * 1024) / 1024;
+  int n_ig_blocks = ((s->ig_size / 8) * 1024) / 1024;
+  int i;
+  for(i = 0; i < n_bg_blocks; i++) {
+    get_block_direct(i + b->block_bitmap, m->blocks + (i * 1024));
+  }
+  for(i = 0; i < n_ig_blocks; i++) {
+    get_block_direct(i + b->inode_bitmap, m->inodes + (i * 1024));
+  }
+}
+
+int get_bitmap(unsigned char *map, int offset) {
+  return (map[offset / 8] >> (offset % 8)) & 1;
+}
+
+void set_bitmap(unsigned char *map, int offset, int value) {
+  map[offset / 8] &= ~(1 << (offset % 8));
+  map[offset / 8] |= (!!value << (offset % 8));
 }
 
 ext2_dirstate_t opendir(struct ext2_inode *inode) {
@@ -223,3 +230,4 @@ int get_path_inode(struct ext2_superblock *s, const char *p) {
   free(p_orig);
   return dir_inode;
 }
+

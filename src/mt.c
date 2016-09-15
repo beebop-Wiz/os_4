@@ -22,6 +22,7 @@ extern page_table_t kernel_pages;
 void init_mt() {
   int i;
   for(i = 0; i < 65536; i++) ptab[i] = 0;
+  ptab[0] = malloc(sizeof(struct process));
   cur_ctx = 0;
 }
 

@@ -14,7 +14,8 @@ extern volatile int cur_ctx;
 #define REGISTER_FS(fsname) do{extern struct fs_driver fsname##_driver; fs_drivers[ndrv] = &fsname##_driver; fsname##_driver.init(ndrv++);}while(0)
 
 void register_filesystems() {
-  REGISTER_FS(devfs);
+  REGISTER_FS(devfs); 
+  REGISTER_FS(ext2fs);
 }
 
 int fs_init() {

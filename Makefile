@@ -200,6 +200,19 @@ echo/fast:
 .PHONY : echo/fast
 
 #=============================================================================
+# Target rules for targets named filetest
+
+# Build rule for target.
+filetest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 filetest
+.PHONY : filetest
+
+# fast build rule for target.
+filetest/fast:
+	$(MAKE) -f src/CMakeFiles/filetest.dir/build.make src/CMakeFiles/filetest.dir/build
+.PHONY : filetest/fast
+
+#=============================================================================
 # Target rules for targets named hello
 
 # Build rule for target.
@@ -381,16 +394,17 @@ help:
 	@echo "... edit_cache"
 	@echo "... run_test"
 	@echo "... mkimg"
+	@echo "... coreutils"
 	@echo "... image"
 	@echo "... version"
 	@echo "... hello"
 	@echo "... os_4.bin"
 	@echo "... init.exe"
+	@echo "... filetest"
 	@echo "... boot2.bin"
 	@echo "... echo"
 	@echo "... sh"
 	@echo "... cat"
-	@echo "... coreutils"
 	@echo "... doc"
 	@echo "... regen_tests"
 	@echo "... c"

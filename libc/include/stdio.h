@@ -20,6 +20,7 @@ int fputc(int c, FILE *stream);
 int fgetc(FILE *stream);
 int getchar();
 int fflush(FILE *stream);
+FILE *fopen(const char *path, const char *mode);
 
 #ifndef STDIO_C
 extern FILE *stdin, *stdout, *stderr;

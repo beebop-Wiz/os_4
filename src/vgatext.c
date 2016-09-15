@@ -159,8 +159,8 @@ unsigned char font8x8_basic[256][8] = {
 unsigned int ww, wh, wx, wy;
 int cfg, cbg;
 
-#define TTY_HEIGHT (600/8)
-#define TTY_WIDTH (800/8)
+#define TTY_HEIGHT (VGA_HEIGHT/8)
+#define TTY_WIDTH (VGA_WIDTH/8)
 int vt100_state = 0;
 unsigned int cx, cy;
 struct tcell {
@@ -245,7 +245,7 @@ void vga_statchar(int c, int x) {
     for(tx = 0; tx < 8; tx++) {
       vga_write_pix(
 		    x * 8 + tx,
-		    ty + 592,
+		    ty + (VGA_HEIGHT - 8),
 		    (font8x8_basic[c][ty] & (1 << tx)) ? 0x00FF00 : 0x000000);
     }
   }

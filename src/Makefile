@@ -182,6 +182,21 @@ echo/fast:
 .PHONY : echo/fast
 
 # Convenience name for target.
+src/CMakeFiles/filetest.dir/rule:
+	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/filetest.dir/rule
+.PHONY : src/CMakeFiles/filetest.dir/rule
+
+# Convenience name for target.
+filetest: src/CMakeFiles/filetest.dir/rule
+
+.PHONY : filetest
+
+# fast build rule for target.
+filetest/fast:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/filetest.dir/build.make src/CMakeFiles/filetest.dir/build
+.PHONY : filetest/fast
+
+# Convenience name for target.
 src/CMakeFiles/hello.dir/rule:
 	cd /home/beebop/src/os_4 && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/hello.dir/rule
 .PHONY : src/CMakeFiles/hello.dir/rule
@@ -388,6 +403,33 @@ coreutils/echo.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/echo.dir/build.make src/CMakeFiles/echo.dir/coreutils/echo.c.s
 .PHONY : coreutils/echo.c.s
 
+coreutils/filetest.o: coreutils/filetest.c.o
+
+.PHONY : coreutils/filetest.o
+
+# target to build an object file
+coreutils/filetest.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/filetest.dir/build.make src/CMakeFiles/filetest.dir/coreutils/filetest.c.o
+.PHONY : coreutils/filetest.c.o
+
+coreutils/filetest.i: coreutils/filetest.c.i
+
+.PHONY : coreutils/filetest.i
+
+# target to preprocess a source file
+coreutils/filetest.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/filetest.dir/build.make src/CMakeFiles/filetest.dir/coreutils/filetest.c.i
+.PHONY : coreutils/filetest.c.i
+
+coreutils/filetest.s: coreutils/filetest.c.s
+
+.PHONY : coreutils/filetest.s
+
+# target to generate assembly for a file
+coreutils/filetest.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/filetest.dir/build.make src/CMakeFiles/filetest.dir/coreutils/filetest.c.s
+.PHONY : coreutils/filetest.c.s
+
 coreutils/sh.o: coreutils/sh.c.o
 
 .PHONY : coreutils/sh.o
@@ -442,6 +484,33 @@ debug.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/debug.c.s
 .PHONY : debug.c.s
 
+disk.o: disk.c.o
+
+.PHONY : disk.o
+
+# target to build an object file
+disk.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/disk.c.o
+.PHONY : disk.c.o
+
+disk.i: disk.c.i
+
+.PHONY : disk.i
+
+# target to preprocess a source file
+disk.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/disk.c.i
+.PHONY : disk.c.i
+
+disk.s: disk.c.s
+
+.PHONY : disk.s
+
+# target to generate assembly for a file
+disk.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/disk.c.s
+.PHONY : disk.c.s
+
 ext2.o: ext2.c.o
 
 .PHONY : ext2.o
@@ -495,6 +564,33 @@ fs/devfs.s: fs/devfs.c.s
 fs/devfs.c.s:
 	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/fs/devfs.c.s
 .PHONY : fs/devfs.c.s
+
+fs/ext2fs.o: fs/ext2fs.c.o
+
+.PHONY : fs/ext2fs.o
+
+# target to build an object file
+fs/ext2fs.c.o:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/fs/ext2fs.c.o
+.PHONY : fs/ext2fs.c.o
+
+fs/ext2fs.i: fs/ext2fs.c.i
+
+.PHONY : fs/ext2fs.i
+
+# target to preprocess a source file
+fs/ext2fs.c.i:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/fs/ext2fs.c.i
+.PHONY : fs/ext2fs.c.i
+
+fs/ext2fs.s: fs/ext2fs.c.s
+
+.PHONY : fs/ext2fs.s
+
+# target to generate assembly for a file
+fs/ext2fs.c.s:
+	cd /home/beebop/src/os_4 && $(MAKE) -f src/CMakeFiles/os_4.bin.dir/build.make src/CMakeFiles/os_4.bin.dir/fs/ext2fs.c.s
+.PHONY : fs/ext2fs.c.s
 
 fs/fs.o: fs/fs.c.o
 
@@ -1150,6 +1246,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... coreutils"
 	@echo "... test"
 	@echo "... image"
 	@echo "... version"
@@ -1157,11 +1254,11 @@ help:
 	@echo "... hello"
 	@echo "... os_4.bin"
 	@echo "... init.exe"
+	@echo "... filetest"
 	@echo "... boot2.bin"
 	@echo "... echo"
 	@echo "... sh"
 	@echo "... cat"
-	@echo "... coreutils"
 	@echo "... async.o"
 	@echo "... async.i"
 	@echo "... async.s"
@@ -1175,18 +1272,27 @@ help:
 	@echo "... coreutils/echo.o"
 	@echo "... coreutils/echo.i"
 	@echo "... coreutils/echo.s"
+	@echo "... coreutils/filetest.o"
+	@echo "... coreutils/filetest.i"
+	@echo "... coreutils/filetest.s"
 	@echo "... coreutils/sh.o"
 	@echo "... coreutils/sh.i"
 	@echo "... coreutils/sh.s"
 	@echo "... debug.o"
 	@echo "... debug.i"
 	@echo "... debug.s"
+	@echo "... disk.o"
+	@echo "... disk.i"
+	@echo "... disk.s"
 	@echo "... ext2.o"
 	@echo "... ext2.i"
 	@echo "... ext2.s"
 	@echo "... fs/devfs.o"
 	@echo "... fs/devfs.i"
 	@echo "... fs/devfs.s"
+	@echo "... fs/ext2fs.o"
+	@echo "... fs/ext2fs.i"
+	@echo "... fs/ext2fs.s"
 	@echo "... fs/fs.o"
 	@echo "... fs/fs.i"
 	@echo "... fs/fs.s"

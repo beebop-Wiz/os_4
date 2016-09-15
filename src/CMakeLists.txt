@@ -28,7 +28,7 @@ add_custom_command(
   )
 add_custom_target(version DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/version.h)
 
-add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c gdt.c user.nasm ring3.c syscall.c timer.c mt.c util.c ext2.c keyboard.c pic.c async.c log.c fs/fs.c fs/devfs.c )
+add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c gdt.c user.nasm ring3.c syscall.c timer.c mt.c util.c ext2.c disk.c keyboard.c pic.c async.c log.c fs/fs.c fs/devfs.c fs/ext2fs.c)
 add_dependencies(os_4.bin version)
 
 target_link_libraries(os_4.bin "-T linker.ld" -ffreestanding -nostdlib -O2 gcc)
@@ -56,13 +56,15 @@ add_executable(hello init/hello.c)
 target_link_libraries(hello c)
 #add_executable(env coreutils/env.c)
 #target_link_libraries(env c)
+add_executable(filetest coreutils/filetest.c)
+target_link_libraries(filetest c)
 add_executable(echo coreutils/echo.c)
 target_link_libraries(echo c)
 add_executable(cat coreutils/cat.c)
 target_link_libraries(cat c)
 add_executable(sh coreutils/sh.c)
 target_link_libraries(sh c)
-add_custom_target(coreutils ALL DEPENDS hello)
+add_custom_target(coreutils ALL DEPENDS hello filetest echo cat sh)
 
 add_custom_command(
   TARGET coreutils
