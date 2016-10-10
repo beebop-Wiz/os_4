@@ -147,7 +147,7 @@ void free(void *mem) {
     ptr = MALLOC_ARENA;
     while(ptr && ptr->mem != mem) ptr = ptr->next;
     if(!ptr)
-      log(LOG_MALLOC, LOG_FAILURE, "Something very bad has happened when freeing %x\n", mem);
+      log(LOG_MALLOC, LOG_FAILURE, "Something very bad has happened when freeing %x (allocd by %x? magic %x)\n", mem, ((struct malloc_header *) mem - 1)->owner, ((struct malloc_header *) mem - 1)->magic);
   }
   ptr->type = BLOCK_FREE;
   ptr->owner = 0;

@@ -51,7 +51,7 @@ int new_process(unsigned int entry) {
   memset(ptab[i]->fds, 0, sizeof(struct fd) * FD_MAX);
   ptab[i]->suspend = SUS_RUNNING;
   ptab[i]->waitcnt = 0;
-  ptab[i]->detach_stack = (unsigned int) malloc_a(DETACH_STACK_SIZE, 4096);
+  ptab[i]->detach_stack = (unsigned int) malloc_a(DETACH_STACK_SIZE, 4096) + DETACH_STACK_SIZE;
   unsigned int j;
   for(j = PROCESS_STACK_BOTTOM; j < PROCESS_STACK_TOP; j += 4096) {
     nonid_page(ptab[i]->pt, j / 4096, 0);
@@ -146,13 +146,16 @@ void switch_ctx(regs_t r) {
   if(!mt_enabled) return;
   printd("CONTEXT SWITCH\n");
   vga_statchar((idx++ + ' '), 30);
+  int i, j;
+  for(i = 0; i < 8; i++) {
+    vga_statchar("012345678abcdef"[(r->eip >> (7-i)*4) % 16], 40 + i);
+  }
   idx %= 80;
   if(mt_enabled > 1 && ptab[cur_ctx]) {
     printd("Old cksum (%d) %x => %x\n", cur_ctx, ptab[cur_ctx]->regs_cksum, calc_regs_cksum(r));
     ptab[cur_ctx]->regs_cksum = calc_regs_cksum(r);
     memcpy(ptab[cur_ctx]->r, r, sizeof(struct registers));
   }
-  int i, j;
   for(i = cur_ctx + 1; i < 65536; i++)
     if(ptab[i] && !ptab[i]->suspend) goto done;
   for(i = 1; (!ptab[i] || ptab[i]->suspend) && i < 65536; i++);

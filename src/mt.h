@@ -9,7 +9,7 @@
 #define PROCESS_BRK_INIT_SIZE 0x10000
 #define PROCESS_BRK_TOP (PROCESS_BRK_INITIAL + PROCESS_BRK_INIT_SIZE)
 
-#define DETACH_STACK_SIZE 0x1000
+#define DETACH_STACK_SIZE 0x10000
 
 #include "idt.h"
 #include "paging.h"

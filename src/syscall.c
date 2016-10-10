@@ -135,12 +135,14 @@ void syscall_unix(regs_t r) {
 volatile unsigned long sid = 0;
 
 void do_syscall(regs_t r) {
+  vga_statchar(r->eax + '0', 31);
   unsigned long this_id = sid++;
   log(LOG_SYSCALL, LOG_INFO, "%x %s %x %x %x %x %x %x %d %d\n", r, r->int_no == 0x80 ? "unix" : "os4", r->eax, r->ebx, r->ecx, r->edx, r->esi, r->edi, cur_ctx, this_id);
   if(r->int_no == 0x80) {
     syscall_unix(r);
   }
   log(LOG_SYSCALL, LOG_INFO, "COMPLETE %d\n", this_id);
+  vga_statchar('.', 31);
 }
 
 // Did you update syscalls.txt?

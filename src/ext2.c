@@ -31,6 +31,7 @@ void read_inode(struct ext2_superblock *s, struct ext2_inode *inode, int inode_i
   struct ext2_bg_desc desc;
   read_block_group(s, &desc, block_group);
   int block_offset = local_index * sizeof(struct ext2_inode);
+  log(LOG_BOOT, LOG_INFO, "inode %d is at (%d, %d) block offset %d\n", inode_idx, block_group, local_index * sizeof(struct ext2_inode) / 1024 + desc.inode_table, block_offset);
   int sector_offset = block_offset % 512;
   int it_sector = desc.inode_table * 2 + (block_offset / 512);
   unsigned char sector[512];
@@ -106,7 +107,7 @@ ext2_dirent_t dirwalk(ext2_dirstate_t s) {
     free(s->last);
   }
   unsigned int i, block_idx = 0, boff = 0, size;
-  unsigned char block[1024];
+  unsigned char block[1048];
   for(i = 0; i < s->ent_idx; i++) {
     get_block(s->inode, block_idx, block);
     size = block[boff + 4];
@@ -176,6 +177,7 @@ int get_file_inode(struct ext2_superblock *s, int dir_inode, const char *name) {
   ext2_dirent_t d;
   while((d = dirwalk(ds))) {
     if(d->nlen && streq(d->name, name)) break;
+    if(!d->nlen) return -1;
   }
   int r;
   if(!d) r = -1; 

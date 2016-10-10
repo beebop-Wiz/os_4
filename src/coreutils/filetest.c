@@ -6,5 +6,9 @@ int main(void) {
   while((c = fgetc(f)) != EOF) {
     putchar(c);
   }
+  f = fopen("/test.txt", "r");
+  while((c = fgetc(f)) != EOF) {
+    putchar(c);
+  }
   return 0;
 }

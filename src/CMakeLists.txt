@@ -29,13 +29,20 @@ add_custom_command(
 add_custom_target(version DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/version.h)
 
 add_executable(os_4.bin kernel.c vga.c port.c vgatext.c idt.c idt.nasm real.nasm real.c vbe.c malloc.c vgadraw.c paging.c debug.c gdt.c user.nasm ring3.c syscall.c timer.c mt.c util.c ext2.c disk.c keyboard.c pic.c async.c log.c fs/fs.c fs/devfs.c fs/ext2fs.c)
+add_custom_command(
+  TARGET os_4.bin
+  POST_BUILD
+  COMMAND /usr/bin/objdump -M intel -d ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/os_4.bin > ${CMAKE_CURRENT_SOURCE_DIR}/../listing.txt
+  DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/os_4.bin
+  COMMENT "Generating asm listing..."
+  )
 add_dependencies(os_4.bin version)
 
 target_link_libraries(os_4.bin "-T linker.ld" -ffreestanding -nostdlib -O2 gcc)
 set_target_properties(os_4.bin PROPERTIES COMPILE_FLAGS "-DKERNEL_SOURCE")
 
-add_custom_target(image ALL ${CMAKE_CURRENT_SOURCE_DIR}/../mkimg DEPENDS os_4.bin)
 
+add_custom_target(image ALL ${CMAKE_CURRENT_SOURCE_DIR}/../mkimg DEPENDS os_4.bin)
 # Build init (init.exe)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../fs_mount/boot/)
@@ -72,3 +79,4 @@ add_custom_command(
   COMMAND /bin/sync
   COMMENT "Synchronizing file system..."
   )
+
