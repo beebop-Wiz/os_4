@@ -14,7 +14,9 @@ struct __file_struct {
 typedef struct __file_struct FILE;
 
 int printf(const char *fmt, ...);
+int fprintf(FILE *f, const char *fmt, ...);
 int vprintf(const char *fmt, __builtin_va_list ap);
+int vfprintf(FILE *f, const char *fmt, __builtin_va_list ap);
 int putchar(int c);
 int fputc(int c, FILE *stream);
 int fgetc(FILE *stream);

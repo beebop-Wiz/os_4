@@ -98,7 +98,7 @@ int puts(const char *s) {
   return 0;
 }
 
- int printf(const char *fmt, ...) {
+int printf(const char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
   int r = vprintf(fmt, ap);
@@ -106,7 +106,19 @@ int puts(const char *s) {
   return r;
 }
 
+int fprintf(FILE *f, const char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  int r = vfprintf(f, fmt, ap);
+  va_end(ap);
+  return r;
+}
+
 int vprintf(const char *fmt, va_list ap) {
+  return vfprintf(stdout, fmt, ap);
+}
+
+int vfprintf(FILE *f, const char *fmt, va_list ap) {
   char c;
   int length = -1;
   while(*fmt) {
@@ -181,15 +193,8 @@ int vprintf(const char *fmt, va_list ap) {
 	break;
       }
     } else {
-      putchar(gc(fmt));
+      fputc(gc(fmt), f);
     }
   }
   return 0;
 }
-
-#if 0
-int printf(char *fmt, ...) {
-  syscall4(0x80, 4, 1, (int) fmt, strlen(fmt));
-  return 0;
-} 
-#endif

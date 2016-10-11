@@ -13,6 +13,7 @@ extern volatile int cur_ctx;
 
 struct e2fs_data {
   struct e2fs_inode inode;
+  int inum;
   unsigned int offset;
   unsigned char blockbuf[1024];
 };
@@ -31,6 +32,12 @@ void read_within_sector(int sector, int offset, int len, unsigned char *mem) {
   memcpy(mem, e2fs_static.sbuf + offset, len);
 }
 
+void write_within_sector(int sector, int offset, int len, unsigned char *mem) {
+  read_sector(sector, e2fs_static.sbuf);
+  memcpy(e2fs_static.sbuf + offset, mem, len);
+  write_sector(sector, e2fs_static.sbuf);
+}
+
 void e2fs_read_superblock(void) {
   read_sector(2, e2fs_static.sbuf);
   memcpy(&e2fs_static.s, e2fs_static.sbuf, sizeof(struct e2fs_superblock));
@@ -45,9 +52,24 @@ void read_block_raw(int n, unsigned char *mem) {
   }
 }
 
+void write_block_raw(int n, unsigned char *mem) {
+  int n_sectors = BLOCK_SIZE / 512;
+  int sid = n * n_sectors;
+  int i;
+  for(i = 0; i < n_sectors; i++) {
+    write_sector(sid + i, mem + i * 512);
+  }
+}
+
 void read_within_block(int block, int offset, int len, unsigned char *mem) {
   read_block_raw(block, e2fs_static.block);
   memcpy(mem, e2fs_static.block + offset, len);
+}
+
+void write_within_block(int block, int offset, int len, unsigned char *mem) {
+  read_block_raw(block, e2fs_static.block);
+  memcpy(e2fs_static.block + offset, mem, len);
+  write_block_raw(block, e2fs_static.block);
 }
 
 void read_bgd(int n, struct e2fs_bdesc *d) {
@@ -68,14 +90,36 @@ void e2fs_read_inode(int idx, struct e2fs_inode *i) {
   read_within_block(bk, bo, sizeof(struct e2fs_inode), (unsigned char *) i);
 }
 
+void e2fs_write_inode(int idx, struct e2fs_inode *i) {
+  int bg = (idx - 1) / e2fs_static.s.s_inodes_per_group;
+  int bi = (idx - 1) % e2fs_static.s.s_inodes_per_group;
+  //  printf("Inode %d is at (%d, %d) ", idx, bg, bi);
+  struct e2fs_bdesc b;
+  read_bgd(bg, &b);
+  int bk = (bi * sizeof(struct e2fs_inode)) / BLOCK_SIZE + b.bg_inode_table;
+  int bo = (bi * sizeof(struct e2fs_inode)) % BLOCK_SIZE;
+  //  printf("block (%d, %d)\n", bk, bo);
+  write_within_block(bk, bo, sizeof(struct e2fs_inode), (unsigned char *) i);
+}						      
+
 void get_inode_block(struct e2fs_inode *i, int block, unsigned char *mem) {
   int block_addr;
   if(block < 12) {
     block_addr = i->i_bp0[block];
   } else {
-    printf("e2fs error: you need to fix indirection\n");
+    printf("e2fs error: you need to fix indirection on read\n");
   }
   read_block_raw(block_addr, mem);
+}
+
+void put_inode_block(struct e2fs_inode *i, int block, unsigned char *mem) {
+  int block_addr;
+  if(block < 12) {
+    block_addr = i->i_bp0[block];
+  } else {
+    printf("e2fs error: you need to fix indirection on write\n");
+  }
+  write_block_raw(block_addr, mem);
 }
 
 int iread(struct e2fs_inode *i, unsigned char *buf, int offset, int count) {
@@ -103,6 +147,24 @@ int iread(struct e2fs_inode *i, unsigned char *buf, int offset, int count) {
   return count;
 }
 
+#define MIN(x, y) (((x)<(y))?(x):(y))
+
+int iwrite(int idx, struct e2fs_inode *i, unsigned char *buf, int offset, int count) {
+  printf("[e2fs] iwrite: %d %d %d\n", offset, count, i->i_size);
+  if((unsigned)(offset + count) > i->i_size) {
+    i->i_size = (unsigned)(offset + count);
+    e2fs_write_inode(idx, i);
+  }
+  get_inode_block(i, offset / BLOCK_SIZE, e2fs_static.block);
+  int dist = BLOCK_SIZE - (offset % BLOCK_SIZE);
+  //  int n_written = 0;
+  memcpy(e2fs_static.block + offset % BLOCK_SIZE, buf, MIN(dist, count));
+  put_inode_block(i, offset / BLOCK_SIZE, e2fs_static.block);
+  if(dist >= count) return count;
+  printf("[e2fs] iwrite: can't write more than a block at a time");
+  return count;
+}
+
 void getdent(struct e2fs_inode *i, struct e2fs_dirent *buf, int offset) {
   if(iread(i, (unsigned char *) buf, offset, 7) == 0) {
     memset(buf, 0, sizeof(struct e2fs_dirent));
@@ -115,6 +177,10 @@ void getdent(struct e2fs_inode *i, struct e2fs_dirent *buf, int offset) {
       iread(i, (unsigned char *) buf, offset, buf->d_rec_len);
     buf->d_name[buf->d_name_len] = 0;
   }
+}
+
+int new_file(struct e2fs_inode *d, char *name) {
+  return (int)d + (int)name;
 }
 
 void prettyprint_mode(unsigned short mode, char *s) {
@@ -228,12 +294,13 @@ int ext2fs_open(char *fname, int mode) {
       if(streq((char *) de.d_name, token)) break;
       offt += de.d_rec_len;
     } while(de.d_inode);
-    if(!streq((char *) de.d_name, token)) return -1;
+    if(!streq((char *) de.d_name, token)) de.d_inode = new_file(&dir, token);
     dir_inode = de.d_inode;
   }
   printf("[e2fs] %s is at inode %d\n", fname, dir_inode);
   struct e2fs_data *data = malloc(sizeof(struct e2fs_data));
   e2fs_read_inode(dir_inode, &data->inode);
+  data->inum = dir_inode;
   ptab[cur_ctx]->fds[id].driver_data = (unsigned long) data;
   printf("[e2fs] open %s -> %d\n", fname, id);
   free(po);
@@ -255,7 +322,15 @@ int e2fs_read(int f, char *c, long len) {
   return nread;
 }
 
+int e2fs_write(int f, char *c, long len) {
+  struct e2fs_data *data = (struct e2fs_data *) ptab[cur_ctx]->fds[f].driver_data;
+  int nwrite = iwrite(data->inum, &data->inode, (unsigned char *) c, data->offset, len);
+  data->offset += nwrite;
+  printf("[e2fs] write %d %d \"%s\" -> %d\n", f, len, c, nwrite);
+  return nwrite;
+}
+
 struct fs_driver ext2fs_driver = {
   /* init check open close write read seek */
-  ext2fs_init, ext2fs_check_name, ext2fs_open, ext2fs_close, 0, e2fs_read, 0
+  ext2fs_init, ext2fs_check_name, ext2fs_open, ext2fs_close, e2fs_write, e2fs_read, 0
 };
