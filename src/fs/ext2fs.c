@@ -72,10 +72,36 @@ void write_within_block(int block, int offset, int len, unsigned char *mem) {
   write_block_raw(block, e2fs_static.block);
 }
 
+char bmread(int start_block, int offt) {
+  int byte = (offt / 8) % BLOCK_SIZE;
+  int bit = offt % 8;
+  int block = (offt / 8) / BLOCK_SIZE + start_block;
+  unsigned char bm;
+  read_within_block(block, byte, 1, &bm);
+  return !!(bm & 1 << bit);
+}
+
+void bmwrite(int start_block, int offt, int val) {
+  int byte = (offt / 8) % BLOCK_SIZE;
+  int bit = offt % 8;
+  int block = (offt / 8) / BLOCK_SIZE + start_block;
+  unsigned char bm;
+  read_within_block(block, byte, 1, &bm);
+  bm &= ~(1 << bit);
+  bm |= (!!val << bit);
+  write_within_block(block, byte, 1, &bm);
+}
+
 void read_bgd(int n, struct e2fs_bdesc *d) {
   int block = n / (BLOCK_SIZE / sizeof(struct e2fs_bdesc)) + 2;
   int offt  = n % (BLOCK_SIZE / sizeof(struct e2fs_bdesc)) * sizeof(struct e2fs_bdesc);
   read_within_block(block, offt, sizeof(struct e2fs_bdesc), (unsigned char *) d);
+}
+
+void write_bgd(int n, struct e2fs_bdesc *d) {
+  int block = n / (BLOCK_SIZE / sizeof(struct e2fs_bdesc)) + 2;
+  int offt  = n % (BLOCK_SIZE / sizeof(struct e2fs_bdesc)) * sizeof(struct e2fs_bdesc);
+  write_within_block(block, offt, sizeof(struct e2fs_bdesc), (unsigned char *) d);
 }
 
 void e2fs_read_inode(int idx, struct e2fs_inode *i) {
@@ -122,8 +148,72 @@ void put_inode_block(struct e2fs_inode *i, int block, unsigned char *mem) {
   write_block_raw(block_addr, mem);
 }
 
+int get_first_free_block() {
+  unsigned int bgn;
+  struct e2fs_bdesc b;
+  unsigned int bi;
+  for(bgn = 0; bgn < e2fs_static.s.s_blocks_count / e2fs_static.s.s_blocks_per_group; bgn++) {
+    read_bgd(bgn, &b);
+    for(bi = 0; bi < e2fs_static.s.s_blocks_per_group; bi++) {
+      if(!bmread(b.bg_block_bitmap, bi)) {
+	return (bgn * e2fs_static.s.s_blocks_per_group) + bi;
+      }
+    }
+  }
+  return -1;
+}
+
+int get_first_free_inode() {
+  unsigned int bgn;
+  struct e2fs_bdesc b;
+  unsigned int ii;
+  for(bgn = 0; bgn < e2fs_static.s.s_inodes_count / e2fs_static.s.s_inodes_per_group; bgn++) {
+    read_bgd(bgn, &b);
+    for(ii = 0; ii < e2fs_static.s.s_inodes_per_group; ii++) {
+      if(!bmread(b.bg_inode_bitmap, ii)) {
+	return (bgn * e2fs_static.s.s_inodes_per_group) + ii + 1;
+      }
+    }
+  }
+  return -1;
+}
+
+int allocate_block() {
+  int bi = get_first_free_block();
+  struct e2fs_bdesc b;
+  read_bgd(bi / e2fs_static.s.s_blocks_per_group, &b);
+  bmwrite(b.bg_block_bitmap, bi % e2fs_static.s.s_blocks_per_group, 1);
+  return bi;
+}
+
+void add_block_to_inode(int idx, struct e2fs_inode *i) {
+  int bi = (i->i_size / BLOCK_SIZE);
+  if(bi < 12) {
+    i->i_bp0[bi] = allocate_block();
+  } else {
+    printf("e2fs error: you need to fix indirection on append\n");
+  }
+  e2fs_write_inode(idx, i);
+}
+
+void guarantee_inode_size(int idx, struct e2fs_inode *i, int len) {
+  int cur_size = i->i_size;
+  if(len < cur_size) goto end;
+  int diff = len - cur_size;
+  int block_space = (BLOCK_SIZE - (cur_size % BLOCK_SIZE)) % BLOCK_SIZE;
+  if(block_space > diff) goto end;
+  diff -= block_space;
+  while(diff > 0) {
+    add_block_to_inode(idx, i);
+    diff -= BLOCK_SIZE;
+  }
+ end:
+  i->i_size = len;
+  e2fs_write_inode(idx, i);
+}
+
 int iread(struct e2fs_inode *i, unsigned char *buf, int offset, int count) {
-  printf("iread: %d %d %d\n", offset, count, i->i_size);
+  //  printf("iread: %d %d %d\n", offset, count, i->i_size);
   if((unsigned)(offset + count) > i->i_size) {
     return iread(i, buf, offset, i->i_size - offset);
   }
@@ -151,17 +241,25 @@ int iread(struct e2fs_inode *i, unsigned char *buf, int offset, int count) {
 
 int iwrite(int idx, struct e2fs_inode *i, unsigned char *buf, int offset, int count) {
   printf("[e2fs] iwrite: %d %d %d\n", offset, count, i->i_size);
-  if((unsigned)(offset + count) > i->i_size) {
-    i->i_size = (unsigned)(offset + count);
-    e2fs_write_inode(idx, i);
-  }
+  guarantee_inode_size(idx, i, offset + count);
   get_inode_block(i, offset / BLOCK_SIZE, e2fs_static.block);
   int dist = BLOCK_SIZE - (offset % BLOCK_SIZE);
-  //  int n_written = 0;
+  int n_written = 0;
   memcpy(e2fs_static.block + offset % BLOCK_SIZE, buf, MIN(dist, count));
   put_inode_block(i, offset / BLOCK_SIZE, e2fs_static.block);
   if(dist >= count) return count;
-  printf("[e2fs] iwrite: can't write more than a block at a time");
+  n_written = dist;
+  int bp = offset / BLOCK_SIZE + 1;
+  for(; n_written < count; n_written += BLOCK_SIZE) {
+    get_inode_block(i, bp, e2fs_static.block);
+    if(n_written + BLOCK_SIZE > count) {
+      memcpy(e2fs_static.block, buf + n_written, count - n_written);
+    } else {
+      memcpy(e2fs_static.block, buf + n_written, BLOCK_SIZE);
+    }
+    put_inode_block(i, bp++, e2fs_static.block);
+  }
+  //  printf("[e2fs] iwrite: can't write more than a block at a time");
   return count;
 }
 
@@ -251,7 +349,8 @@ int ext2fs_init(int id) {
     offt += d.d_rec_len;
     getdent(&i, &d, offt);
   }
-  
+  printf("  First free block: %d\n", get_first_free_block());
+  printf("  First free inode: %d\n", get_first_free_inode());
   return 0;
 }
 

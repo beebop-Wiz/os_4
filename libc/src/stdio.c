@@ -42,7 +42,7 @@ int getchar() {
 int fputc(int c, FILE *stream) {
   if(!init) return 0;
   stream->buf[stream->bufwp++] = c;
-  if(c == '\n') {
+  if(c == '\n' || stream->bufwp >= BUFSIZ) {
     syscall4(0x80, 4, stream->fd, (int) stream->buf, stream->bufwp);
     stream->bufwp = 0;
   }
@@ -78,18 +78,24 @@ int fgetc(FILE *stream) {
 
 const char digits[] = "0123456789abcdef";
 
-void itoa_u(unsigned long i, unsigned int radix) {
+void itoa_u(FILE *f, unsigned long i, unsigned int radix) {
   if(i >= radix)
-    itoa_u(i / radix, radix);
-  putchar(digits[i % radix]);
+    itoa_u(f, i / radix, radix);
+  fputc(digits[i % radix], f);
 }
 
-void itoa_s(signed long i, int radix) {
+void itoa_s(FILE *f, signed long i, int radix) {
   if(i < 0) {
     i = -i;
-    putchar('-');
+    fputc('-', f);
   }
-  itoa_u((unsigned long) i, radix);
+  itoa_u(f, (unsigned long) i, radix);
+}
+
+int fputs(const char *s, FILE *f) {
+  int i;
+  for(i = 0; i < strlen(s); i++) fputc(s[i], f);
+  return 0;
 }
 
 int puts(const char *s) {
@@ -145,51 +151,51 @@ int vfprintf(FILE *f, const char *fmt, va_list ap) {
       case 'i':
 	switch(length) {
 	case LEN_64:
-	  itoa_s(va_arg(ap, signed long long), 10);
+	  itoa_s(f, va_arg(ap, signed long long), 10);
 	  break;
 	default:
-	  itoa_s(va_arg(ap, signed int), 10);
+	  itoa_s(f, va_arg(ap, signed int), 10);
 	  break;
 	}
 	break;
       case 'u':
 	switch(length) {
 	case LEN_64:
-	  itoa_u(va_arg(ap, unsigned long), 10);
+	  itoa_u(f, va_arg(ap, unsigned long), 10);
 	  break;
 	default:
-	  itoa_u(va_arg(ap, unsigned int), 10);
+	  itoa_u(f, va_arg(ap, unsigned int), 10);
 	  break;
 	}
 	break;
       case 'o':
 	switch(length) {
 	case LEN_64:
-	  itoa_u(va_arg(ap, unsigned long), 8);
+	  itoa_u(f, va_arg(ap, unsigned long), 8);
 	  break;
 	default:
-	  itoa_u(va_arg(ap, unsigned int), 8);
+	  itoa_u(f, va_arg(ap, unsigned int), 8);
 	  break;
 	}
 	break;
       case 'x':
 	switch(length) {
 	case LEN_64:
-	  itoa_u(va_arg(ap, unsigned long), 16);
+	  itoa_u(f, va_arg(ap, unsigned long), 16);
 	  break;
 	default:
-	  itoa_u(va_arg(ap, unsigned int), 16);
+	  itoa_u(f, va_arg(ap, unsigned int), 16);
 	  break;
 	}
 	break;
       case 'c':
-	putchar(va_arg(ap, unsigned int));
+	fputc(va_arg(ap, unsigned int), f);
 	break;
       case 's':
-	puts(va_arg(ap, char *));
+	fputs(va_arg(ap, char *), f);
 	break;
       case '%':
-	putchar('%');
+	fputc('%', f);
 	break;
       }
     } else {
