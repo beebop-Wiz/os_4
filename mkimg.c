@@ -49,8 +49,8 @@ struct bheader {
   u_int16_t nsectors;
   union {
     struct {
-      u_int16_t memaddr_hi;
       u_int16_t memaddr_lo;
+      u_int16_t memaddr_hi;
     } o;
     u_int32_t l;
   } addr;
@@ -62,6 +62,16 @@ int r512(int n) {
   int d = ((int) (n) / 512) * 512;
   return d + 512;
 }
+
+unsigned char gdt[512] = {
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0xff, 0xff, 0x00, 0x00, 0x00, 0x9a, 0xcf, 0x00,
+  0xff, 0xff, 0x00, 0x00, 0x00, 0x92, 0xcf, 0x00,
+  0xff, 0xff, 0x00, 0x00, 0x00, 0x9a, 0x8f, 0x00,
+  0xff, 0xff, 0x00, 0x00, 0x00, 0x92, 0x8f, 0x00,
+  0xff, 0xff, 0x00, 0x00, 0x00, 0xfa, 0xcf, 0x00,
+  0xff, 0xff, 0x00, 0x00, 0x00, 0xf2, 0xcf, 0x00
+};
 
 int main(void) {
   struct stat fs;
@@ -89,12 +99,17 @@ int main(void) {
   for(i = 0; i < 512; i++) buf[i] = 0;
   printf("Wrote bootloader.\n");
 
-  // Next, parse the 2nd stage bootloader ELF file.
+  // Next, parse the 2nd stage bootloader ELF file, and write our GDT.
   struct elf_header osh;
   struct pheader ph;
   struct bheader bh;
   for(i = 0; i < sizeof(bh.pad); i++)
     bh.pad[i] = 0;
+  bh.nsectors = 1;
+  bh.addr.o.memaddr_lo = 0x0000;
+  bh.addr.o.memaddr_hi = 0x0ec0;
+  write(devfd, &bh, sizeof(bh));
+  write(devfd, gdt, 512);
   u_int8_t *buf2;
   read(boot2fd, &osh, sizeof(osh));
   printf("Read boot2 header, bit %d, endian %d, PHT pos 0x%x, PT size %dx"
@@ -158,7 +173,6 @@ int main(void) {
   bh.nsectors = 0;
   bh.addr.l = osh.entry;
   write(devfd, &bh, sizeof(bh));
-
   
   close(loaderfd);
   close(osfd);

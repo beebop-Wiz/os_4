@@ -1,10 +1,7 @@
 #include <sys/wait.h>
 #include <sys/call.h>
 
-pid_t wait(int *status) {
-  while(syscall(9, -1, (int) status, 0) == 0) {
-    int i;
-    for(i = 0; i < 100000; i++) ;
-  }
-  return 0;
+pid_t waitpid(pid_t pid, int *wstatus, int options) {
+  return syscall4(0x80, 7, pid, (int) wstatus, options);
 }
+

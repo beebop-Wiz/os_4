@@ -1,6 +1,5 @@
 ; boot.nasm
-; Main kernel entry point. Called by the bootloader.
-	
+; Main 2nd stage boot entry point. Called by the bootloader.
 section .bootstrap_stack, nobits
 align 4
 stack_bottom:
@@ -11,8 +10,12 @@ section .text
 global _start
 _start:
 	mov [sector_offset], di
-	mov [gdt_address], ecx
 	mov esp, stack_top
+	mov ax, 0x10
+	mov es,ax
+	mov fs,ax
+	mov gs,ax
+	mov ss,ax
 extern boot2_main
 	call boot2_main
 	cli
@@ -26,4 +29,4 @@ sector_offset:
 dd 0
 global gdt_address
 gdt_address:
-dd 0
+dd 0xec00

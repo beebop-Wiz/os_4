@@ -18,6 +18,8 @@
 unsigned int *pagedir;
 struct mem_tree phy;
 unsigned char paging_enabled = 0;
+extern page_table_t kernel_pages;
+
 
 void init_paging() {
   pagedir = malloc_a(0x4000, 4096);
@@ -69,6 +71,20 @@ void mark_block(int gran, int off) {
   }
 }
 
+void clear_block(int gran, int off) {
+  //  printd("Marked block %d:%x (%x/%d)\n", gran, off, off / 32, off % 32);
+  phy.bitmap[gran][off / 32] &= ~(1 << (off % 32));
+  if(gran) {
+    mark_block(gran - 1, off * 2);
+    mark_block(gran - 1, off * 2 + 1);
+  }
+  for(gran++; gran < 18; gran++) {
+    off /= 2;
+    phy.bitmap[gran][off / 32] &= ~(1 << (off % 32));
+  }
+}
+
+
 unsigned int get_page_block(int gran) {
   int l = (1 << gran) * 4096;
   int bs = (131072 >> gran);
@@ -113,11 +129,18 @@ void swap_page_table(page_table_t old, page_table_t new) {
 }
 
 void update_page_table(page_table_t pt) {
-  register_page_table(pt);
+  while(pt) {
+    register_page_table(pt);
+    pt = pt->next;
+  }
 }
 
 unsigned int nonid_page(page_table_t pt, unsigned int offset, char update) {
+  if(get_mapping(kernel_pages, offset)) {
+    //    printf("About to overwrite a page in the kernel page table (%x)! You don't want to do that.\n", offset);
+  }
   unsigned int addr;
+  printdm("Arbitrarily paging page %x (vaddr %x PDI %x)\n", offset, offset * 4096, offset / 1024);
   while(pt) {
     if(!pt->table) {
       pt->table = malloc_a(4 * 4096, 4096);
@@ -128,6 +151,8 @@ unsigned int nonid_page(page_table_t pt, unsigned int offset, char update) {
     if(pt->idx == offset / 1024) {
       addr = get_page_block(0);
       pt->table[offset % 1024] = (addr * 4096) | 0x7;
+      if(update)
+	register_page_table(pt);
       return addr;
     }
     if(!pt->next) {
@@ -157,6 +182,9 @@ unsigned int get_mapping(page_table_t pt, unsigned int offset) {
 void id_page(page_table_t pt, unsigned int offset) {
   if(paging_enabled)
     printdm("Identity paging page %x (vaddr %x PDI %x)\n", offset, offset * 4096, offset / 1024);
+  if(get_mapping(kernel_pages, offset)  && pt != kernel_pages) {
+    //    printf("[id] About to overwrite a page in the kernel page table (%x)! You don't want to do that.\n", offset);
+  }
   while(pt) {
     if(!pt->table) {
       printdm("PT cache miss for offset %x (tab)\n", offset);
@@ -186,6 +214,9 @@ void id_page(page_table_t pt, unsigned int offset) {
 void mapped_page(page_table_t pt, unsigned int offset, unsigned int map, char update) {
   if(paging_enabled)
     printdm("Mapped paging page %x (vaddr %x PDI %x)\n", offset, offset * 4096, offset / 1024);
+  if(get_mapping(kernel_pages, offset) && pt != kernel_pages) {
+    //    printf("[mapped] About to overwrite a page in the kernel page table (%x)! You don't want to do that.\n", offset);
+  }
   while(pt) {
     if(!pt->table) {
       printdm("PT cache miss for offset %x (tab)\n", offset);
@@ -197,6 +228,8 @@ void mapped_page(page_table_t pt, unsigned int offset, unsigned int map, char up
     if(pt->idx == offset / 1024) {
       pt->table[offset % 1024] = (map * 4096) | 0x7;
       mark_block(0, map);
+      if(update)
+	register_page_table(pt);
       return;
     }
     if(!pt->next) {
@@ -208,6 +241,20 @@ void mapped_page(page_table_t pt, unsigned int offset, unsigned int map, char up
 	register_page_table(pt->next);
       pt->next->table[offset % 1024] = (map * 4096) | 0x7;
       mark_block(0, map);
+      return;
+    }
+    pt = pt->next;
+  }
+}
+
+
+void unmap_page(page_table_t pt, unsigned int offset) {
+  while(pt) {
+    if(!pt->table) return;
+    if(!pt->next) return;
+    if(pt->idx == offset / 1024) {
+      clear_block(0, pt->table[offset % 1024] / 4096);
+      pt->table[offset % 1024] = 0;
       return;
     }
     pt = pt->next;

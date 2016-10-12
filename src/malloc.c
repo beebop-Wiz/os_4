@@ -1,19 +1,16 @@
 #include "malloc.h"
 #include "vgatext.h"
-#include "debug.h"
+#include "log.h"
 #include "paging.h"
-
-#ifdef DEBUG_MALLOC
-#define printd(fmt, ...) printf(fmt, ##__VA_ARGS__)
-#else
-#define printd(fmt, ...)
-#endif
 
 #define MALLOC_ARENA ((void *) 0x4000000)
 #define MALLOC_FIRST_BLOCK ((void *) MALLOC_ARENA + sizeof(struct malloc_header))
 
+void *malloc_start, *malloc_end;
+
 void init_malloc() {
-  struct malloc_header *ptr = MALLOC_ARENA;
+  struct malloc_header *ptr = malloc_start = MALLOC_ARENA;
+  malloc_end = malloc_start + sizeof(struct malloc_header) * 4;
   ptr->magic = MALLOC_MAGIC;
   ptr->type = BLOCK_USED;
   ptr->length = 0;
@@ -27,7 +24,7 @@ extern unsigned char paging_enabled;
 void page_all_allocations() {
   struct malloc_header *ptr = MALLOC_ARENA;
   while(ptr) {
-    printd("Paging allocation for %x-%x\n", ptr, ptr + ptr->length);
+    log(LOG_MALLOC, LOG_DEBUG, "Paging allocation for %x-%x\n", ptr, ptr + ptr->length);
     id_page(kernel_pages, ((unsigned int) ptr) / 4096);
     unsigned int i;
     for(i = 0; i < (ptr->length / 4096); i++) {
@@ -55,9 +52,9 @@ void *align_address(void *addr, int align) {
 }
 
 void *page_allocation(void *addr, unsigned int size) {
-  printd("Allocating %x + %x (%d)\n", addr, size, paging_enabled);
+  log(LOG_MALLOC, LOG_DEBUG, "Allocating %x + %x (%d)\n", addr, size, paging_enabled);
   if(!paging_enabled) return addr;
-  printd("Paging new memory for allocation at %x (page %x, dir %x)\n", (unsigned int) addr, (unsigned int) addr / 4096 , ((unsigned int) addr / 4096) / 1024);
+  log(LOG_MALLOC, LOG_DEBUG, "Paging new memory for allocation at %x (page %x, dir %x)\n", (unsigned int) addr, (unsigned int) addr / 4096 , ((unsigned int) addr / 4096) / 1024);
   unsigned int i;
   id_page(kernel_pages, ((unsigned int) addr) / 4096);
   for(i = 0; i < (size / 4096) + 2; i++) {
@@ -65,6 +62,10 @@ void *page_allocation(void *addr, unsigned int size) {
   }
   for(i = 0; i < (size / 4); i++) {
     ((int *) addr)[i]= 0;
+  }
+  if(addr + size > malloc_end) {
+    malloc_end = addr + size;
+    malloc_end += sizeof(struct malloc_header);
   }
   return addr;
 }
@@ -81,16 +82,16 @@ unsigned int header_diff(struct malloc_header *a) {
 void *malloc_a(unsigned int size, int align) {
   // Simple first fit allocation.
   struct malloc_header *ptr = MALLOC_ARENA;
-  printd("Beginning allocation of %d bytes (up to %d).\n", size, size + align);
+  log(LOG_MALLOC, LOG_INFO, "Beginning allocation of %d bytes (up to %d).\n", size, size + align);
   // traverse the array looking for free blocks
   while(ptr->next) {
-    printd("Checking block at %x + %x\n", ptr, ptr->length);
+    log(LOG_MALLOC, LOG_DEBUG, "Checking block at %x + %x\n", ptr, ptr->length);
     if(ptr->type == BLOCK_FREE && ptr->length > size + sizeof(struct malloc_header)) {
       // found a free block
-      printd("Found a free, allocated block at offset %x\n",
+      log(LOG_MALLOC, LOG_DEBUG, "Found a free, allocated block at offset %x\n",
 	     PTR_SUB(ptr, MALLOC_ARENA, unsigned int));
       if(align) {
-	printd("\tChecking alignment...\n");
+	log(LOG_MALLOC, LOG_DEBUG, "\tChecking alignment...\n");
 	if(header_diff(ptr) < (unsigned int) align_address(ptr, align) + size) {
 	  ptr = ptr->next;
 	  continue;
@@ -107,10 +108,10 @@ void *malloc_a(unsigned int size, int align) {
   // last block.
   if(ptr->type == BLOCK_FREE && ptr->length > size + sizeof(struct malloc_header)) {
     // found a free block
-    printd("Found a free, allocated block at offset %x (last block)\n",
+    log(LOG_MALLOC, LOG_DEBUG, "Found a free, allocated block at offset %x (last block)\n",
 	   PTR_SUB(ptr, MALLOC_ARENA, unsigned int));
     if(align) {
-      printd("\tChecking alignment...\n");
+      log(LOG_MALLOC, LOG_DEBUG, "\tChecking alignment...\n");
       if(header_diff(ptr) < (unsigned int) align_address(ptr, align) + size) goto nofree;
     }
     ptr->type = BLOCK_USED;
@@ -119,7 +120,7 @@ void *malloc_a(unsigned int size, int align) {
     return page_allocation(align_address(PTR_ADD(ptr, sizeof(struct malloc_header), void *), align), size);
   }
  nofree:
-  printd("Found no free blocks. Putting a new one at %x (prev %x + %x)\n", PTR_ADD(ptr, sizeof(struct malloc_header) + ptr->length, struct malloc_header *), ptr, ptr->length);
+  log(LOG_MALLOC, LOG_DEBUG, "Found no free blocks. Putting a new one at %x (prev %x + %x)\n", PTR_ADD(ptr, sizeof(struct malloc_header) + ptr->length, struct malloc_header *), ptr, ptr->length);
   // ok, now we definitely have to allocate one
   ptr->next = PTR_ADD(ptr, sizeof(struct malloc_header) + ptr->length, struct malloc_header *);
   page_header(ptr->next);
@@ -131,21 +132,25 @@ void *malloc_a(unsigned int size, int align) {
     ptr->next->length = size;
   ptr->next->owner = (void (*)()) __builtin_return_address(0);
   ptr->next->next = 0;
-  printd("New block allocated, size %d loc %x.\n", ptr->next->length, ptr->next);
+  log(LOG_MALLOC, LOG_INFO, "New block allocated, size %d loc %x.\n", ptr->next->length, ptr->next);
   return page_allocation(align_address(PTR_ADD(ptr->next, sizeof(struct malloc_header), void *), align), size);
 }
 
 void free(void *mem) {
+  if(mem < malloc_start || mem > malloc_end) {
+    log(LOG_MALLOC, LOG_FAILURE, "Someone's trying to free a non-malloc'd pointer (%x) (%x - %x)!\n", mem, malloc_start, malloc_end);
+    return;
+  }
   struct malloc_header *ptr = (struct malloc_header *) mem - 1;
   if(ptr->magic != MALLOC_MAGIC) {
     // check if it's an aligned block
     ptr = MALLOC_ARENA;
     while(ptr && ptr->mem != mem) ptr = ptr->next;
     if(!ptr)
-      printf("Something very bad has happened when freeing %x\n", mem);
+      log(LOG_MALLOC, LOG_FAILURE, "Something very bad has happened when freeing %x (allocd by %x? magic %x)\n", mem, ((struct malloc_header *) mem - 1)->owner, ((struct malloc_header *) mem - 1)->magic);
   }
   ptr->type = BLOCK_FREE;
   ptr->owner = 0;
-  printd("Freed %x +%x bytes\n", ptr, ptr->length);
+  log(LOG_MALLOC, LOG_INFO, "Freed %x +%x bytes\n", ptr, ptr->length);
 }
 

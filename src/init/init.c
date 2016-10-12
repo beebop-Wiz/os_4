@@ -1,26 +1,34 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <sys/call.h>
 #include <unistd.h>
-#include <fcntl.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/wait.h>
 
-int main(void) {
-  char cmd_buf[128];
-  int cmd_ptr;
-  pid_t child;
+// back > fore
+
+int st2_r = 0;
+
+char *strtok2(char *s, char *d) {
+  return (st2_r++) ? strtok(0, d) : strtok(s, d);
+}
+
+char *default_env[] = {
+  "PATH=/bin:/usr/bin",
+  "USER=root"
+};
+
+int main(void) {		/* init is always called with no args and no environment */
+  printf("Hello, Userspace!\n");
   while(1) {
-    printf("$ ");
-    fflush(stdout);
-    cmd_ptr = 0;
-    while((cmd_buf[cmd_ptr++] = getchar()) != '\n') ;
-    if(cmd_ptr == 1) continue;
-    cmd_buf[cmd_ptr - 1] = 0;
-    if(!(child = fork())) {
-      if(execv(cmd_buf, 0) < 0) {
-	printf("%s: command not found\n", cmd_buf);
-	exit(127);
-      }
-    } else wait(0);
+    printf("Starting shell... (/bin/sh)\n");
+    pid_t shell;
+    if(!(shell = fork())) {
+      execve("/bin/sh", 0, default_env);
+      return 0;
+    } else {
+      waitpid(-1, 0, 0);
+    }
+    printf("Shell exited, restarting\n");
   }
-  return 0;
 }

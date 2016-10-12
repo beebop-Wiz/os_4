@@ -4,38 +4,10 @@
 #include "util.h"
 #include "vgatext.h"
 #include "malloc.h"
+#include "log.h"
+#include "disk.h"
 
-extern char vbeinfo[512];
-extern struct {
-  unsigned char size;
-  unsigned char res;
-  unsigned short nxfer;
-  struct {
-    unsigned short lo;
-    unsigned short hi;
-  } __attribute__ ((packed)) addr;
-  unsigned int lba;
-  unsigned int pad;
-} __attribute__ ((packed)) rmsector;
-
-void read_sector(unsigned int lba, unsigned char *mem) {
-  rmsector.size = 0x10;
-  rmsector.res = 0;
-  rmsector.nxfer = 1;
-  rmsector.addr.lo = OFF(vbeinfo);
-  rmsector.addr.hi = SEG(vbeinfo);
-  rmsector.lba = lba;
-  rmsector.pad = 0;
-  rmregs.ax = 0x4200;
-  rmregs.dx = 0x0081;
-  rmregs.si = OFF(&rmsector);
-  rmregs.ds = SEG(&rmsector);
-  bios_intr(0x13);
-  int i;
-  for(i = 0; i < 512; i++) {
-    mem[i] = vbeinfo[i];
-  }
-}
+// This ext2 code should not be used after boot - use the fs interface!
 
 void read_superblock(struct ext2_superblock *s) {
   memset(s, 0, 1024);
@@ -59,6 +31,7 @@ void read_inode(struct ext2_superblock *s, struct ext2_inode *inode, int inode_i
   struct ext2_bg_desc desc;
   read_block_group(s, &desc, block_group);
   int block_offset = local_index * sizeof(struct ext2_inode);
+  log(LOG_BOOT, LOG_INFO, "inode %d is at (%d, %d) block offset %d\n", inode_idx, block_group, local_index * sizeof(struct ext2_inode) / 1024 + desc.inode_table, block_offset);
   int sector_offset = block_offset % 512;
   int it_sector = desc.inode_table * 2 + (block_offset / 512);
   unsigned char sector[512];
@@ -70,11 +43,52 @@ void get_block(struct ext2_inode *inode, int block_idx, unsigned char *block) {
   unsigned int block_addr;
   if(block_idx < 12) {
     block_addr = inode->bp[block_idx];
+  } else if(block_idx < 268) {
+    read_sector(inode->bpp * 2, block);
+    read_sector(inode->bpp * 2 + 1, block + 512);
+    int bpp_idx = (block_idx - 12);
+    block_addr = ((unsigned int *) block)[bpp_idx];
   } else {
-    printf("EXT2 error: you need to fix indirection\n");
+    log(LOG_GENERAL, LOG_FAILURE, "EXT2 error: you need to fix indirection\n");
   }
   read_sector(block_addr * 2, block);
   read_sector(block_addr * 2 + 1, block + 512);
+}
+
+void get_block_direct(int block_idx, unsigned char *block) {
+  read_sector(block_idx * 2, block);
+  read_sector(block_idx * 2 + 1, block + 512);
+}
+
+void allocate_bitmaps(struct ext2_superblock *s, struct ext2_block_bitmaps *m) {
+  m->blocks = malloc(((s->bg_size / 8) * 1024) / 1024);
+  m->inodes = malloc(((s->ig_size / 8) * 1024) / 1024);
+}
+
+void free_bitmaps(struct ext2_block_bitmaps *m) {
+  free(m->blocks);
+  free(m->inodes);
+}
+
+void read_bitmaps(struct ext2_superblock *s, struct ext2_bg_desc *b, struct ext2_block_bitmaps *m) {
+  int n_bg_blocks = ((s->bg_size / 8) * 1024) / 1024;
+  int n_ig_blocks = ((s->ig_size / 8) * 1024) / 1024;
+  int i;
+  for(i = 0; i < n_bg_blocks; i++) {
+    get_block_direct(i + b->block_bitmap, m->blocks + (i * 1024));
+  }
+  for(i = 0; i < n_ig_blocks; i++) {
+    get_block_direct(i + b->inode_bitmap, m->inodes + (i * 1024));
+  }
+}
+
+int get_bitmap(unsigned char *map, int offset) {
+  return (map[offset / 8] >> (offset % 8)) & 1;
+}
+
+void set_bitmap(unsigned char *map, int offset, int value) {
+  map[offset / 8] &= ~(1 << (offset % 8));
+  map[offset / 8] |= (!!value << (offset % 8));
 }
 
 ext2_dirstate_t opendir(struct ext2_inode *inode) {
@@ -93,7 +107,7 @@ ext2_dirent_t dirwalk(ext2_dirstate_t s) {
     free(s->last);
   }
   unsigned int i, block_idx = 0, boff = 0, size;
-  unsigned char block[1024];
+  unsigned char block[1048];
   for(i = 0; i < s->ent_idx; i++) {
     get_block(s->inode, block_idx, block);
     size = block[boff + 4];
@@ -123,7 +137,8 @@ void closedir(ext2_dirstate_t s) {
     free(s->last->name);
     free(s->last);
   }
-  free(s->inode);
+  if(s->inode)
+    free(s->inode);
   free(s);
 }
 
@@ -162,6 +177,7 @@ int get_file_inode(struct ext2_superblock *s, int dir_inode, const char *name) {
   ext2_dirent_t d;
   while((d = dirwalk(ds))) {
     if(d->nlen && streq(d->name, name)) break;
+    if(!d->nlen) return -1;
   }
   int r;
   if(!d) r = -1; 
@@ -192,7 +208,7 @@ void list_directory(struct ext2_superblock *s, struct ext2_inode *i) {
       d->name[d->nlen] = 0;
       read_inode(s, &sub, d->inode);
       parse_inode_type(sub.type, out);
-      printf("%s %s %d %d\n", out, d->name, sub.size_low, d->inode);
+      log(LOG_GENERAL, LOG_INFO, "%s %s %d %d\n", out, d->name, sub.size_low, d->inode);
     }
   }
   closedir(root);
@@ -209,10 +225,11 @@ int get_path_inode(struct ext2_superblock *s, const char *p) {
   while((token = path_tokenize(path, &path))) {
     if(!strlen(token)) break;
     read_inode(s, &dir, dir_inode);
-    //    list_directory(s, &dir);
+    //list_directory(s, &dir);
     dir_inode = get_file_inode(s, dir_inode, token);
     if(dir_inode == -1) return -1;
   }
   free(p_orig);
   return dir_inode;
 }
+

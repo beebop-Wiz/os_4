@@ -1,0 +1,27 @@
+;; This buffer is for notes you don't want to save, and for Lisp evaluation.
+;; If you want to create a file, visit that file with C-x C-f,
+;; then enter the text in that file's own buffer.
+
+(8 x 16) * 4 = 32 x 16
+
+  0123456789abcdef0123456789abcdef
+                   
+1         |       |       |
+2         |       |       |   oo
+3         |       |       | o888
+4         |       |       |o8 88
+5 o8^^^8o o8^^^8o |       o8  88
+6 88   88 |^^8oo  |       ^^^^88^
+7 ^8ooo8^ ^8ooo8^ |       |   88
+8         |       88888888|
+
+x-edge 34 (3400)
+y-edge 42 (84)
+
+
+esi = ebx * 32
+edx = (eax + esi) / 8
+ch = [edx + (img + 0x7c00)]
+
+edx = (eax + (ebx * 32)) / 8
+    = (eax / 8) + (ebx * 4)

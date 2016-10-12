@@ -59,7 +59,8 @@ global int_%1
 	isr_noerr 45
 	isr_noerr 46
 	isr_noerr 47
-	
+
+	isr_noerr 128
 	isr_noerr 129
 	
 asm_intr:

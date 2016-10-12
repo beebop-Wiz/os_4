@@ -17,7 +17,7 @@ void vga_clearcolor(int color) {
   unsigned int b2 = ((color & 0xFFFF00) >> 8) | ((color & 0xFFFF) << 16);
   unsigned int b3 = ((color & 0xFFFFFF) << 8) | ((color & 0xFF0000) >> 16);
   int i;
-  for(i = 0; i < 800 * 600 * 3; i += 3) {
+  for(i = 0; i < VGA_WIDTH * VGA_HEIGHT * 3; i += 3) {
     vga[i] = b1;
     vga[i + 1] = b2;
     vga[i + 2] = b3;

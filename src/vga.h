@@ -148,4 +148,8 @@ void vga_set_palette(int idx, unsigned char r, unsigned char g, unsigned char b)
 void vga_clear();
 
 int vga_get_color(int x, int y);
+
+#define VGA_WIDTH 1024
+#define VGA_HEIGHT 768
+
 #endif

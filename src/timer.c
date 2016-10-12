@@ -9,9 +9,12 @@ volatile int tn = 0;
 extern volatile int cs;
 extern unsigned int cx, cy;
 
+volatile unsigned long long jiffy_clock = 0;
+
 void timer_intr(regs_t r) {
+  jiffy_clock++;
   tn++;
-  if((tn % 10) == 9) {
+  if((tn % 50) == 49) {
     cs = !cs;
     vga_redraw();
   }

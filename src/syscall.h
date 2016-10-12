@@ -12,10 +12,16 @@ enum syscalls {
   SYS_READ,			/* 7 */
   SYS_EXEC,			/* 8 */
   SYS_WAIT,			/* 9 */
+  SYS_SET_HANDLER,		/* 10 */
+  SYS_WAIT_END,			/* 11 */
+  SYS_KILL,			/* 12 */
+  SYS_TCSETPGRP,		/* 13 */
+  SYS_GETPID,			/* 14 */
 };
 
 #include "idt.h"
 
 void do_syscall(regs_t r);
+void init_syscall();
 
 #endif

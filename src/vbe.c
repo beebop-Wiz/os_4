@@ -20,9 +20,9 @@ void vbe_load_data() {
   }
   vga_putchar('\n');
   // we should eventually do something with this.
-  // until then, set 0x4115
+  // until then, set 0x4118 (24 bits, 1024x768)
   rmregs.ax = 0x4f02;
-  rmregs.bx = 0x4115;
+  rmregs.bx = 0x4118;
   bios_intr(0x10);
   *((unsigned int *) 0xFD000000) = 0xffffffff;
 }
