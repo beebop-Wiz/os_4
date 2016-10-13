@@ -14,6 +14,19 @@ struct fs_driver {
 #define DRIVER_MAX 256
 #define FD_MAX 256
 
+#define O_RDONLY 1
+#define O_WRONLY 2
+#define O_RDWR   3
+
+#define O_CLOEXEC   4
+#define O_CREAT     8
+#define O_DIRECTORY 16
+#define O_EXCL      32
+#define O_NOCTTY    64
+#define O_NOFOLLOW  128
+#define O_TMPFILE   256
+#define O_TRUNC     512
+
 int fs_init();
 int fs_open(char *fname, int mode);
 int fs_close(int f);

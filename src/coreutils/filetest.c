@@ -11,7 +11,7 @@ int main(void) {
   int i;
   char c;
   printf("Initializing buffer\n");
-  for(i = 0; i < 2048; i++) data[i] = 'a' + (i / (2048 / 26));
+  for(i = 0; i < 1024; i++) data[i] = 'a' + (i / (2048 / 26));
   data[2049] = 0;
   FILE *f2 = fopen("/test2.txt", "w");
   printf("Writing data\n");

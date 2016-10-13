@@ -22,7 +22,10 @@ void init_stdio(void) {
 }
 
 FILE *fopen(const char *path, const char *mode) {
-  int fd = syscall3(0x80, 5, (int) path, 0);
+  int mbin = 0;
+  if(mode[0] == 'r') mbin = O_RDONLY;
+  if(mode[0] == 'w') mbin = O_WRONLY | O_CREAT | O_TRUNC;
+  int fd = syscall3(0x80, 5, (int) path, mbin);
   if(fd < 0) return 0;
   FILE *r = malloc(sizeof(FILE));
   r->fd = fd;

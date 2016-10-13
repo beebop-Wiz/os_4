@@ -43,6 +43,11 @@ void e2fs_read_superblock(void) {
   memcpy(&e2fs_static.s, e2fs_static.sbuf, sizeof(struct e2fs_superblock));
 }
 
+void e2fs_write_superblock(void) {
+  memcpy(e2fs_static.sbuf, &e2fs_static.s, sizeof(struct e2fs_superblock));
+  write_sector(2, e2fs_static.sbuf);
+}
+
 void read_block_raw(int n, unsigned char *mem) {
   int n_sectors = BLOCK_SIZE / 512;
   int sid = n * n_sectors;
@@ -128,6 +133,27 @@ void e2fs_write_inode(int idx, struct e2fs_inode *i) {
   write_within_block(bk, bo, sizeof(struct e2fs_inode), (unsigned char *) i);
 }						      
 
+
+// TODO: refactor all inode functions to use this
+
+int get_inode_bnum(struct e2fs_inode *i, int block) {
+  int block_addr;
+  if(block < 12) {
+    block_addr = i->i_bp0[block];
+  } else {
+    printf("e2fs error: get_inode_bnum: you need to fix indirection\n");
+  }
+  return block_addr;
+}
+
+void set_inode_bnum(struct e2fs_inode *i, int block, int block_addr) {
+  if(block < 12) {
+    i->i_bp0[block] = block_addr;
+  } else {
+    printf("e2fs error: set_inode_bnum: you need to fix indirection\n");
+  }
+}
+
 void get_inode_block(struct e2fs_inode *i, int block, unsigned char *mem) {
   int block_addr;
   if(block < 12) {
@@ -183,6 +209,10 @@ int allocate_block() {
   struct e2fs_bdesc b;
   read_bgd(bi / e2fs_static.s.s_blocks_per_group, &b);
   bmwrite(b.bg_block_bitmap, bi % e2fs_static.s.s_blocks_per_group, 1);
+  b.bg_free_blocks_count--;
+  write_bgd(bi / e2fs_static.s.s_blocks_per_group, &b);
+  e2fs_static.s.s_free_blocks_count--;
+  e2fs_write_superblock();
   return bi;
 }
 
@@ -279,6 +309,19 @@ void getdent(struct e2fs_inode *i, struct e2fs_dirent *buf, int offset) {
 
 int new_file(struct e2fs_inode *d, char *name) {
   return (int)d + (int)name;
+}
+
+void truncate(int idx, struct e2fs_inode *i) {
+  int b;
+  struct e2fs_bdesc bg;
+  int bidx;
+  for(b = 0;(bidx = get_inode_bnum(i, b)) > 0; b++) {
+    set_inode_bnum(i, b, 0);
+    read_bgd(bidx / e2fs_static.s.s_blocks_per_group, &bg);
+    bmwrite(bg.bg_block_bitmap, b % e2fs_static.s.s_blocks_per_group, 0);
+  }
+  i->i_size = 0;
+  e2fs_write_inode(idx, i);
 }
 
 void prettyprint_mode(unsigned short mode, char *s) {
@@ -403,6 +446,11 @@ int ext2fs_open(char *fname, int mode) {
   ptab[cur_ctx]->fds[id].driver_data = (unsigned long) data;
   printf("[e2fs] open %s -> %d\n", fname, id);
   free(po);
+
+  if(mode & O_TRUNC) {
+    truncate(data->inum, &data->inode);
+  }
+  
   return id;
 }
 
