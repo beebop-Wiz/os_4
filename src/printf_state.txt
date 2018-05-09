@@ -1,0 +1,46 @@
+PRINTF state machine
+
+Ground:
+	'%' -> (Buffer[FSI], Format)
+	any -> (Print, Ground)
+Format:
+	'#' -> (Flag[ALT], Format)
+	'0' -> (Flag[ZPD], Format)
+	'-' -> (Flag[RPD], Format)
+	' ' -> (Flag[SSP], Format)
+	'+' -> (Flag[EXS], Format)
+	[1-9] -> (Buffer[FWD], Width)
+	'.' -> (Nothing, Precision)
+	[hlLjzt] -> (Buffer[LEN], Format)
+	[diouxXeEfFgGaAcspnm] -> (Output, Ground)
+	'%' -> (Print, Ground)
+	any -> (Print, Ground)
+	
+Width:
+        [0-9] -> (Buffer[FWD], Width)
+	any -> Format
+
+Precision:
+        [0-9] -> (Buffer[PRC], Precision)
+	any -> Format
+
+Buffer:  Store character and continue
+Print:   Print character and continue
+Flag:    Set flag based on character
+Output:  Output based on format specifier
+Nothing:
+
+
+Buffers:
+ FSI - Format Sequence Introduction; max 1 char
+ FWD - Field width; no maximum
+ PRC - Precision; no maximum
+ LEN - Length; max 2 chars
+ CON - Conversion specifier; max 1 char
+ 
+Flags:
+ ALT - alternate form
+ ZPD - zero pad
+ RPD - right pad
+ SSP - space in front of positive number
+ EXS - explicit sign
